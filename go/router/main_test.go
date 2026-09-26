@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"net"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -12,6 +13,8 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/wiramahendra/thompson-sampling/go/outcome"
 )
 
 func envGetter(vars map[string]string) func(string) string {
@@ -262,5 +265,110 @@ func TestBinaryBootsVerifiedAndSettles(t *testing.T) {
 	}
 	if resp["learned"] != true {
 		t.Fatalf("binary did not learn: %v", resp)
+	}
+}
+
+// D5: bounded parameters are validated; public settlement needs an explicit
+// override; degraded health tested at the gateway layer.
+func TestLoadConfigRejectsOutOfRange(t *testing.T) {
+	base := map[string]string{"ROUTER_MODE": "verified", "STRATEGY_ID": "t",
+		"DECISIONS_PATH": "/tmp/d.jsonl", "OUTCOMES_PATH": "/tmp/o.jsonl", "SETTLE_TOKEN": "s"}
+	with := func(k, v string) map[string]string {
+		m := map[string]string{}
+		for kk, vv := range base {
+			m[kk] = vv
+		}
+		m[k] = v
+		return m
+	}
+	for name, kv := range map[string][2]string{
+		"shadow-rate-high": {"SHADOW_SAMPLE_RATE", "1.5"},
+		"shadow-rate-neg":  {"SHADOW_SAMPLE_RATE", "-0.1"},
+		"shadow-conc-neg":  {"SHADOW_MAX_CONCURRENCY", "-2"},
+		"shadow-timeout":   {"SHADOW_TIMEOUT", "-5s"},
+	} {
+		if _, err := loadConfig(envGetter(with(kv[0], kv[1]))); err == nil {
+			t.Fatalf("%s: out-of-range value accepted", name)
+		}
+	}
+	// Public settlement listener without override is refused.
+	if _, err := loadConfig(envGetter(with("SETTLE_ADDR", "0.0.0.0:8081"))); err == nil {
+		t.Fatal("public settlement without override accepted")
+	}
+	// ... with the explicit override it loads (auth still enforced downstream).
+	ok := with("SETTLE_ADDR", "0.0.0.0:8081")
+	ok["ALLOW_PUBLIC_SETTLE"] = "1"
+	if _, err := loadConfig(envGetter(ok)); err != nil {
+		t.Fatalf("override rejected: %v", err)
+	}
+	// Loopback forms pass.
+	for _, addr := range []string{"127.0.0.1:8081", "localhost:8081", "[::1]:8081"} {
+		if _, err := loadConfig(envGetter(with("SETTLE_ADDR", addr))); err != nil {
+			t.Fatalf("loopback %q rejected: %v", addr, err)
+		}
+	}
+}
+
+// D4: shutdown drains listeners and writes a final checkpoint.
+func TestShutdownDrainsAndCheckpoints(t *testing.T) {
+	dir := t.TempDir()
+	cfg, err := loadConfig(envGetter(map[string]string{
+		"ROUTER_MODE": "verified", "STRATEGY_ID": "t2",
+		"ARMS":                "a,b",
+		"EVIDENCE_PATH":       filepath.Join(dir, "ev.jsonl"),
+		"DECISIONS_PATH":      filepath.Join(dir, "d.jsonl"),
+		"OUTCOMES_PATH":       filepath.Join(dir, "o.jsonl"),
+		"SETTLE_TOKEN":        "s3cret",
+		"CHECKPOINT_INTERVAL": "0",
+	}))
+	if err != nil {
+		t.Fatal(err)
+	}
+	rt, cleanup, err := buildRouter(cfg)
+	if err != nil {
+		t.Fatal(err)
+	}
+	// Ephemeral listeners: prove drain behavior without fixed ports.
+	pubLn, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatal(err)
+	}
+	privLn, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatal(err)
+	}
+	srv := &servers{
+		public:   &http.Server{Handler: publicMux(rt)},
+		internal: &http.Server{Handler: internalMux(rt)},
+	}
+	go func() { _ = srv.public.Serve(pubLn) }()
+	go func() { _ = srv.internal.Serve(privLn) }()
+	deadline := time.Now().Add(10 * time.Second)
+	for {
+		resp, err := http.Get("http://" + pubLn.Addr().String() + "/health")
+		if err == nil && resp.StatusCode == http.StatusOK {
+			resp.Body.Close()
+			break
+		}
+		if err == nil {
+			resp.Body.Close()
+		}
+		if time.Now().After(deadline) {
+			t.Fatal("never healthy")
+		}
+		time.Sleep(50 * time.Millisecond)
+	}
+	shutdown(srv, cfg, rt, cleanup)
+	// Listeners closed...
+	if _, err := http.Get("http://" + pubLn.Addr().String() + "/health"); err == nil {
+		t.Fatal("public listener still serving after shutdown")
+	}
+	// ...and a final checkpoint written.
+	if _, err := os.Stat(checkpointPath(cfg)); err != nil {
+		t.Fatalf("no shutdown checkpoint: %v", err)
+	}
+	cp, err := outcome.LoadCheckpoint(checkpointPath(cfg))
+	if err != nil || cp == nil {
+		t.Fatalf("checkpoint unloadable: %+v %v", cp, err)
 	}
 }

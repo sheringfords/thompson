@@ -7,11 +7,13 @@
 package main
 
 import (
+	"context"
 	"crypto/subtle"
 	"flag"
 	"fmt"
 	"log"
 	"math/rand/v2"
+	"net"
 	"net/http"
 	"os"
 	"os/signal"
@@ -93,6 +95,9 @@ func loadConfig(getenv func(string) string) (appConfig, error) {
 		if err != nil {
 			return c, fmt.Errorf("router: bad SHADOW_SAMPLE_RATE: %w", err)
 		}
+		if f < 0 || f > 1 {
+			return c, fmt.Errorf("router: SHADOW_SAMPLE_RATE %v outside [0, 1]", f)
+		}
 		c.shadowRate = f
 	}
 	c.shadowTimeout = 5 * time.Second
@@ -101,6 +106,9 @@ func loadConfig(getenv func(string) string) (appConfig, error) {
 		if err != nil {
 			return c, fmt.Errorf("router: bad SHADOW_TIMEOUT: %w", err)
 		}
+		if d < 0 {
+			return c, fmt.Errorf("router: negative SHADOW_TIMEOUT %v", d)
+		}
 		c.shadowTimeout = d
 	}
 	c.shadowMaxConc = 5
@@ -108,6 +116,9 @@ func loadConfig(getenv func(string) string) (appConfig, error) {
 		i, err := strconv.Atoi(v)
 		if err != nil {
 			return c, fmt.Errorf("router: bad SHADOW_MAX_CONCURRENCY: %w", err)
+		}
+		if i < 0 {
+			return c, fmt.Errorf("router: negative SHADOW_MAX_CONCURRENCY %d", i)
 		}
 		c.shadowMaxConc = i
 	}
@@ -135,6 +146,12 @@ func loadConfig(getenv func(string) string) (appConfig, error) {
 		if c.settleAddr == "" {
 			c.settleAddr = "127.0.0.1:8081"
 		}
+		// The settlement endpoint writes to the learning ledger: binding it
+		// beyond loopback requires an explicit, documented operator override.
+		// Authentication alone is not sufficient against network exposure.
+		if !isLoopbackAddr(c.settleAddr) && getenv("ALLOW_PUBLIC_SETTLE") != "1" {
+			return c, fmt.Errorf("router: SETTLE_ADDR %q is not loopback: set ALLOW_PUBLIC_SETTLE=1 to acknowledge public settlement exposure", c.settleAddr)
+		}
 		c.mapper = getenv("MAPPER")
 		if v := getenv("SELECTION_SEED"); v != "" {
 			sd, err := strconv.ParseUint(v, 10, 64)
@@ -153,6 +170,26 @@ func loadConfig(getenv func(string) string) (appConfig, error) {
 		}
 	}
 	return c, nil
+}
+
+// isLoopbackAddr reports whether addr resolves to a loopback interface
+// (127.0.0.0/8, ::1, or localhost). Anything else is treated as public.
+func isLoopbackAddr(addr string) bool {
+	host := addr
+	for i := len(addr) - 1; i >= 0; i-- {
+		if addr[i] == ':' {
+			host = addr[:i]
+			break
+		}
+	}
+	host = strings.Trim(host, "[]")
+	if host == "localhost" {
+		return true
+	}
+	if ip := net.ParseIP(host); ip != nil {
+		return ip.IsLoopback()
+	}
+	return false
 }
 
 // bearerAuth returns a settlement auth hook comparing against a fixed token
@@ -318,14 +355,46 @@ func main() {
 	}
 	defer cleanup()
 
+	srv := serve(cfg, router)
+	waitForSignal()
+	shutdown(srv, cfg, router, cleanup)
+}
+
+// servers holds both listeners so shutdown drains them together.
+type servers struct {
+	public   *http.Server
+	internal *http.Server
+}
+
+// serve binds and serves in the background. Production passes fixed addrs;
+// tests pass :0 addrs. Either way shutdown() drains both.
+func serve(cfg appConfig, router *gateway.Router) *servers {
+	srv := &servers{
+		public: &http.Server{Addr: ":" + cfg.port, Handler: publicMux(router)},
+	}
+	go func() {
+		log.Printf("router listening on %s mode=%s strategy=%s arms=%v", srv.public.Addr, cfg.mode, cfg.strategyID, cfg.arms)
+		log.Printf("ownership: single Policy instance per process (sync.Mutex in Policy, single replica V0)")
+		// Fatal on bind failure: a half-alive gateway (no listeners) would
+		// pass health checks served by a stale process squatting the same
+		// port and route traffic to the wrong files. ErrServerClosed is the
+		// normal shutdown path.
+		if err := srv.public.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("public listener: %v", err)
+		}
+	}()
 	if cfg.mode == gateway.VerifiedMode {
+		srv.internal = &http.Server{Addr: cfg.settleAddr, Handler: internalMux(router)}
 		go func() {
 			log.Printf("settlement listening on %s (internal only)", cfg.settleAddr)
-			log.Fatal(http.ListenAndServe(cfg.settleAddr, internalMux(router)))
+			if err := srv.internal.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+				log.Fatalf("internal listener: %v", err)
+			}
 		}()
 		// Checkpoint cadence: bounded replay time at the cost of one sync
 		// write per interval. SIGTERM/SIGINT checkpoints once more and exits
 		// cleanly; SIGKILL falls back to ledger replay (slower, still exact).
+		// Checkpoint calls serialize on the router's settleMu.
 		if cfg.checkpointEvery > 0 {
 			go func() {
 				t := time.NewTicker(cfg.checkpointEvery)
@@ -337,22 +406,32 @@ func main() {
 				}
 			}()
 		}
-		go func() {
-			sig := make(chan os.Signal, 1)
-			signal.Notify(sig, syscall.SIGTERM, syscall.SIGINT)
-			<-sig
-			if cfg.mode == gateway.VerifiedMode {
-				if err := router.CheckpointVerifiedLearning(checkpointPath(cfg)); err != nil {
-					log.Printf("shutdown checkpoint: %v", err)
-				}
-			}
-			cleanup()
-			os.Exit(0)
-		}()
 	}
+	return srv
+}
 
-	addr := ":" + cfg.port
-	log.Printf("router listening on %s mode=%s strategy=%s arms=%v", addr, cfg.mode, cfg.strategyID, cfg.arms)
-	log.Printf("ownership: single Policy instance per process (sync.Mutex in Policy, single replica V0)")
-	log.Fatal(http.ListenAndServe(addr, publicMux(router)))
+func waitForSignal() {
+	sig := make(chan os.Signal, 1)
+	signal.Notify(sig, syscall.SIGTERM, syscall.SIGINT)
+	<-sig
+}
+
+// shutdown drains in-flight requests against a deadline, writes one final
+// checkpoint in verified mode, then releases stores. Ticker and shutdown
+// checkpoints serialize on settleMu; a torn checkpoint tmp file is
+// overwritten by the next save, and a torn final checkpoint fails the next
+// boot loudly (delete it to force a full ledger rebuild).
+func shutdown(srv *servers, cfg appConfig, router *gateway.Router, cleanup func()) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	if srv.internal != nil {
+		_ = srv.internal.Shutdown(ctx)
+	}
+	_ = srv.public.Shutdown(ctx)
+	if cfg.mode == gateway.VerifiedMode {
+		if err := router.CheckpointVerifiedLearning(checkpointPath(cfg)); err != nil {
+			log.Printf("shutdown checkpoint: %v", err)
+		}
+	}
+	cleanup()
 }

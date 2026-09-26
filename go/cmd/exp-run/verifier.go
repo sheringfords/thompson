@@ -87,6 +87,16 @@ func (FixtureVerifier) PlanAttempt(job ManifestJob, expID string, attIdx int, ar
 		validation = outcome.ValidationNotRun
 		latency = obs.TimeoutMs
 		cost = nil // unmetered: nothing observed, nothing imputed
+	case obs.Transport != outcome.TransportOK:
+		// A non-timeout transport error (e.g. HTTP 500, connection refused)
+		// proves the attempt produced no usable output, but task outcome is
+		// still decided by the independent truth draw below — never inferred
+		// from the status. A 500 with a lucky draw verifies success exactly
+		// as a 200 would; the transport field preserves what the wire said.
+		verified = drawToVerified(drawSuccess(expID, job.JobID, attIdx, arm, truth.SuccessP))
+		if verified == outcome.VerifiedFailure {
+			category = "task_failure"
+		}
 	case job.Behavior == BehaviorInvalidOutput:
 		// Transport succeeded (HTTP 200) but the payload is task-invalid.
 		// This is the transport/task separation case: success on the wire,
@@ -118,7 +128,6 @@ func (FixtureVerifier) PlanAttempt(job ManifestJob, expID string, attIdx int, ar
 // fallback appends a human attempt when configured and no model attempt
 // succeeded; its cost travels via HumanReviewCostUSD, never as a model arm.
 func (FixtureVerifier) PlanSettlement(job ManifestJob, expID string, firstDecision, jobID string, attempts []outcome.Attempt, assignedAt time.Time) ([]outcome.OutcomeEvent, bool) {
-	_ = expID
 	mk := func(version uint64, status outcome.JobStatus, atts []outcome.Attempt, decider string, verifiedAt time.Time) outcome.OutcomeEvent {
 		return outcome.OutcomeEvent{
 			SchemaVersion: outcome.SchemaVersion, EventType: outcome.EventJobSettled,
@@ -169,14 +178,36 @@ func (FixtureVerifier) PlanSettlement(job ManifestJob, expID string, firstDecisi
 	case BehaviorTimeoutThenAccept:
 		v1 := mk(1, outcome.StatusUnknown, attempts, "", assignedAt)
 		v1.CorrectedAt = ""
-		fixed := withHuman(fixTimeoutAttempts(job, attempts))
-		v2 := mk(2, outcome.StatusAccepted, fixed, deciderOf(fixed, outcome.VerifiedSuccess), assignedAt.Add(lagOr(lag, 20*time.Hour)))
+		fixed := withHuman(fixTimeoutAttempts(job, expID, attempts))
+		if len(fixed) == 0 {
+			v2 := mk(2, outcome.StatusUnknown, fixed, "", assignedAt.Add(lagOr(lag, 20*time.Hour)))
+			v2.CorrectedAt = assignedAt.UTC().Format(time.RFC3339Nano)
+			return []outcome.OutcomeEvent{v1, v2}, true
+		}
+		// The authoritative resolution follows the draw, not the behavior
+		// name: a timeout that actually failed resolves REJECTED.
+		if hasSuccess(fixed) {
+			v2 := mk(2, outcome.StatusAccepted, fixed, deciderOf(fixed, outcome.VerifiedSuccess), assignedAt.Add(lagOr(lag, 20*time.Hour)))
+			v2.CorrectedAt = assignedAt.UTC().Format(time.RFC3339Nano)
+			return []outcome.OutcomeEvent{v1, v2}, true
+		}
+		v2 := mk(2, outcome.StatusRejected, fixed, deciderOf(fixed, outcome.VerifiedFailure), assignedAt.Add(lagOr(lag, 20*time.Hour)))
 		v2.CorrectedAt = assignedAt.UTC().Format(time.RFC3339Nano)
 		return []outcome.OutcomeEvent{v1, v2}, true
 	case BehaviorUnknownThenAccept:
 		v1 := mk(1, outcome.StatusUnknown, attempts, "", assignedAt)
-		fixed := withHuman(fixTimeoutAttempts(job, attempts))
-		v2 := mk(2, outcome.StatusAccepted, fixed, deciderOf(fixed, outcome.VerifiedSuccess), assignedAt.Add(lagOr(lag, 20*time.Hour)))
+		fixed := withHuman(fixTimeoutAttempts(job, expID, attempts))
+		if len(fixed) == 0 {
+			v2 := mk(2, outcome.StatusUnknown, fixed, "", assignedAt.Add(lagOr(lag, 20*time.Hour)))
+			v2.CorrectedAt = assignedAt.UTC().Format(time.RFC3339Nano)
+			return []outcome.OutcomeEvent{v1, v2}, true
+		}
+		if hasSuccess(fixed) {
+			v2 := mk(2, outcome.StatusAccepted, fixed, deciderOf(fixed, outcome.VerifiedSuccess), assignedAt.Add(lagOr(lag, 20*time.Hour)))
+			v2.CorrectedAt = assignedAt.UTC().Format(time.RFC3339Nano)
+			return []outcome.OutcomeEvent{v1, v2}, true
+		}
+		v2 := mk(2, outcome.StatusRejected, fixed, deciderOf(fixed, outcome.VerifiedFailure), assignedAt.Add(lagOr(lag, 20*time.Hour)))
 		v2.CorrectedAt = assignedAt.UTC().Format(time.RFC3339Nano)
 		return []outcome.OutcomeEvent{v1, v2}, true
 	case BehaviorCorrectToReject:
@@ -204,19 +235,28 @@ func (FixtureVerifier) PlanSettlement(job ManifestJob, expID string, firstDecisi
 	}
 }
 
+// drawToVerified maps a ground-truth draw to a task verdict.
+func drawToVerified(ok bool) outcome.VerifiedOutcome {
+	if ok {
+		return outcome.VerifiedSuccess
+	}
+	return outcome.VerifiedFailure
+}
+
 // fixTimeoutAttempts re-verifies timeout attempts once authoritative evidence
-// exists: fixture truth decides what actually happened (draw-based, same
-// coin the live draw would have used at that index).
-func fixTimeoutAttempts(job ManifestJob, attempts []outcome.Attempt) []outcome.Attempt {
+// exists, using the same deterministic draw the live attempt would have used
+// (indexed by the attempt's sequence number, which the outcome contract
+// guarantees equals its position). No threshold shortcuts: a timeout on a
+// high-quality arm can still have failed, and the coin decides.
+func fixTimeoutAttempts(job ManifestJob, expID string, attempts []outcome.Attempt) []outcome.Attempt {
 	out := make([]outcome.Attempt, len(attempts))
 	copy(out, attempts)
 	for i := range out {
 		if out[i].Verified != outcome.VerifiedUnknown {
 			continue
 		}
-		// Timeout on a high-quality arm usually still succeeded server-side;
-		// the fixture resolves per-arm: success_p >= 0.5 means it landed.
-		if p := job.Arms[out[i].ArmID].SuccessP; p >= 0.5 {
+		p := job.Arms[out[i].ArmID].SuccessP
+		if drawSuccess(expID, job.JobID, int(out[i].Seq), out[i].ArmID, p) {
 			out[i].Verified = outcome.VerifiedSuccess
 			out[i].Validation = outcome.ValidationPass
 			out[i].VerifiedBy = "checker:reconciler-fixture"

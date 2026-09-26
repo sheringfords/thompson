@@ -20,6 +20,10 @@ type Manifest struct {
 	MaturationH  float64           `json:"maturation_hours"`
 	Treatments   []TreatmentConfig `json:"treatments"`
 	Jobs         []ManifestJob     `json:"jobs"`
+	// CharterDigest pins the frozen experimental charter this workload was
+	// built for. Resume binds to it: a manifest authorized under a different
+	// charter is a different experiment and must not continue this ledger.
+	CharterDigest string `json:"charter_digest,omitempty"`
 
 	WorkloadVersion string `json:"workload_version"`
 	Synthetic       bool   `json:"synthetic"`
@@ -176,21 +180,23 @@ func (m *Manifest) contentHash() (string, error) {
 	clone := *m
 	clone.WorkloadVersion = ""
 	b, err := json.Marshal(struct {
-		ExperimentID string            `json:"experiment_id"`
-		WorkloadName string            `json:"workload_name"`
-		Seed         uint64            `json:"seed"`
-		MaturationH  float64           `json:"maturation_hours"`
-		Treatments   []TreatmentConfig `json:"treatments"`
-		Jobs         []ManifestJob     `json:"jobs"`
-		Synthetic    bool              `json:"synthetic"`
+		ExperimentID  string            `json:"experiment_id"`
+		WorkloadName  string            `json:"workload_name"`
+		Seed          uint64            `json:"seed"`
+		MaturationH   float64           `json:"maturation_hours"`
+		Treatments    []TreatmentConfig `json:"treatments"`
+		Jobs          []ManifestJob     `json:"jobs"`
+		CharterDigest string            `json:"charter_digest,omitempty"`
+		Synthetic     bool              `json:"synthetic"`
 	}{
-		ExperimentID: clone.ExperimentID,
-		WorkloadName: clone.WorkloadName,
-		Seed:         clone.Seed,
-		MaturationH:  clone.MaturationH,
-		Treatments:   clone.Treatments,
-		Jobs:         canonJobs(clone.Jobs),
-		Synthetic:    clone.Synthetic,
+		ExperimentID:  clone.ExperimentID,
+		WorkloadName:  clone.WorkloadName,
+		Seed:          clone.Seed,
+		MaturationH:   clone.MaturationH,
+		Treatments:    clone.Treatments,
+		Jobs:          canonJobs(clone.Jobs),
+		CharterDigest: clone.CharterDigest,
+		Synthetic:     clone.Synthetic,
 	})
 	if err != nil {
 		return "", err

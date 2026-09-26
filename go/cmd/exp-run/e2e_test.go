@@ -10,6 +10,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -19,7 +20,17 @@ import (
 
 var (
 	e2eBin string
+	// e2ePortBase allocates disjoint loopback port blocks per test cluster.
+	// Fixed ports let zombies from killed runs hijack health checks: a new
+	// gateway would boot "successfully" against a stale process serving the
+	// wrong files. Unique bases per cluster remove the collision class.
+	e2ePortBase atomic.Int64
 )
+
+func nextPortBases() (pubBase, settleBase int) {
+	base := 22000 + int(e2ePortBase.Add(1))*100
+	return base, base + 50
+}
 
 func TestMain(m *testing.M) {
 	dir, err := os.MkdirTemp("", "router-e2e-bin")
@@ -53,9 +64,10 @@ type e2eCluster struct {
 	token string
 }
 
-func bootE2E(t *testing.T, treatments map[string]string, mappers map[string]string, base int) *e2eCluster {
+func bootE2E(t *testing.T, treatments map[string]string, mappers map[string]string) *e2eCluster {
 	t.Helper()
 	root := t.TempDir()
+	pubBase, settleBase := nextPortBases()
 	c := &e2eCluster{procs: map[string]*GatewayProc{}, dirs: map[string]string{}, token: "e2e-token"}
 	i := 0
 	for tx, arms := range treatments {
@@ -65,8 +77,8 @@ func bootE2E(t *testing.T, treatments map[string]string, mappers map[string]stri
 		}
 		c.dirs[tx] = dir
 		g, err := SpawnGateway(routerBin(t), tx, dir,
-			fmt.Sprintf("127.0.0.1:%d", base+i),
-			fmt.Sprintf("127.0.0.1:%d", base+10+i),
+			fmt.Sprintf("127.0.0.1:%d", pubBase+i),
+			fmt.Sprintf("127.0.0.1:%d", settleBase+i),
 			c.token, arms, tx, mappers[tx], "", 20*time.Second)
 		if err != nil {
 			t.Fatalf("boot %s: %v", tx, err)
@@ -93,7 +105,7 @@ func stdMappers() map[string]string {
 // Scenario 12 (+4 plumbing): the public listener cannot settle; the
 // internal listener can, with auth.
 func TestE2EPublicCannotSettle(t *testing.T) {
-	c := bootE2E(t, map[string]string{"t2": "cheap,strong"}, map[string]string{"t2": ""}, 18281)
+	c := bootE2E(t, map[string]string{"t2": "cheap,strong"}, map[string]string{"t2": ""})
 	g := c.procs["t2"]
 	client := &http.Client{Timeout: 5 * time.Second}
 	resp, err := client.Post(g.PublicURL+"/v1/outcomes", "application/json", strings.NewReader(`{}`))
@@ -117,7 +129,7 @@ func TestE2EPublicCannotSettle(t *testing.T) {
 
 // Scenario 3: repeated submission settles once; ledger holds one event.
 func TestE2EDuplicateSettleOnce(t *testing.T) {
-	c := bootE2E(t, map[string]string{"t2": "cheap,strong"}, map[string]string{"t2": ""}, 18381)
+	c := bootE2E(t, map[string]string{"t2": "cheap,strong"}, map[string]string{"t2": ""})
 	g := c.procs["t2"]
 	rr := g.Route(context.Background(), []byte(`{}`), 10*time.Second)
 	if rr.DecisionID == "" {
@@ -170,15 +182,38 @@ func countOutcomeFile(t *testing.T, dir string) int {
 
 // Scenario 9: crash after assignment before execution recovers with the same
 // treatment and no duplicate learning.
+// A headerless progress log cannot be bound to any manifest: resume
+// refuses instead of continuing an unverifiable ledger.
+func TestResumeRefusesHeaderlessProgress(t *testing.T) {
+	dir := t.TempDir()
+	m := generateManifest(13, 3)
+	mPath := filepath.Join(dir, "manifest.json")
+	writeJSON(t, mPath, m)
+	// Hand-write a job row with no header (legacy/foreign file).
+	raw := "{\"job_id\":\"job-00000\",\"treatment\":\"t0\",\"probability\":0.3333333333333333,\"phase\":\"assigned\",\"terminal\":false}\n"
+	if err := os.WriteFile(filepath.Join(dir, "progress.jsonl"), []byte(raw), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	r := openTestRunner(t, mPath, dir)
+	defer r.Shutdown()
+	if err := r.Run(context.Background()); err == nil {
+		t.Fatal("resume over headerless progress accepted")
+	}
+}
+
 func TestE2ECrashAfterAssignment(t *testing.T) {
 	dir := t.TempDir()
 	m := generateManifest(11, 10)
 	mPath := filepath.Join(dir, "manifest.json")
 	writeJSON(t, mPath, m)
-	r := openTestRunner(t, mPath, dir, 18581, 18591)
+	r := openTestRunner(t, mPath, dir)
 	// Simulate crash after assignment rows exist but before execution:
-	// compute the genuine assignment, persist an assigned-only row, then
-	// resume without executing anything first.
+	// a real crash always leaves the run header (written at Run start),
+	// so write it, then an assigned-only row, then resume without having
+	// executed anything.
+	if err := r.checkOrWriteHeader(); err != nil {
+		t.Fatal(err)
+	}
 	m0, err := LoadManifest(mPath)
 	if err != nil {
 		t.Fatal(err)
@@ -191,7 +226,7 @@ func TestE2ECrashAfterAssignment(t *testing.T) {
 		t.Fatal(err)
 	}
 	r.Shutdown()
-	r2 := openTestRunner(t, mPath, dir, 18581, 18591)
+	r2 := openTestRunner(t, mPath, dir)
 	defer r2.Shutdown()
 	if err := r2.Run(context.Background()); err != nil {
 		t.Fatalf("resume: %v", err)
@@ -235,14 +270,14 @@ func TestE2ECrashAfterSettle(t *testing.T) {
 	m := generateManifest(12, 4)
 	mPath := filepath.Join(dir, "manifest.json")
 	writeJSON(t, mPath, m)
-	r := openTestRunner(t, mPath, dir, 18681, 18691)
+	r := openTestRunner(t, mPath, dir)
 	if err := r.Run(context.Background()); err != nil {
 		t.Fatal(err)
 	}
 	r.Shutdown()
 	before := countOutcomeEvents(t, dir)
 	// Hard restart: brand-new processes on the same files (boot recovers).
-	r2 := openTestRunner(t, mPath, dir, 18681, 18691)
+	r2 := openTestRunner(t, mPath, dir)
 	defer r2.Shutdown()
 	if err := r2.Run(context.Background()); err != nil {
 		t.Fatalf("resume: %v", err)
@@ -270,17 +305,19 @@ func TestE2EMissingStorageFailsClosed(t *testing.T) {
 	dir := t.TempDir()
 	bad := filepath.Join(dir, "nope", "x", "decisions.jsonl")
 	_ = bad
+	pub0, set0 := nextPortBases()
 	_, err := SpawnGateway(routerBin(t), "t2", filepath.Join(dir, "missing-parent", "t2"),
-		"127.0.0.1:18481", "127.0.0.1:18491", "tok", "cheap,strong", "t2", "", "", 3*time.Second)
+		fmt.Sprintf("127.0.0.1:%d", pub0), fmt.Sprintf("127.0.0.1:%d", set0), "tok", "cheap,strong", "t2", "", "", 3*time.Second)
 	_ = err
 	// Port collision also fails fast: occupy a port, then boot onto it.
-	holder, err := spawnHolder(t, 18482)
+	pub1, _ := nextPortBases()
+	holder, err := spawnHolder(t, pub1+1)
 	if err != nil {
 		t.Skip("no free port for collision test")
 	}
 	defer holder.Close()
 	_, err = SpawnGateway(routerBin(t), "t2", filepath.Join(dir, "t2b"),
-		"127.0.0.1:18482", "127.0.0.1:18492", "tok", "cheap,strong", "t2", "", "", 2*time.Second)
+		fmt.Sprintf("127.0.0.1:%d", pub1+1), fmt.Sprintf("127.0.0.1:%d", pub1+51), "tok", "cheap,strong", "t2", "", "", 2*time.Second)
 	if err == nil {
 		t.Fatal("booted onto an occupied port")
 	}
@@ -298,12 +335,13 @@ func writeJSON(t *testing.T, path string, v any) {
 }
 
 // openTestRunner wires a Runner over real gateway binaries on dedicated ports.
-func openTestRunner(t *testing.T, manifestPath, dir string, pubBase, settleBase int) *Runner {
+func openTestRunner(t *testing.T, manifestPath, dir string) *Runner {
 	t.Helper()
 	m, err := LoadManifest(manifestPath)
 	if err != nil {
 		t.Fatal(err)
 	}
+	pubBase, settleBase := nextPortBases()
 	pubPorts := []int{pubBase, pubBase + 1, pubBase + 2}
 	settlePorts := []int{settleBase, settleBase + 1, settleBase + 2}
 	r, err := OpenRunner(RunnerConfig{

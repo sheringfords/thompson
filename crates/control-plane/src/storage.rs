@@ -170,7 +170,12 @@ impl Persister {
             let mut ticker = tokio::time::interval(self.interval);
             loop {
                 ticker.tick().await;
-                let _ = self.storage.save_all(&self.registry);
+                // Surfaced, not swallowed: a persistently failing store
+                // means snapshots are not durable, and the operator must
+                // see it in logs, not discover it after a restart.
+                if let Err(e) = self.storage.save_all(&self.registry) {
+                    tracing::warn!(error=%e, "background snapshot persist failed");
+                }
             }
         })
     }

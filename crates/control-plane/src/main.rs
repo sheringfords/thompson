@@ -21,14 +21,22 @@ async fn main() -> anyhow::Result<()> {
     let storage_kind = std::env::var("STORAGE").unwrap_or_else(|_| "memory".to_string());
     let registry = Arc::new(Registry::new());
 
-    // Optional file storage for local durability
+    // Optional file storage for local durability. Unknown backends fail
+    // fast: silently falling back to memory (as STORAGE=s3 once did) loses
+    // snapshots on restart while the operator believes they are durable.
     let storage: Arc<dyn RegistryStorage> = match storage_kind.as_str() {
         "file" => {
             let dir = std::env::var("STORAGE_DIR").unwrap_or_else(|_| "/tmp/traverse".to_string());
             tracing::info!(dir=%dir, "using FileStorage");
             Arc::new(FileStorage::new(dir))
         }
-        _ => Arc::new(MemoryStorage),
+        "memory" => {
+            tracing::warn!("using MemoryStorage: snapshots are NOT durable across restarts");
+            Arc::new(MemoryStorage)
+        }
+        other => {
+            anyhow::bail!("unknown STORAGE={other:?}: want \"file\" or \"memory\" (s3/postgres are not implemented)");
+        }
     };
 
     // Background persist every 30s (best-effort)

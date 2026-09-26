@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"sync"
 	"time"
 
 	"github.com/wiramahendra/thompson-sampling/go/outcome"
@@ -44,8 +45,11 @@ func SpawnGateway(routerBin, treatment, dir, publicAddr, settleAddr, token, arms
 	)
 	cmd := exec.Command(routerBin)
 	cmd.Env = env
-	var stderr bytes.Buffer
-	cmd.Stderr = &stderr
+	// Mutex-guarded stderr: os/exec copies child output from its own
+	// goroutine while the health-wait loop below may read the buffer on
+	// failure. A plain bytes.Buffer races here (caught by -race).
+	stderr := &lockedBuffer{}
+	cmd.Stderr = stderr
 	if err := cmd.Start(); err != nil {
 		return nil, fmt.Errorf("exp-run: start gateway %s: %w", treatment, err)
 	}
@@ -82,6 +86,25 @@ func portOf(addr string) string {
 		}
 	}
 	return addr
+}
+
+// lockedBuffer is a bytes.Buffer safe for concurrent use by os/exec's
+// stderr copier and the spawning goroutine's failure reads.
+type lockedBuffer struct {
+	mu  sync.Mutex
+	buf bytes.Buffer
+}
+
+func (b *lockedBuffer) Write(p []byte) (int, error) {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	return b.buf.Write(p)
+}
+
+func (b *lockedBuffer) String() string {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	return b.buf.String()
 }
 
 // Kill stops the gateway and waits for exit.

@@ -48,9 +48,9 @@ func truthArm(p, cost, lat float64) ArmTruth {
 	return ArmTruth{SuccessP: p, CostUSD: &cost, LatencyMs: lat}
 }
 
-func runScenario(t *testing.T, dir, mPath string, pubBase, settleBase int) {
+func runScenario(t *testing.T, dir, mPath string) {
 	t.Helper()
-	r := openTestRunner(t, mPath, dir, pubBase, settleBase)
+	r := openTestRunner(t, mPath, dir)
 	defer r.Shutdown()
 	if err := r.Run(context.Background()); err != nil {
 		t.Fatalf("run: %v", err)
@@ -118,7 +118,7 @@ func TestScenarioInvalidOutputRejected(t *testing.T) {
 	job := sJob("jinv", "s", BehaviorInvalidOutput, arms)
 	job.Eligible = []string{"t0"}
 	mPath := scenarioManifest(t, dir, []ManifestJob{job})
-	runScenario(t, dir, mPath, 18781, 18791)
+	runScenario(t, dir, mPath)
 
 	ev := latestOutcome(t, dir, "t0", "jinv")
 	if ev.Status != outcome.StatusRejected {
@@ -151,7 +151,7 @@ func TestScenarioTimeoutThenAccept(t *testing.T) {
 	job := sJob("jto", "s", BehaviorTimeoutThenAccept, arms)
 	job.Eligible = []string{"t2"}
 	mPath := scenarioManifest(t, dir, []ManifestJob{job})
-	runScenario(t, dir, mPath, 18881, 18891)
+	runScenario(t, dir, mPath)
 
 	evs := outcomeVersions(t, dir, "t2", "jto")
 	if len(evs) != 2 || evs[0].Status != outcome.StatusUnknown || evs[1].Status != outcome.StatusAccepted {
@@ -176,7 +176,7 @@ func TestScenarioFallbackChain(t *testing.T) {
 	job.Eligible = []string{"t2"}
 	job.Human = HumanTruth{Enabled: true, CostUSD: 2.5, LatencyMs: 600000, AlwaysSucceed: true}
 	mPath := scenarioManifest(t, dir, []ManifestJob{job})
-	runScenario(t, dir, mPath, 18981, 18991)
+	runScenario(t, dir, mPath)
 
 	ev := latestOutcome(t, dir, "t2", "jfb")
 	if ev.Status != outcome.StatusAccepted {
@@ -203,7 +203,7 @@ func TestScenarioCorrectionChain(t *testing.T) {
 	job := sJob("jcor", "s", BehaviorCorrectToReject, arms)
 	job.Eligible = []string{"t2"}
 	mPath := scenarioManifest(t, dir, []ManifestJob{job})
-	runScenario(t, dir, mPath, 19081, 19091)
+	runScenario(t, dir, mPath)
 
 	evs := outcomeVersions(t, dir, "t2", "jcor")
 	if len(evs) != 2 || evs[0].Status != outcome.StatusAccepted || evs[1].Status != outcome.StatusRejected {
@@ -221,7 +221,7 @@ func TestScenarioUnresolvedVisible(t *testing.T) {
 	job := sJob("jun", "s", BehaviorUnresolved, arms)
 	job.Eligible = []string{"t0"}
 	mPath := scenarioManifest(t, dir, []ManifestJob{job})
-	runScenario(t, dir, mPath, 19181, 19191)
+	runScenario(t, dir, mPath)
 
 	// No outcome row references this job under either key space.
 	_, evs, err := harness.LoadTreatmentDir(dir + "/t0")

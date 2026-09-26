@@ -125,3 +125,54 @@ func TestHumanFallbackAccounting(t *testing.T) {
 		t.Fatal("failed model attempt recorded as decider")
 	}
 }
+
+// D2: non-timeout transport errors do not decide the task outcome. With
+// SuccessP=1 the verdict is success despite the 500; with 0 it is failure.
+// Either way the transport field preserves what the wire said.
+func TestTransportErrorDoesNotDecideOutcome(t *testing.T) {
+	mk := func(p float64) ManifestJob {
+		return ManifestJob{JobID: "te", Strata: "s", Behavior: BehaviorNormal,
+			Arms: map[string]ArmTruth{"a": {SuccessP: p, LatencyMs: 100}}}
+	}
+	err500 := ObservedAttempt{DecisionID: "d", Arm: "a", Transport: outcome.TransportError, HTTPStatus: 500}
+	good := FixtureVerifier{}.PlanAttempt(mk(1.0), "e", 0, "a", err500, vAt)
+	if good.Attempt.Verified != outcome.VerifiedSuccess {
+		t.Fatalf("500 with certain truth not success: %+v", good.Attempt)
+	}
+	if good.Attempt.Transport != outcome.TransportError {
+		t.Fatal("transport observation overwritten")
+	}
+	bad := FixtureVerifier{}.PlanAttempt(mk(0.0), "e", 0, "a", err500, vAt)
+	if bad.Attempt.Verified != outcome.VerifiedFailure {
+		t.Fatalf("500 with impossible truth not failure: %+v", bad.Attempt)
+	}
+}
+
+// D2: timeout resolution follows the deterministic draw, not a threshold.
+// With SuccessP=1 every timeout resolves success; with 0, failure.
+func TestTimeoutResolutionDrawBased(t *testing.T) {
+	mk := func(p float64) ManifestJob {
+		return ManifestJob{JobID: "tr", Strata: "s", Behavior: BehaviorTimeoutThenAccept,
+			Arms: map[string]ArmTruth{"a": {SuccessP: p, LatencyMs: 100}}}
+	}
+	toAtt := func() []outcome.Attempt {
+		return []outcome.Attempt{{
+			AttemptID: "tr-a0", Seq: 0, ExecutorID: "a", ArmID: "a",
+			Transport: outcome.TransportTimeout, LatencyMs: 500,
+			Validation: outcome.ValidationNotRun, Verified: outcome.VerifiedUnknown,
+		}}
+	}
+	vs, ok := FixtureVerifier{}.PlanSettlement(mk(1.0), "e", "dec", "job-dec", toAtt(), vAt)
+	if !ok || len(vs) != 2 || vs[1].Status != outcome.StatusAccepted {
+		t.Fatalf("certain timeout must resolve accept: %+v %v", vs, ok)
+	}
+	vs, ok = FixtureVerifier{}.PlanSettlement(mk(0.0), "e", "dec", "job-dec", toAtt(), vAt)
+	if !ok || len(vs) != 2 {
+		t.Fatalf("impossible timeout plan wrong: %+v %v", vs, ok)
+	}
+	// p=0: timeout resolves to failure; with no human fallback the job
+	// rejects rather than accepts.
+	if vs[1].Status != outcome.StatusRejected {
+		t.Fatalf("impossible timeout must resolve reject: %+v", vs[1])
+	}
+}

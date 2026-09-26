@@ -400,6 +400,16 @@ func SaveCheckpoint(path string, cp Checkpoint) error {
 	if err := os.Rename(tmp, path); err != nil {
 		return fmt.Errorf("outcome: rename checkpoint: %w", err)
 	}
+	// Directory sync: without it a crash can lose the rename itself,
+	// leaving the previous checkpoint (or none) after reboot.
+	dir, err := os.Open(filepath.Dir(path))
+	if err != nil {
+		return fmt.Errorf("outcome: open checkpoint dir: %w", err)
+	}
+	defer dir.Close()
+	if err := dir.Sync(); err != nil {
+		return fmt.Errorf("outcome: sync checkpoint dir: %w", err)
+	}
 	return nil
 }
 

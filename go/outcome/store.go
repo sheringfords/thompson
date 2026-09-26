@@ -15,6 +15,10 @@ import (
 // Submit is idempotent per (job, version) and linearizes concurrent writers:
 // exactly one outcome version per job is latest, versions increase by exactly
 // 1, and a conflicting re-submission of an existing version is rejected.
+//
+// Durability contract: implementations wired into verified mode MUST survive
+// process restart (the file store does; the memory store exists for tests
+// and is rejected at router construction).
 type OutcomeStore interface {
 	// Submit validates, assigns Seq, persists, and returns applied=true when
 	// the event is newly committed. An exact duplicate returns applied=false

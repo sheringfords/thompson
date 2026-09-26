@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"context"
+	"crypto/sha256"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -223,14 +224,122 @@ func (r *Runner) logProgress(row ProgressRow) error {
 	if err != nil {
 		return err
 	}
-	b = append(b, '\n')
+	return r.logProgressRaw(append(b, '\n'))
+}
+
+func (r *Runner) logProgressRaw(b []byte) error {
 	if _, err := r.progress.Write(b); err != nil {
 		return err
 	}
 	return r.progress.Sync()
 }
 
-// LoadProgress reads the latest row per job.
+// RunHeader is the first progress-log line of a run. Resume binds to every
+// field: a different experiment, workload, seed, charter, strategy set, or
+// clock is a different experiment and must not continue this ledger.
+type RunHeader struct {
+	Kind            string `json:"kind"`
+	ExperimentID    string `json:"experiment_id"`
+	WorkloadVersion string `json:"workload_version"`
+	Seed            uint64 `json:"seed"`
+	CharterDigest   string `json:"charter_digest,omitempty"`
+	TreatmentsHash  string `json:"treatments_hash"`
+	T0Clock         string `json:"t0_clock"`
+	StepSeconds     int64  `json:"step_seconds"`
+}
+
+// treatmentConfigHash binds the strategy/treatment configuration.
+func treatmentConfigHash(m *Manifest) (string, error) {
+	b, err := json.Marshal(m.Treatments)
+	if err != nil {
+		return "", err
+	}
+	sum := sha256.Sum256(b)
+	return fmt.Sprintf("%x", sum[:16]), nil
+}
+
+// currentHeader builds the header this run requires.
+func (r *Runner) currentHeader() (RunHeader, error) {
+	th, err := treatmentConfigHash(r.cfg.Manifest)
+	if err != nil {
+		return RunHeader{}, err
+	}
+	return RunHeader{
+		Kind: "run-header", ExperimentID: r.cfg.Manifest.ExperimentID,
+		WorkloadVersion: r.cfg.Manifest.WorkloadVersion, Seed: r.cfg.Manifest.Seed,
+		CharterDigest: r.cfg.Manifest.CharterDigest, TreatmentsHash: th,
+		T0Clock:     r.cfg.T0Clock.UTC().Format(time.RFC3339Nano),
+		StepSeconds: int64(r.cfg.Step / time.Second),
+	}, nil
+}
+
+// checkOrWriteHeader writes the header on a fresh root, or rejects resume
+// under incompatible configuration.
+func (r *Runner) checkOrWriteHeader() error {
+	want, err := r.currentHeader()
+	if err != nil {
+		return err
+	}
+	f, err := os.Open(r.cfg.Root + "/progress.jsonl")
+	if os.IsNotExist(err) {
+		return r.logProgressRaw(headerLine(want))
+	}
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	sc := bufio.NewScanner(f)
+	sc.Buffer(make([]byte, 0, 64*1024), 10*1024*1024)
+	if !sc.Scan() {
+		// Empty file: treat as fresh.
+		return r.logProgressRaw(headerLine(want))
+	}
+	var got RunHeader
+	if err := json.Unmarshal(sc.Bytes(), &got); err != nil {
+		return fmt.Errorf("exp-run: progress log has no run header (foreign file?): %w", err)
+	}
+	if got.Kind != "run-header" {
+		return fmt.Errorf("exp-run: progress log has no run header (foreign file?)")
+	}
+	mismatch := func(field, a, b string) error {
+		if a != b {
+			return fmt.Errorf("exp-run: resume incompatible: %s changed (%q vs %q)", field, b, a)
+		}
+		return nil
+	}
+	if err := mismatch("experiment_id", want.ExperimentID, got.ExperimentID); err != nil {
+		return err
+	}
+	if err := mismatch("workload_version", want.WorkloadVersion, got.WorkloadVersion); err != nil {
+		return err
+	}
+	if want.Seed != got.Seed {
+		return fmt.Errorf("exp-run: resume incompatible: seed changed (%d vs %d)", got.Seed, want.Seed)
+	}
+	if want.CharterDigest != got.CharterDigest {
+		return fmt.Errorf("exp-run: resume incompatible: charter digest changed (%q vs %q)", got.CharterDigest, want.CharterDigest)
+	}
+	if err := mismatch("treatments", want.TreatmentsHash, got.TreatmentsHash); err != nil {
+		return err
+	}
+	if err := mismatch("t0_clock", want.T0Clock, got.T0Clock); err != nil {
+		return err
+	}
+	if want.StepSeconds != got.StepSeconds {
+		return fmt.Errorf("exp-run: resume incompatible: step changed (%d vs %d)", got.StepSeconds, want.StepSeconds)
+	}
+	return nil
+}
+
+func headerLine(h RunHeader) []byte {
+	b, err := json.Marshal(h)
+	if err != nil {
+		panic(err)
+	}
+	return append(b, '\n')
+}
+
+// LoadProgress reads the latest row per job, skipping the run header.
 func LoadProgress(root string) (map[string]ProgressRow, error) {
 	out := map[string]ProgressRow{}
 	f, err := os.Open(root + "/progress.jsonl")
@@ -252,6 +361,9 @@ func LoadProgress(root string) (map[string]ProgressRow, error) {
 		if err := json.Unmarshal(line, &row); err != nil {
 			return nil, fmt.Errorf("exp-run: bad progress line: %w", err)
 		}
+		if row.JobID == "" {
+			continue // run header or foreign line: headers are checked separately
+		}
 		out[row.JobID] = row
 	}
 	return out, sc.Err()
@@ -262,6 +374,11 @@ func LoadProgress(root string) (map[string]ProgressRow, error) {
 // first execution; resume skips terminally-settled jobs and re-runs the rest
 // from scratch with identical assignments.
 func (r *Runner) Run(ctx context.Context) error {
+	// Resume binds to the run header: experiment, workload version, seed,
+	// charter, treatments, and clock must all match, or resume refuses.
+	if err := r.checkOrWriteHeader(); err != nil {
+		return err
+	}
 	prior, err := LoadProgress(r.cfg.Root)
 	if err != nil {
 		return err
@@ -380,6 +497,15 @@ func (r *Runner) runJob(ctx context.Context, job ManifestJob, asg harness.Assign
 		rr := r.executeAttempt(ctx, g, job, att, assignedAt)
 		if rr.TimedOut {
 			arm, dec := r.resolveTimeout(g, assignedAt)
+			if dec == "" {
+				// No decision was committed for this attempt (the request
+				// never reached the gateway, or the ledger is unreadable).
+				// Abort the job with a distinct error: fabricating a
+				// placeholder gateway ID (e.g. "job-") would collide across
+				// jobs and corrupt the join. The job stays visibly
+				// attempted-but-unsettled for operator triage.
+				return fmt.Errorf("exp-run: job %q attempt %d timed out with no committed decision: aborting (no placeholder created)", job.JobID, att)
+			}
 			obs := ObservedAttempt{DecisionID: dec, Transport: outcome.TransportTimeout, TimeoutMs: float64(r.cfg.Timeout.Milliseconds())}
 			plan := r.verifier.PlanAttempt(job, r.cfg.Manifest.ExperimentID, att, arm, obs, assignedAt)
 			attempts = append(attempts, plan.Attempt)

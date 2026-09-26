@@ -15,6 +15,15 @@
   focused suites (gateway/thompson/outcome/harness/router/cmd) green at base
   per prior session records. Results appended when the run completes.
 
+## Full-suite baseline result (recorded post-run)
+
+`go test -race -count=1 ./...` on `abf2d0e`: all packages green EXCEPT one
+pre-existing data race in `go/cmd/exp-run/cluster.go` (`SpawnGateway`
+reads the child-stderr `bytes.Buffer` while the os/exec copier goroutine
+writes; surfaces in `TestE2EMissingStorageFailsClosed`). This race predates
+the mission (test scaffolding owned by the pilot-readiness track) and is
+fixed in PR D with a mutex-guarded buffer. No other failures.
+
 ## P0 reproduction index (all reproduced against `abf2d0e` before fixing)
 
 ### P0-1. Missing-cost sensitivity is same-direction (PR A)

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"sync"
+	"syscall"
 	"time"
 
 	"github.com/wiramahendra/thompson-sampling/go/thompson"
@@ -174,10 +175,18 @@ type FileEvidenceWriter struct {
 // New files are created 0600: evidence can contain prompt-adjacent metadata and
 // must not be world-readable. Existing files keep their current mode; tighten
 // with `chmod 600` on upgrade. Caller should Close when done.
+//
+// Single writer is enforced with an exclusive, non-blocking flock held for
+// the writer's lifetime: a second opener fails fast instead of interleaving
+// JSONL fragments from two processes.
 func NewFileEvidenceWriter(path string) (*FileEvidenceWriter, error) {
 	f, err := os.OpenFile(path, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0o600)
 	if err != nil {
 		return nil, fmt.Errorf("evidence: open %s: %w", path, err)
+	}
+	if err := syscall.Flock(int(f.Fd()), syscall.LOCK_EX|syscall.LOCK_NB); err != nil {
+		_ = f.Close()
+		return nil, fmt.Errorf("evidence: file %s is already held by another writer (single-writer enforced): %w", path, err)
 	}
 	return &FileEvidenceWriter{file: f, path: path}, nil
 }
@@ -231,6 +240,7 @@ func (w *FileEvidenceWriter) Close() error {
 	if w.file == nil {
 		return nil
 	}
+	_ = syscall.Flock(int(w.file.Fd()), syscall.LOCK_UN)
 	err := w.file.Close()
 	w.file = nil
 	return err

@@ -3,8 +3,31 @@ package gateway
 import (
 	"encoding/json"
 	"os"
+	"path/filepath"
 	"testing"
 )
+
+// A second concurrent writer on one evidence file fails fast instead of
+// interleaving JSONL fragments.
+func TestFileEvidenceWriterSingleWriter(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "evidence.jsonl")
+	w, err := NewFileEvidenceWriter(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer w.Close()
+	if _, err := NewFileEvidenceWriter(path); err == nil {
+		t.Fatal("second evidence writer opened without error")
+	}
+	if err := w.Close(); err != nil {
+		t.Fatal(err)
+	}
+	w2, err := NewFileEvidenceWriter(path)
+	if err != nil {
+		t.Fatalf("reopen after close failed: %v", err)
+	}
+	defer w2.Close()
+}
 
 func TestFileEvidenceWriterProducesValidJSONL(t *testing.T) {
 	tmp, err := os.CreateTemp("", "evidence-*.jsonl")

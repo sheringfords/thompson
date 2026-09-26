@@ -170,6 +170,11 @@ func decisionsEqual(a, b CommittedDecision) bool {
 // DecisionStore is the durable registry of committed live decisions. Commit
 // assigns Seq and persists before the caller may dispatch execution; Lookup
 // recovers a decision after restart for settlement matching.
+//
+// Durability contract: implementations wired into verified mode MUST survive
+// process restart (the file store does; custom in-memory implementations do
+// not and are rejected at router construction). There is no read-repair:
+// Lookup reflects exactly what Commit persisted.
 type DecisionStore interface {
 	// Commit validates, assigns Seq, persists, and returns the stored record
 	// plus true when newly committed. An exact-ID exact-content retry returns

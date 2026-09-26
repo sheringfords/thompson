@@ -10,6 +10,7 @@ import (
 	"math/rand/v2"
 	"net/http"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/wiramahendra/thompson-sampling/go/outcome"
@@ -28,17 +29,21 @@ func DecisionIDFromContext(ctx context.Context) (string, bool) {
 // Router is the deployable routing path: Select -> persist -> Execute -> Reward -> Record -> persist (+ optional shadow).
 // Single Policy instance per process (state_ownership requirement), guarded by policy's own mutex.
 type Router struct {
-	policy        *thompson.Policy
-	registry      *ProviderRegistry
-	writer        EvidenceWriter
-	decisions     DecisionStore
-	strategyID    string
-	mode          RouterMode
-	outcomes      outcome.OutcomeStore
-	learner       *outcome.Learner
-	mapper        outcome.RewardMapper
-	settleAuth    func(r *http.Request) bool
-	settleMu      sync.Mutex
+	policy     *thompson.Policy
+	registry   *ProviderRegistry
+	writer     EvidenceWriter
+	decisions  DecisionStore
+	strategyID string
+	mode       RouterMode
+	outcomes   outcome.OutcomeStore
+	learner    *outcome.Learner
+	mapper     outcome.RewardMapper
+	settleAuth func(r *http.Request) bool
+	settleMu   sync.Mutex
+	// persistIssue holds the Unix-nano timestamp of the last request-path
+	// persistence failure (decision commit, evidence write). HealthHandler
+	// reports degraded within a minute of it.
+	persistIssue  atomic.Int64
 	rngFactory    func() *rand.Rand
 	mu            sync.Mutex
 	recorded      map[string]bool
@@ -319,12 +324,14 @@ func (rt *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		OccurredAt:       nowRFC3339Nano(),
 	})
 	if err != nil {
+		rt.notePersistenceIssue()
 		http.Error(w, fmt.Sprintf("decision commit failed: %v", err), http.StatusInternalServerError)
 		return
 	}
 	if err := rt.decisions.MarkExecution(DecisionExecution{
 		DecisionID: canonicalID, Phase: PhaseDispatched, OccurredAt: nowRFC3339Nano(),
 	}); err != nil {
+		rt.notePersistenceIssue()
 		http.Error(w, fmt.Sprintf("decision dispatch mark failed: %v", err), http.StatusInternalServerError)
 		return
 	}
@@ -352,6 +359,7 @@ func (rt *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		ShadowArmID:             shadowArmID,
 	}
 	if err := rt.writer.WriteDecisionStarted(started); err != nil {
+		rt.notePersistenceIssue()
 		http.Error(w, fmt.Sprintf("evidence write failed: %v", err), http.StatusInternalServerError)
 		return
 	}
@@ -433,6 +441,7 @@ func (rt *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		CostUSD:       provOutcome.CostUSD,
 	}
 	if err := rt.writer.WriteExecutionObserved(observed); err != nil {
+		rt.notePersistenceIssue()
 		http.Error(w, fmt.Sprintf("evidence write failed: %v", err), http.StatusInternalServerError)
 		return
 	}
@@ -583,8 +592,27 @@ func (rt *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// notePersistenceIssue records a request-path persistence failure for the
+// degraded-health window. Call on decision-commit and evidence-write
+// failures only; validation rejections are client errors.
+func (rt *Router) notePersistenceIssue() {
+	rt.persistIssue.Store(time.Now().UnixNano())
+}
+
 func (rt *Router) HealthHandler(w http.ResponseWriter, r *http.Request) {
+	// Liveness with a degraded window: the process refuses to start unless
+	// required storage opens, and request-time persistence failures already
+	// fail closed per request. A persistence failure within the last minute
+	// additionally marks the instance unhealthy so load balancers drain it.
+	// (Scope: decision-commit and evidence-write failures on this router's
+	// request path. Settlement validation rejections are client errors, not
+	// storage failures, and do not affect health.)
 	w.Header().Set("Content-Type", "application/json")
+	if nanos := rt.persistIssue.Load(); nanos != 0 && time.Since(time.Unix(0, nanos)) < time.Minute {
+		w.WriteHeader(http.StatusServiceUnavailable)
+		_, _ = w.Write([]byte(`{"status":"degraded"}`))
+		return
+	}
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte(`{"status":"ok"}`))
 }

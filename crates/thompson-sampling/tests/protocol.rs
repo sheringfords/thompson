@@ -12,10 +12,7 @@ fn fixture(name: &str) -> String {
 }
 
 fn approx(a: f64, b: f64, tol: f64) {
-    assert!(
-        (a - b).abs() <= tol,
-        "expected {b} (±{tol}), got {a}"
-    );
+    assert!((a - b).abs() <= tol, "expected {b} (±{tol}), got {a}");
 }
 
 /// Go-authored snapshot: full arm set, config, posteriors, pulls, totals,
@@ -33,7 +30,11 @@ fn go_snapshot_restores_with_config() {
     }
     let gpt = by_id["openai/gpt-4"];
     assert_eq!(gpt.pulls(), 6);
-    approx(gpt.posterior.mean(), 9.401883326338973 / 10.401883326338973, 1e-12);
+    approx(
+        gpt.posterior.mean(),
+        9.401883326338973 / 10.401883326338973,
+        1e-12,
+    );
     approx(gpt.cumulative_reward, 4.8, 1e-9);
 
     // Config identity: binarize/ucb/family/discount fixture.
@@ -94,8 +95,7 @@ fn reward_vectors_match() {
         quality: Option<f64>,
         expected_total: f64,
     }
-    let rows: Vec<Row> =
-        serde_json::from_str(&fixture("rewards.json")).expect("decode rewards");
+    let rows: Vec<Row> = serde_json::from_str(&fixture("rewards.json")).expect("decode rewards");
     assert!(!rows.is_empty());
     let policy = RewardPolicy::default();
     for r in rows.iter() {
@@ -114,8 +114,8 @@ fn reward_vectors_match() {
 /// RNG. Never bitwise identity across languages by design.
 #[test]
 fn sampler_moments_match() {
-    use rand::SeedableRng;
     use rand::rngs::SmallRng;
+    use rand::SeedableRng;
     #[derive(serde::Deserialize)]
     struct Vector {
         alpha: f64,

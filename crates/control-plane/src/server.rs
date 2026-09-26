@@ -112,7 +112,20 @@ async fn list(State(registry): State<Arc<Registry>>, headers: HeaderMap) -> impl
         .get(axum::http::header::AUTHORIZATION)
         .and_then(|v| v.to_str().ok())
         .unwrap_or("");
-    let tenant = authorized_tenant(auth).unwrap_or_else(|| "*".to_string());
+    // Deny explicitly on missing context: the middleware normally 401s
+    // first, but this handler must never default to unrestricted scope even
+    // if wired without it. Open dev mode (no env) still yields `*` from
+    // authorized_tenant itself.
+    let tenant = match authorized_tenant(auth) {
+        Some(t) => t,
+        None => {
+            return (
+                StatusCode::UNAUTHORIZED,
+                Json(serde_json::json!({"error":"unauthorized"})),
+            )
+                .into_response()
+        }
+    };
     let body = if tenant == "*" {
         registry.to_json()
     } else {
@@ -127,6 +140,7 @@ async fn list(State(registry): State<Arc<Registry>>, headers: HeaderMap) -> impl
         [(axum::http::header::CONTENT_TYPE, "application/json")],
         body,
     )
+        .into_response()
 }
 
 async fn get_one(
@@ -138,7 +152,16 @@ async fn get_one(
         .get(axum::http::header::AUTHORIZATION)
         .and_then(|v| v.to_str().ok())
         .unwrap_or("");
-    let tenant = authorized_tenant(auth).unwrap_or_else(|| "*".to_string());
+    let tenant = match authorized_tenant(auth) {
+        Some(t) => t,
+        None => {
+            return (
+                StatusCode::UNAUTHORIZED,
+                Json(serde_json::json!({"error":"unauthorized"})),
+            )
+                .into_response()
+        }
+    };
     // If scoped, only allow own tenant key
     if tenant != "*" && tenant != key {
         return (
@@ -167,7 +190,14 @@ async fn health() -> impl IntoResponse {
 }
 
 async fn metrics(State(registry): State<Arc<Registry>>) -> impl IntoResponse {
-    // Prometheus text format: per-tenant + per-arm stats + billing
+    // Prometheus text format: per-tenant + per-arm stats + billing.
+    //
+    // EXPOSURE BOUNDARY (reviewed, intentional): this endpoint is public and
+    // reveals tenant IDs, arm IDs, posterior means, pull counts, and derived
+    // cost estimates. It never carries prompts, responses, or outcome
+    // payloads. In multi-tenant deployments put network controls in front
+    // (see helm/traverse/values.yaml) — tenant enumeration here is by
+    // design, not by accident.
     let dash = crate::dashboard::build_dashboard(&registry);
     let billing_cost: f64 = std::env::var("BILLING_COST_PER_1K")
         .ok()
@@ -230,6 +260,16 @@ mod tests {
     use axum::http::StatusCode;
     use thompson_sampling::ThompsonSampling;
 
+    /// Serializes every test that mutates process-global auth env vars.
+    /// Cargo runs tests on threads in one process, so unsynchronized
+    /// set_var/remove_var flips global auth mid-request in sibling tests
+    /// (the historical source of flaky per-tenant failures).
+    static ENV_LOCK: std::sync::Mutex<()> = std::sync::Mutex::new(());
+
+    fn lock_env() -> std::sync::MutexGuard<'static, ()> {
+        ENV_LOCK.lock().unwrap()
+    }
+
     #[test]
     fn server_json_round_trip() {
         let reg = Arc::new(Registry::new());
@@ -264,6 +304,7 @@ mod tests {
 
     #[test]
     fn per_tenant_token_parsing() {
+        let _env = lock_env();
         unsafe { std::env::set_var("CONTROL_PLANE_TOKENS", "tenant-a:tok-a, tenant-b:tok-b ") };
         let m = tenant_tokens();
         assert_eq!(m.get("tok-a").unwrap(), "tenant-a");
@@ -273,6 +314,7 @@ mod tests {
 
     #[test]
     fn per_tenant_authorized_tenant() {
+        let _env = lock_env();
         unsafe { std::env::set_var("CONTROL_PLANE_TOKENS", "t1:tok1,t2:tok2") };
         assert_eq!(authorized_tenant("Bearer tok1").unwrap(), "t1");
         assert_eq!(authorized_tenant("Bearer tok2").unwrap(), "t2");
@@ -298,7 +340,11 @@ mod tests {
     }
 
     #[tokio::test]
+    // Intentional: the whole point is holding process-global auth env
+    // stable across the awaited request under test.
+    #[allow(clippy::await_holding_lock)]
     async fn snapshots_gated_by_auth() {
+        let _env = lock_env();
         // Set token via env for this test (serial via unsafe)
         unsafe { std::env::set_var("CONTROL_PLANE_TOKEN", "test-token") };
         let reg = Arc::new(Registry::new());
@@ -313,7 +359,11 @@ mod tests {
     }
 
     #[tokio::test]
+    // Intentional: the whole point is holding process-global auth env
+    // stable across the awaited request under test.
+    #[allow(clippy::await_holding_lock)]
     async fn per_tenant_scoping_filters_list() {
+        let _env = lock_env();
         unsafe { std::env::set_var("CONTROL_PLANE_TOKENS", "t1:tok1,t2:tok2") };
         let reg = Arc::new(Registry::new());
         let policy = ThompsonSampling::with_defaults(["a"]);
@@ -338,7 +388,11 @@ mod tests {
     }
 
     #[tokio::test]
+    // Intentional: the whole point is holding process-global auth env
+    // stable across the awaited request under test.
+    #[allow(clippy::await_holding_lock)]
     async fn per_tenant_get_one_forbidden() {
+        let _env = lock_env();
         unsafe { std::env::set_var("CONTROL_PLANE_TOKENS", "t1:tok1") };
         let reg = Arc::new(Registry::new());
         let policy = ThompsonSampling::with_defaults(["a"]);
@@ -352,6 +406,39 @@ mod tests {
             .unwrap();
         let resp = tower::ServiceExt::oneshot(app, req).await.unwrap();
         assert_eq!(resp.status(), StatusCode::FORBIDDEN);
+        unsafe { std::env::remove_var("CONTROL_PLANE_TOKENS") };
+    }
+
+    #[tokio::test]
+    // Intentional: the whole point is holding process-global auth env
+    // stable across the awaited request under test.
+    #[allow(clippy::await_holding_lock)]
+    async fn bad_token_yields_unauthorized_not_data() {
+        // Regression guard for the list-handler fallback: an invalid token
+        // must produce the unauthorized body, never a tenant dump, even if
+        // the middleware layer is ever bypassed (the handler denies on its
+        // own since this fix).
+        let _env = lock_env();
+        unsafe { std::env::set_var("CONTROL_PLANE_TOKENS", "t1:tok1") };
+        let reg = Arc::new(Registry::new());
+        let policy = ThompsonSampling::with_defaults(["a"]);
+        reg.put("t1".to_string(), policy.snapshot());
+        for uri in ["/snapshots", "/snapshots/t1"] {
+            let app = router(Arc::clone(&reg));
+            let req = axum::http::Request::builder()
+                .uri(uri)
+                .header("Authorization", "Bearer wrong")
+                .body(axum::body::Body::empty())
+                .unwrap();
+            let resp = tower::ServiceExt::oneshot(app, req).await.unwrap();
+            assert_eq!(resp.status(), StatusCode::UNAUTHORIZED, "{uri}");
+            let body = axum::body::to_bytes(resp.into_body(), 10 * 1024)
+                .await
+                .unwrap();
+            let s = String::from_utf8(body.to_vec()).unwrap();
+            assert!(s.contains("unauthorized"), "{uri}: {s}");
+            assert!(!s.contains("posterior"), "{uri}: leaked snapshot data");
+        }
         unsafe { std::env::remove_var("CONTROL_PLANE_TOKENS") };
     }
 }

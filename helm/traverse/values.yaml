@@ -12,9 +12,11 @@ service:
 env:
   RUST_LOG: info
 
-# Thin waist — no S3 by default. Set STORAGE=s3 + s3.bucket to enable shared storage (requires control-plane --features s3)
+# Storage backend. Only "memory" and "file" are implemented: "s3" and
+# "postgres" features exist as explicit not-implemented stubs and the binary
+# refuses to start with STORAGE=s3. Do not set kind: s3 expecting durability.
 storage:
-  kind: memory # memory | file | s3 (s3 needs --features s3)
+  kind: memory # memory | file
   dir: /data
   s3:
     bucket: ""

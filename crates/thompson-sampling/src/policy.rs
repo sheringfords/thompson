@@ -583,15 +583,27 @@ impl ThompsonSampling {
 /// trips of the same value, so it is irrelevant to selection — but it does mean
 /// a snapshot is not a byte-identical fingerprint of a policy. Compare restored
 /// policies with a tolerance, not with `==`.
+///
+/// # Legacy readers
+///
+/// PascalCase aliases (`Arms`, `ID`, `Alpha`, …) decode pre-canonical Go
+/// snapshots; writers always emit canonical snake_case.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Snapshot {
     /// Snapshot format version.
     pub version: u32,
     /// Configuration in force when the snapshot was taken.
+    ///
+    /// `default` keeps pre-canonical Go snapshots (which omitted `config`)
+    /// readable: they restore under the default configuration. New writers
+    /// always include it.
+    #[serde(default)]
     pub config: Config,
     /// Every arm and its posterior.
+    #[serde(alias = "Arms")]
     pub arms: Vec<Arm>,
     /// Total observations recorded.
+    #[serde(alias = "TotalPulls")]
     pub total_pulls: u64,
 }
 

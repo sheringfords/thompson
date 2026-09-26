@@ -4,15 +4,22 @@ use crate::posterior::Posterior;
 use serde::{Deserialize, Serialize};
 
 /// One selectable option, together with everything learned about it.
+///
+/// PascalCase aliases decode pre-canonical Go snapshots; writers always
+/// emit canonical snake_case.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Arm {
     /// Stable identifier, conventionally `provider/model`.
+    #[serde(alias = "ID")]
     pub id: String,
     /// Current Beta posterior over this arm's success probability.
+    #[serde(alias = "Posterior")]
     pub posterior: Posterior,
     /// Sum of raw rewards observed, before the update rule discretises them.
+    #[serde(alias = "CumulativeReward")]
     pub cumulative_reward: f64,
     /// Whether this arm began from an informed prior rather than `Beta(1, 1)`.
+    #[serde(alias = "WarmStarted")]
     pub warm_started: bool,
 }
 

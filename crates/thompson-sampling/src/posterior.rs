@@ -38,10 +38,13 @@ pub enum UpdateRule {
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
 pub struct Posterior {
     /// Beta shape parameter tracking successes.
+    #[serde(alias = "Alpha")]
     pub alpha: f64,
     /// Beta shape parameter tracking failures.
+    #[serde(alias = "Beta")]
     pub beta: f64,
     /// Number of real observations folded in since construction.
+    #[serde(alias = "Pulls")]
     pub pulls: u64,
 }
 

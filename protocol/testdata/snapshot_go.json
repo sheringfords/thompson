@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "config": {
+    "discount": 0.99,
+    "reward_policy": {
+      "weights": {
+        "latency": 0.25,
+        "success": 0.4,
+        "cache": 0.05,
+        "cost": 0.15,
+        "quality": 0.15
+      },
+      "target_latency_ms": 500,
+      "max_latency_ms": 10000,
+      "target_cost_usd": 0.001,
+      "max_cost_usd": 0.1,
+      "failure_is_zero": true
+    },
+    "selection": {
+      "c": 2,
+      "selection": "ucb_regularized",
+      "until_pulls": 30
+    },
+    "update_rule": {
+      "rule": "binarize",
+      "threshold": 0.6
+    },
+    "warm_start": {
+      "discount": 0.2,
+      "fallback": {
+        "alpha": 4,
+        "beta": 1
+      },
+      "strategy": "family_similarity"
+    }
+  },
+  "arms": [
+    {
+      "id": "anthropic/claude-3-opus",
+      "posterior": {
+        "alpha": 3.713146225026413,
+        "beta": 4.7774374728157945,
+        "pulls": 4
+      },
+      "cumulative_reward": 0.8,
+      "warm_started": true
+    },
+    {
+      "id": "openai/gpt-4",
+      "posterior": {
+        "alpha": 9.401883326338973,
+        "beta": 1,
+        "pulls": 6
+      },
+      "cumulative_reward": 4.8,
+      "warm_started": true
+    }
+  ],
+  "total_pulls": 10
+}

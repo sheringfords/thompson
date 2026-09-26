@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "Arms": [
+    {
+      "ID": "openai/gpt-4",
+      "Posterior": {
+        "Alpha": 3.0,
+        "Beta": 2.0,
+        "Pulls": 3
+      },
+      "CumulativeReward": 2.5,
+      "WarmStarted": false
+    }
+  ],
+  "TotalPulls": 3
+}

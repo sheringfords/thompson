@@ -774,7 +774,7 @@ const SnapshotVersion = 1
 // param. Existing Go snapshots without `config` remain valid.
 type Snapshot struct {
 	Version    uint32  `json:"version"`
-	Config     *Config `json:"config,omitempty"`
+	Config     *Config `json:"config"`
 	Arms       []Arm   `json:"arms"`
 	TotalPulls uint64  `json:"total_pulls"`
 }

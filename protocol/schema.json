@@ -1,19 +1,76 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Thompson Wire v1",
-  "description": "Wire types for Snapshot/Outcome/Config — frozen after trace replay gate",
+  "title": "Thompson Wire v1 (canonical)",
+  "description": "Canonical Snapshot/Config JSON shared by the Rust and Go implementations. Writers always emit this shape. Readers additionally accept the pre-canonical Go shape (PascalCase keys, integer Kind enums, absent config) and pre-canonical Rust readers accept missing config via default. Proven by protocol/testdata fixtures and the TestProtocol* (Go) + tests/protocol.rs (Rust) suites.",
   "type": "object",
   "properties": {
-    "version": { "type": "integer", "const": 1, "description": "Snapshot::VERSION policy.rs:511" },
+    "version": { "type": "integer", "const": 1, "description": "Snapshot::VERSION" },
     "config": {
       "type": "object",
       "properties": {
-        "update_rule": { "enum": ["binarize", "bernoulli", "fractional"], "description": "posterior.rs:19 UpdateRule" },
-        "reward_policy": { "type": "object", "description": "reward.rs:97 RewardPolicy" },
-        "warm_start": { "type": "object", "description": "warm_start.rs:81 FamilySimilarity" },
-        "selection": { "enum": ["thompson", "ucb_regularized", "phased"], "description": "policy.rs:16 Selection" },
-        "discount": { "type": ["number", "null"], "description": "policy.rs:70 Option<f64>, FixedDiscount discount.rs:17" }
-      }
+        "update_rule": {
+          "type": "object",
+          "properties": {
+            "rule": { "enum": ["binarize", "bernoulli", "fractional"] },
+            "threshold": { "type": "number", "description": "present when rule=binarize; must lie in [0, 1)" }
+          },
+          "required": ["rule"]
+        },
+        "reward_policy": {
+          "type": "object",
+          "properties": {
+            "weights": {
+              "type": "object",
+              "properties": {
+                "latency": { "type": "number" },
+                "success": { "type": "number" },
+                "cache": { "type": "number" },
+                "cost": { "type": "number" },
+                "quality": { "type": "number" }
+              },
+              "required": ["latency", "success", "cache", "cost", "quality"],
+              "description": "weights must be finite; NaN/Inf rejected by validation, treated as absent by direct scoring"
+            },
+            "target_latency_ms": { "type": "number" },
+            "max_latency_ms": { "type": "number" },
+            "target_cost_usd": { "type": "number" },
+            "max_cost_usd": { "type": "number" },
+            "failure_is_zero": { "type": "boolean" }
+          },
+          "required": ["weights", "target_latency_ms", "max_latency_ms", "target_cost_usd", "max_cost_usd", "failure_is_zero"]
+        },
+        "warm_start": {
+          "type": "object",
+          "properties": {
+            "strategy": { "enum": ["cold", "fixed", "family_similarity"] },
+            "alpha": { "type": "number", "description": "present when strategy=fixed" },
+            "beta": { "type": "number", "description": "present when strategy=fixed" },
+            "discount": { "type": "number", "description": "present when strategy=family_similarity" },
+            "fallback": {
+              "type": "object",
+              "properties": {
+                "alpha": { "type": "number" },
+                "beta": { "type": "number" }
+              },
+              "description": "present when strategy=family_similarity"
+            }
+          },
+          "required": ["strategy"]
+        },
+        "selection": {
+          "type": "object",
+          "properties": {
+            "selection": { "enum": ["thompson", "ucb_regularized", "phased"] },
+            "c": { "type": "number", "description": "present when selection=ucb_regularized; must be finite" },
+            "until_pulls": { "type": "integer", "description": "present when selection=ucb_regularized" },
+            "bootstrap": { "type": "integer", "description": "present when selection=phased" },
+            "min_pulls_for_exploit": { "type": "integer", "description": "present when selection=phased" }
+          },
+          "required": ["selection"]
+        },
+        "discount": { "type": ["number", "null"], "description": "null (or Go 0) means stationary; otherwise per-round factor in (0, 1)" }
+      },
+      "required": ["update_rule", "reward_policy", "warm_start", "selection", "discount"]
     },
     "arms": {
       "type": "array",
@@ -24,18 +81,19 @@
           "posterior": {
             "type": "object",
             "properties": {
-              "alpha": { "type": "number", "minimum": 0.0001 },
-              "beta": { "type": "number", "minimum": 0.0001 },
+              "alpha": { "type": "number", "exclusiveMinimum": 0 },
+              "beta": { "type": "number", "exclusiveMinimum": 0 },
               "pulls": { "type": "integer", "minimum": 0 }
             },
             "required": ["alpha", "beta", "pulls"]
           },
+          "cumulative_reward": { "type": "number" },
           "warm_started": { "type": "boolean" }
         },
-        "required": ["id", "posterior"]
+        "required": ["id", "posterior", "cumulative_reward", "warm_started"]
       }
     },
     "total_pulls": { "type": "integer", "minimum": 0 }
   },
-  "required": ["version", "arms", "total_pulls"]
+  "required": ["version", "config", "arms", "total_pulls"]
 }

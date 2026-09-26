@@ -1,0 +1,24 @@
+[
+  {
+    "latency_ms": 100,
+    "success": true,
+    "cache_hit": false,
+    "cost_usd": 0.001,
+    "expected_total": 0.9411764705882353
+  },
+  {
+    "latency_ms": 9000,
+    "success": true,
+    "cache_hit": true,
+    "cost_usd": 0.09,
+    "quality": 0.87,
+    "expected_total": 0.6219673046251994
+  },
+  {
+    "latency_ms": 10,
+    "success": false,
+    "cache_hit": false,
+    "cost_usd": 0,
+    "expected_total": 0
+  }
+]

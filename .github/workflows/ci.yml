@@ -56,10 +56,15 @@ jobs:
       - name: Test
         run: go test -race ./...
       - name: Conformance
-        run: go test -run TestConformance -v ./...
+        # Protocol-v1 wire fixtures shared with the Rust side
+        # (protocol/testdata + TestProtocol* in go/thompson +
+        # crates/thompson-sampling/tests/protocol.rs). The -run pattern must
+        # match real tests: an empty match exits 0 and gates nothing.
+        run: go test -run 'TestProtocol' -v ./...
       - name: Helm lint
         run: |
           helm lint ../helm/traverse || echo "helm not installed, skip"
+          helm lint ../helm/router || echo "helm not installed, skip"
 
   reproduce:
     name: Reproduce findings

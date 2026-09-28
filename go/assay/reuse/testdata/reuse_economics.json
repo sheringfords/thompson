@@ -3,73 +3,73 @@
     {
       "repeats": 1,
       "b0_modeled_usd": 0.5,
-      "b2_modeled_plus_measured_usd": 0.5000000115013287,
-      "saved_usd": -1.1501328667229416e-8,
-      "measured_overhead_usd": 1.1501328631944445e-8,
+      "b2_modeled_plus_measured_usd": 0.5000000004174622,
+      "saved_usd": -4.174621759389652e-10,
+      "measured_overhead_usd": 4.174621805555555e-10,
       "net_win": false
     },
     {
       "repeats": 2,
       "b0_modeled_usd": 1,
-      "b2_modeled_plus_measured_usd": 0.5000000230026572,
-      "saved_usd": 0.4999999769973428,
-      "measured_overhead_usd": 2.300265726388889e-8,
+      "b2_modeled_plus_measured_usd": 0.5000000008349244,
+      "saved_usd": 0.49999999916507565,
+      "measured_overhead_usd": 8.34924361111111e-10,
       "net_win": true
     },
     {
       "repeats": 5,
       "b0_modeled_usd": 2.5,
-      "b2_modeled_plus_measured_usd": 0.5000000575066431,
-      "saved_usd": 1.999999942493357,
-      "measured_overhead_usd": 5.7506643159722226e-8,
+      "b2_modeled_plus_measured_usd": 0.5000000020873109,
+      "saved_usd": 1.9999999979126892,
+      "measured_overhead_usd": 2.0873109027777773e-9,
       "net_win": true
     },
     {
       "repeats": 20,
       "b0_modeled_usd": 10,
-      "b2_modeled_plus_measured_usd": 0.5000002300265727,
-      "saved_usd": 9.499999769973428,
-      "measured_overhead_usd": 2.300265726388889e-7,
+      "b2_modeled_plus_measured_usd": 0.5000000083492436,
+      "saved_usd": 9.499999991650757,
+      "measured_overhead_usd": 8.34924361111111e-9,
       "net_win": true
     },
     {
       "repeats": 100,
       "b0_modeled_usd": 50,
-      "b2_modeled_plus_measured_usd": 0.5000011501328632,
-      "saved_usd": 49.49999884986714,
-      "measured_overhead_usd": 0.0000011501328631944446,
+      "b2_modeled_plus_measured_usd": 0.500000041746218,
+      "saved_usd": 49.49999995825378,
+      "measured_overhead_usd": 4.174621805555555e-8,
       "net_win": true
     }
   ],
   "overhead_ns": {
-    "key_build_digest_ns": 187550.686,
-    "lookup_ns": 184799.544,
-    "evaluate_hit_ns": 120882.7525,
-    "bytes_verify_ns": 334862.679,
-    "per_hit_total_ns": 828095.6615
+    "key_build_digest_ns": 7253.1085,
+    "lookup_ns": 6743.147,
+    "evaluate_hit_ns": 8553.8065,
+    "bytes_verify_ns": 7507.215,
+    "per_hit_total_ns": 30057.277
   },
   "scaling": [
     {
       "records": 1000,
-      "publish_total_ms": 17224,
-      "cold_lookup_ns": 83625.728,
-      "warm_lookup_ns": 106682.036,
+      "publish_total_ms": 4141,
+      "cold_lookup_ns": 5663.01,
+      "warm_lookup_ns": 10917.944,
       "bytes_per_record": 1610.57,
-      "note": "replay 581ms"
+      "note": "replay 15ms"
     },
     {
       "records": 10000,
-      "publish_total_ms": 63471,
-      "cold_lookup_ns": 70091.682,
-      "warm_lookup_ns": 95657.82,
+      "publish_total_ms": 40713,
+      "cold_lookup_ns": 9582.132,
+      "warm_lookup_ns": 7706.724,
       "bytes_per_record": 1614.467,
-      "note": "replay 11334ms"
+      "note": "replay 214ms"
     },
     {
       "records": 1000000,
       "publish_total_ms": 0,
-      "cold_lookup_ns": 101169.928,
-      "warm_lookup_ns": 101169.928,
+      "cold_lookup_ns": 9312.333999999999,
+      "warm_lookup_ns": 9312.333999999999,
       "bytes_per_record": 1612.5185000000001,
       "note": "PROJECTION from 1k/10k measured means: storage strictly linear (bytes/record stable), warm lookup O(1) map (flat 1k-\u003e10k); 100k build with per-record fsync not attempted in-test (see report for fsync analysis)"
     }
@@ -78,22 +78,22 @@
     {
       "shape": "chain-L500-correction",
       "edges": 499,
-      "total_ns": 3506024052,
-      "per_edge_ns": 7012048.104,
+      "total_ns": 2340571564,
+      "per_edge_ns": 4681143.128,
       "invalidated": 500
     },
     {
       "shape": "star-F300-stale",
       "edges": 300,
-      "total_ns": 1672511885,
-      "per_edge_ns": 5556517.890365449,
+      "total_ns": 1496146641,
+      "per_edge_ns": 4970586.84717608,
       "invalidated": 301
     }
   ],
   "cold_warm": {
     "records": 10000,
-    "replay_ms": 9089,
-    "replay_per_record_ns": 908926.8576
+    "replay_ms": 341,
+    "replay_per_record_ns": 34150.942
   },
-  "breakeven_note": "Break-even at ASSUMED $0.05/compute-hour: reuse machinery (~828096ns/hit) costs ~$0.000000012/hit; any execution costing more than ~2x that is net-positive from the second identical run. At modeled W1/W2 costs ($0.50/$0.20) the machinery pays for itself at R\u003e=2. Negative case R=1 (no repeats): machinery is pure overhead (measured, reported, no savings claimed)."
+  "breakeven_note": "Break-even at ASSUMED $0.05/compute-hour: reuse machinery (~30057ns/hit) costs ~$0.000000000/hit; any execution costing more than ~2x that is net-positive from the second identical run. At modeled W1/W2 costs ($0.50/$0.20) the machinery pays for itself at R\u003e=2. Negative case R=1 (no repeats): machinery is pure overhead (measured, reported, no savings claimed)."
 }

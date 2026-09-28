@@ -85,7 +85,7 @@ func benchOverhead(t *testing.T) OverheadBreak {
 	lookup := acceptLookup(pubBody.OutcomeJobID, 1)
 	const N = 2000
 	var kb, lk, ev, bv time.Duration
-	live := liveOf(k)
+	live := LiveOf(k)
 	for i := 0; i < N; i++ {
 		t0 := time.Now()
 		c := k.Canonical()

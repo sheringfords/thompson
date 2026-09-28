@@ -186,6 +186,24 @@ func readAssignmentRows(path string) ([]string, error) {
 	return out, sc.Err()
 }
 
+// journalPathFor resolves the experimental storage backend: empty keeps
+// JSONL; "journal" selects the SQLite journal file. Anything else, or a
+// journal flag on a non-cost-aware treatment, fails closed here (never in
+// the child, where a misconfigured binary could half-start).
+func journalPathFor(t TreatmentConfig, dir string) string {
+	switch t.StorageBackend {
+	case "":
+		return ""
+	case "journal":
+		if !t.CostAware {
+			return "JOURNAL-BACKEND-REQUIRES-COSTAWARE"
+		}
+		return dir + "/journal.db"
+	default:
+		return "JOURNAL-BACKEND-UNKNOWN:" + t.StorageBackend
+	}
+}
+
 // Boot spawns one gateway binary per treatment with isolated files.
 func (r *Runner) Boot() error {
 	for i, t := range r.cfg.Manifest.Treatments {
@@ -219,7 +237,8 @@ func (r *Runner) Boot() error {
 				"127.0.0.1:"+itoa(r.cfg.PubPorts[i]),
 				"127.0.0.1:"+itoa(r.cfg.SettlePorts[i]),
 				r.cfg.Token, arms, t.ID, selSeed,
-				scPath, dir+"/safety.jsonl", r.cfg.OperatorToken, r.cfg.Timeout)
+				scPath, dir+"/safety.jsonl", r.cfg.OperatorToken,
+				journalPathFor(t, dir), r.cfg.Timeout)
 		} else {
 			g, err = SpawnGateway(r.cfg.RouterBin, t.ID, dir,
 				"127.0.0.1:"+itoa(r.cfg.PubPorts[i]),
@@ -632,29 +651,15 @@ func (r *Runner) executeAttempt(ctx context.Context, g *GatewayProc, job Manifes
 // the in-flight attempt. Returns the selected arm and decision ID.
 func (r *Runner) resolveTimeout(g *GatewayProc, since time.Time) (arm, decision string) {
 	_ = since
-	before := countLines(g.Dir + "/decisions.jsonl")
+	before := g.countDecisions()
 	deadline := time.Now().Add(30 * time.Second)
 	for time.Now().Before(deadline) {
-		if countLines(g.Dir+"/decisions.jsonl") > before {
-			return latestDecision(g.Dir)
+		if g.countDecisions() > before {
+			return g.latestCommitted()
 		}
 		time.Sleep(100 * time.Millisecond)
 	}
-	return latestDecision(g.Dir)
-}
-
-func countLines(path string) int {
-	raw, err := os.ReadFile(path)
-	if err != nil {
-		return 0
-	}
-	n := 0
-	for _, line := range strings.Split(string(raw), "\n") {
-		if strings.TrimSpace(line) != "" {
-			n++
-		}
-	}
-	return n
+	return g.latestCommitted()
 }
 
 // appendAssignment persists one assignment row to a treatment ledger,

@@ -9,9 +9,11 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"strings"
 	"sync"
 	"time"
 
+	"github.com/wiramahendra/thompson-sampling/go/assay/journal"
 	"github.com/wiramahendra/thompson-sampling/go/outcome"
 )
 
@@ -28,8 +30,13 @@ type GatewayProc struct {
 	// X-Instance-ID, so a squatter on our ports fails loudly (409 / boot
 	// error) instead of silently serving foreign ledgers.
 	instanceID string
-	cmd       *exec.Cmd
-	client    *http.Client
+	cmd        *exec.Cmd
+	client     *http.Client
+	// countDecisions/latestCommitted abstract timeout resolution over the
+	// treatment's decision authority (file ledger or journal). Set at spawn;
+	// resolveTimeout never touches backend files directly.
+	countDecisions  func() int
+	latestCommitted func() (arm, id string)
 }
 
 // newInstanceID mints a unique per-gateway-process identity.
@@ -178,13 +185,31 @@ func (g *GatewayProc) Settle(ev outcome.OutcomeEvent) (applied, learned bool, er
 // verified learning plus the validated RuleV2/V3 policy, durable safety
 // controller, and operator authentication. All three inputs are required;
 // absence fails closed in the binary (never half-enabled).
-func SpawnCostAwareGateway(routerBin, treatment, dir, publicAddr, settleAddr, token, arms, strategy, selectionSeed, safetyConfigPath, safetyPath, operatorToken string, timeout time.Duration) (*GatewayProc, error) {
-	base, err := spawnWithEnv(routerBin, treatment, dir, publicAddr, settleAddr, token, arms, strategy, "", selectionSeed, map[string]string{
+func SpawnCostAwareGateway(routerBin, treatment, dir, publicAddr, settleAddr, token, arms, strategy, selectionSeed, safetyConfigPath, safetyPath, operatorToken, journalPath string, timeout time.Duration) (*GatewayProc, error) {
+	env := map[string]string{
 		"COSTAWARE":      "1",
 		"SAFETY_CONFIG":  safetyConfigPath,
 		"SAFETY_PATH":    safetyPath,
 		"OPERATOR_TOKEN": operatorToken,
-	}, timeout)
+	}
+	if journalPath != "" {
+		if len(journalPath) > 16 && journalPath[:16] == "JOURNAL-BACKEND-" {
+			return nil, fmt.Errorf("exp-run: treatment %s has %s (refusing)", treatment, journalPath)
+		}
+		env["JOURNAL_PATH"] = journalPath
+	}
+	base, err := spawnWithEnv(routerBin, treatment, dir, publicAddr, settleAddr, token, arms, strategy, "", selectionSeed, env, timeout)
+	if err != nil {
+		return nil, err
+	}
+	if journalPath != "" {
+		// Timeout resolution reads the journal authority, never the
+		// (absent) decisions.jsonl. Read handles are short-lived per
+		// call: no lifecycle coupling to the gateway process.
+		jp := journalPath
+		base.countDecisions = func() int { return countJournalDecisions(jp) }
+		base.latestCommitted = func() (string, string) { return latestJournalDecision(jp) }
+	}
 	return base, err
 }
 
@@ -219,7 +244,9 @@ func spawnWithEnv(routerBin, treatment, dir, publicAddr, settleAddr, token, arms
 		PublicURL: "http://" + publicAddr,
 		SettleURL: "http://" + settleAddr,
 		Token:     token, Dir: dir, cmd: cmd, instanceID: instanceID,
-		client: &http.Client{Timeout: timeout},
+		client:          &http.Client{Timeout: timeout},
+		countDecisions:  func() int { n, _ := countFileDecisions(dir); return n },
+		latestCommitted: func() (string, string) { return latestDecision(dir) },
 	}
 	deadline := time.Now().Add(timeout)
 	for {
@@ -254,6 +281,66 @@ func spawnWithEnv(routerBin, treatment, dir, publicAddr, settleAddr, token, arms
 	}
 }
 
+// countFileDecisions counts committed decision rows in a file ledger.
+func countFileDecisions(dir string) (int, error) {
+	raw, err := os.ReadFile(dir + "/decisions.jsonl")
+	if err != nil {
+		return 0, err
+	}
+	n := 0
+	for _, line := range strings.Split(string(raw), "\n") {
+		if strings.TrimSpace(line) != "" {
+			n++
+		}
+	}
+	return n, nil
+}
+
+// countJournalDecisions counts committed decision rows through a
+// short-lived read handle (WAL readers never contend with the writer).
+func countJournalDecisions(journalPath string) int {
+	j, err := journal.Open(journalPath)
+	if err != nil {
+		return 0
+	}
+	defer j.Close()
+	evs, err := j.EventsSince(0)
+	if err != nil {
+		return 0
+	}
+	n := 0
+	for _, e := range evs {
+		if e.Kind == "decision" {
+			n++
+		}
+	}
+	return n
+}
+
+// latestJournalDecision returns the newest committed decision.
+func latestJournalDecision(journalPath string) (arm, id string) {
+	j, err := journal.Open(journalPath)
+	if err != nil {
+		return "", ""
+	}
+	defer j.Close()
+	evs, err := j.EventsSince(0)
+	if err != nil {
+		return "", ""
+	}
+	for i := len(evs) - 1; i >= 0; i-- {
+		if evs[i].Kind != "decision" {
+			continue
+		}
+		var d journal.Decision
+		if err := jsonUnmarshalToDecision(evs[i].Payload, &d); err != nil {
+			continue
+		}
+		return d.SelectedArm, d.DecisionID
+	}
+	return "", ""
+}
+
 // Operator posts an operator action (suspend/resume) to the treatment's
 // internal listener with the operator credential.
 func (g *GatewayProc) Operator(action, arm, reason, operatorToken, operatorID string) (int, error) {
@@ -272,4 +359,8 @@ func (g *GatewayProc) Operator(action, arm, reason, operatorToken, operatorID st
 	}
 	defer resp.Body.Close()
 	return resp.StatusCode, nil
+}
+
+func jsonUnmarshalToDecision(raw string, d *journal.Decision) error {
+	return json.Unmarshal([]byte(raw), d)
 }

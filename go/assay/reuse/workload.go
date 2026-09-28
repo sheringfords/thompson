@@ -300,3 +300,13 @@ func Mutations(workload string) []Mutation {
 		irrelevant, verifier, correction,
 	}
 }
+
+// LiveOf materializes the key's claimed dependency set as a live-world map
+// (exact-replay probe input for Evaluate).
+func LiveOf(k ExecutionKey) map[string]string {
+	m := map[string]string{}
+	for _, d := range k.CurrentDeps() {
+		m[d.Name] = d.Digest
+	}
+	return m
+}

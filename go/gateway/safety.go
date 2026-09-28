@@ -103,6 +103,16 @@ type armSafety struct {
 	suspendSeq uint64
 }
 
+// SafetyEventSink persists safety-transition events durably. Implemented
+// by *SafetyStore (file log) and by journal-backed adapters; the
+// controller only depends on this seam.
+type SafetyEventSink interface {
+	Append(SafetyEvent) error
+	Events() ([]SafetyEvent, error)
+	Failed() bool
+	Close() error
+}
+
 // SafetyController enforces the safety contract. It implements SafetyGate
 // for selection and SettlementObserver for monitoring-driven suspension.
 // Locking: one mutex guards everything. Established partial order:
@@ -116,7 +126,7 @@ type SafetyController struct {
 	cfgHash   string
 	arms      map[string]*armSafety
 	emerg     bool
-	store     *SafetyStore
+	store     SafetyEventSink
 	decisions DecisionStore
 	outcomes  outcome.OutcomeStore
 }
@@ -125,7 +135,7 @@ type SafetyController struct {
 // re-folding history and replaying exploration budgets from the decisions
 // ledger. Decisions must implement DecisionScanner when non-empty; otherwise
 // resume refuses (budgets cannot be reconstructed).
-func NewSafetyController(cfg SafetyConfig, cfgHash string, store *SafetyStore, decisions DecisionStore, outcomes outcome.OutcomeStore) (*SafetyController, error) {
+func NewSafetyController(cfg SafetyConfig, cfgHash string, store SafetyEventSink, decisions DecisionStore, outcomes outcome.OutcomeStore) (*SafetyController, error) {
 	if err := cfg.Validate(); err != nil {
 		return nil, err
 	}

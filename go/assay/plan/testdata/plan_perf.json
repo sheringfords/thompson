@@ -1,0 +1,47 @@
+{
+  "cases": [
+    {
+      "workload": "D2",
+      "treatment": "P0",
+      "scenario": "cold",
+      "trials": 5,
+      "executed_mean": 8,
+      "reused_mean": 0,
+      "op_work_ms_mean": 231.9903772,
+      "op_work_ms_max": 238.333745,
+      "plan_overhead_us_mean": 1592.1078,
+      "latency_ms_mean": 233.802682,
+      "store_bytes": 0,
+      "terminal_accepted": true
+    },
+    {
+      "workload": "D2",
+      "treatment": "P2",
+      "scenario": "cold",
+      "trials": 5,
+      "executed_mean": 7,
+      "reused_mean": 1,
+      "op_work_ms_mean": 253.79462640000003,
+      "op_work_ms_max": 405.96659,
+      "plan_overhead_us_mean": 69314.7498,
+      "latency_ms_mean": 323.3150668,
+      "store_bytes": 11933,
+      "terminal_accepted": true
+    },
+    {
+      "workload": "D1",
+      "treatment": "P3",
+      "scenario": "cold-selects-direct",
+      "trials": 5,
+      "executed_mean": 3,
+      "reused_mean": 0,
+      "op_work_ms_mean": 153.1102066,
+      "op_work_ms_max": 165.69044,
+      "plan_overhead_us_mean": 31041.118800000004,
+      "latency_ms_mean": 184.35697220000003,
+      "store_bytes": 4747,
+      "terminal_accepted": true
+    }
+  ],
+  "note": "Synthetic CPU work only (SHA-256 burns, WorkUnitHashes=2000/unit), darwin. PlanOverheadNS includes fsync-bound store publishes (~6-9ms/record macOS); pure lookup/evaluate/plan resolution is microsecond-scale per node (see reuse assay). Cold P2 pays durability writes and can be slower wall-clock than P0; warmth pays it back."
+}

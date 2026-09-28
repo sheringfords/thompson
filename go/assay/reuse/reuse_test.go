@@ -54,14 +54,6 @@ func acceptLookup(jobID string, version uint64) OutcomeLookup {
 	}
 }
 
-func liveOf(k ExecutionKey) map[string]string {
-	m := map[string]string{}
-	for _, d := range k.CurrentDeps() {
-		m[d.Name] = d.Digest
-	}
-	return m
-}
-
 func TestCanonicalDeterminism(t *testing.T) {
 	a := testKey()
 	b := testKey()
@@ -102,7 +94,7 @@ func TestPublishLookupEvaluateValid(t *testing.T) {
 	if !ok || got.ArtifactDigest != body.ArtifactDigest {
 		t.Fatal("lookup miss or wrong artifact")
 	}
-	d := s.Evaluate(k, liveOf(k), acceptLookup(body.OutcomeJobID, 1))
+	d := s.Evaluate(k, LiveOf(k), acceptLookup(body.OutcomeJobID, 1))
 	if d.Validity != ValidityValid || !d.Hit {
 		t.Fatalf("evaluate = %+v", d)
 	}
@@ -165,12 +157,12 @@ func TestUnknownValidityNeverValid(t *testing.T) {
 		t.Fatal(err)
 	}
 	// Source outcome unknown -> UNKNOWN.
-	d := s.Evaluate(k, liveOf(k), func(string) Outcome { return Outcome{} })
+	d := s.Evaluate(k, LiveOf(k), func(string) Outcome { return Outcome{} })
 	if d.Validity != ValidityUnknown || d.Hit != true {
 		t.Fatalf("expected UNKNOWN hit, got %+v", d)
 	}
 	// Required dep unresolvable in live world -> UNKNOWN.
-	live := liveOf(k)
+	live := LiveOf(k)
 	delete(live, "config")
 	d = s.Evaluate(k, live, acceptLookup(body.OutcomeJobID, 1))
 	if d.Validity != ValidityUnknown {
@@ -194,7 +186,7 @@ func TestOneDepChangeStales(t *testing.T) {
 	if _, err := s.Publish(k, body); err != nil {
 		t.Fatal(err)
 	}
-	live := liveOf(k)
+	live := LiveOf(k)
 	live["config"] = DigestString("cfg2") // exactly one dependency mutates
 	d := s.Evaluate(k, live, acceptLookup(body.OutcomeJobID, 1))
 	if d.Validity != ValidityStale {
@@ -219,7 +211,7 @@ func TestIrrelevantMetadataDoesNotInvalidate(t *testing.T) {
 	// Hostname/run-id/wall-clock live outside the key: same key, same live
 	// world -> still VALID. (Non-semantic fields are excluded by construction;
 	// they never enter Canonical().)
-	d := s.Evaluate(k, liveOf(k), acceptLookup(body.OutcomeJobID, 1))
+	d := s.Evaluate(k, LiveOf(k), acceptLookup(body.OutcomeJobID, 1))
 	if d.Validity != ValidityValid {
 		t.Fatalf("irrelevant metadata invalidated reuse: %+v", d)
 	}
@@ -232,7 +224,7 @@ func TestVerifierChangeStales(t *testing.T) {
 	if _, err := s.Publish(k, body); err != nil {
 		t.Fatal(err)
 	}
-	live := liveOf(k)
+	live := LiveOf(k)
 	live["verifier_contract"] = DigestString("verifier/v3")
 	d := s.Evaluate(k, live, acceptLookup(body.OutcomeJobID, 1))
 	if d.Validity != ValidityStale {
@@ -266,7 +258,7 @@ func TestTransitiveInvalidationChain(t *testing.T) {
 		t.Fatal(err)
 	}
 	// Change a leaf dep of A: A goes STALE, B and C follow transitively.
-	liveA := liveOf(ka)
+	liveA := LiveOf(ka)
 	liveA["lockfile"] = DigestString("lock2")
 	d := s.Evaluate(ka, liveA, acceptLookup(ba.OutcomeJobID, 1))
 	if d.Validity != ValidityStale {
@@ -292,7 +284,7 @@ func TestTransitiveInvalidationChain(t *testing.T) {
 	if _, err := s.Publish(ku, bu); err != nil {
 		t.Fatal(err)
 	}
-	d = s.Evaluate(ku, liveOf(ku), acceptLookup(bu.OutcomeJobID, 1))
+	d = s.Evaluate(ku, LiveOf(ku), acceptLookup(bu.OutcomeJobID, 1))
 	if d.Validity != ValidityValid {
 		t.Fatalf("unrelated artifact affected: %+v", d)
 	}
@@ -305,19 +297,19 @@ func TestRestoreDoesNotAutoRevive(t *testing.T) {
 	if _, err := s.Publish(k, body); err != nil {
 		t.Fatal(err)
 	}
-	live := liveOf(k)
+	live := LiveOf(k)
 	live["config"] = DigestString("cfg2")
 	if d := s.Evaluate(k, live, acceptLookup(body.OutcomeJobID, 1)); d.Validity != ValidityStale {
 		t.Fatalf("want STALE, got %+v", d)
 	}
 	// Restoring original bytes makes the EXACT key valid again (contract §4:
 	// revival only via exact-key validity + authoritative source).
-	if d := s.Evaluate(k, liveOf(k), acceptLookup(body.OutcomeJobID, 1)); d.Validity != ValidityValid {
+	if d := s.Evaluate(k, LiveOf(k), acceptLookup(body.OutcomeJobID, 1)); d.Validity != ValidityValid {
 		t.Fatalf("exact key + authoritative source should be VALID: %+v", d)
 	}
 	// But if the source was corrected meanwhile, restore stays INVALID.
 	s.PropagateCorrection(body.OutcomeJobID, 2, "REJECTED")
-	if d := s.Evaluate(k, liveOf(k), acceptLookup(body.OutcomeJobID, 2)); d.Validity != ValidityInvalid {
+	if d := s.Evaluate(k, LiveOf(k), acceptLookup(body.OutcomeJobID, 2)); d.Validity != ValidityInvalid {
 		t.Fatalf("corrected source must stay INVALID after restore: %+v", d)
 	}
 }
@@ -373,7 +365,7 @@ func TestConflictingEvidenceFailsClosed(t *testing.T) {
 	lookup := func(q string) Outcome {
 		return Outcome{JobID: q, Version: 7, Status: "ACCEPTED", Found: true}
 	}
-	d := s.Evaluate(k, liveOf(k), lookup)
+	d := s.Evaluate(k, LiveOf(k), lookup)
 	if d.Validity != ValidityInvalid {
 		t.Fatalf("conflicting evidence must be INVALID, got %+v", d)
 	}
@@ -419,7 +411,7 @@ func TestCrashRestartReconstruction(t *testing.T) {
 	if got.State != ValidityStale || got.ArtifactDigest != body.ArtifactDigest {
 		t.Fatalf("reconstructed = %+v", got)
 	}
-	d := s2.Evaluate(k, liveOf(k), acceptLookup(body.OutcomeJobID, 1))
+	d := s2.Evaluate(k, LiveOf(k), acceptLookup(body.OutcomeJobID, 1))
 	if d.Validity != ValidityValid {
 		t.Fatalf("post-restart exact replay = %+v", d)
 	}

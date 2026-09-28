@@ -135,6 +135,26 @@ func (j *Journal) Close() error {
 // ordering comes from seq, never from clocks).
 var nowNS = func() int64 { return time.Now().UnixNano() }
 
+// LatestVersion returns the highest settled version for a job (false when
+// none). Adapters use it to distinguish duplicate redelivery (same
+// version, idempotent) from stale redelivery (older version, refused)
+// without reimplementing version rules.
+func (j *Journal) LatestVersion(jobID string) (uint64, bool, error) {
+	var v uint64
+	err := j.db.QueryRow(`SELECT MAX(version) FROM events WHERE kind='outcome' AND job_id=?`, jobID).Scan(&v)
+	if err != nil {
+		return 0, false, err
+	}
+	var n int
+	if err := j.db.QueryRow(`SELECT COUNT(*) FROM events WHERE kind='outcome' AND job_id=?`, jobID).Scan(&n); err != nil {
+		return 0, false, err
+	}
+	if n == 0 {
+		return 0, false, nil
+	}
+	return v, true, nil
+}
+
 // Len returns the committed event count (single sequence length).
 func (j *Journal) Len() (int, error) {
 	var n int

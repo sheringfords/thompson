@@ -261,7 +261,7 @@ func (r *Runner) runB2(m *ModeMetrics, w World, base World, freshBody []byte, fr
 	stored, hit := r.Store.Lookup(cur.KeyDigest())
 	var dec Decision
 	if hit {
-		live := liveOf(cur)
+		live := LiveOf(cur)
 		dec = r.Store.Evaluate(cur, live, r.outcomeLookup)
 	}
 	m.VerifyOverheadNS += time.Since(t0).Nanoseconds()

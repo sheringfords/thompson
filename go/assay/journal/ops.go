@@ -1,6 +1,7 @@
 package journal
 
 import (
+	cryptorand "crypto/rand"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -9,7 +10,9 @@ import (
 // Decision is the journal's committed-selection record. It mirrors the
 // fields of the production committed decision that the benchmark compares;
 // policy-identity, rule version, config digest, and fallback flag travel
-// with every row.
+// with every row. The score_kind/eligible_state/cost_per_success fields
+// are gateway-evidence fidelity additions (omitempty): old rows without
+// them replay identically.
 type Decision struct {
 	DecisionID  string             `json:"decision_id"`
 	JobID       string             `json:"job_id"`
@@ -23,18 +26,52 @@ type Decision struct {
 	ConfigHash  string             `json:"config_hash"`
 	Fallback    bool               `json:"fallback"`
 	Explore     bool               `json:"explore"`
+	// Gateway fidelity (omitempty, default zero values).
+	ScoreKind     string             `json:"score_kind,omitempty"`
+	EligibleState []ArmState         `json:"eligible_state,omitempty"`
+	CostPerSuc    map[string]float64 `json:"cost_per_success,omitempty"`
+}
+
+// ArmState is one eligible arm's posterior snapshot at decision time.
+type ArmState struct {
+	ArmID string  `json:"arm_id"`
+	Alpha float64 `json:"alpha"`
+	Beta  float64 `json:"beta"`
+	Pulls uint64  `json:"pulls"`
 }
 
 // OutcomeAttempt is one execution attempt inside a settled outcome.
+// Fields below Verified are gateway-fidelity additions (omitempty;
+// assay-only rows omit them and replay identically).
 type OutcomeAttempt struct {
 	AttemptID string   `json:"attempt_id"`
 	ArmID     string   `json:"arm_id"`
 	CostUSD   *float64 `json:"cost_usd,omitempty"`
 	Verified  string   `json:"verified"`
+	ExecutorID       string            `json:"executor_id,omitempty"`
+	Transport        string            `json:"transport,omitempty"`
+	LatencyMs        float64           `json:"latency_ms,omitempty"`
+	Validation       string            `json:"validation,omitempty"`
+	VerifiedBy       string            `json:"verified_by,omitempty"`
+	VerifiedAt       string            `json:"verified_at,omitempty"`
+	InputTokens      *int              `json:"input_tokens,omitempty"`
+	OutputTokens     *int              `json:"output_tokens,omitempty"`
+	FailureCategory  string            `json:"failure_category,omitempty"`
+	FieldCorrections []FieldCorrection `json:"field_corrections,omitempty"`
 }
 
-// SettledOutcome is the journal's versioned outcome record.
+// FieldCorrection records one validator/human field-level fix (diagnostic).
+type FieldCorrection struct {
+	Field  string `json:"field"`
+	Before string `json:"before"`
+	After  string `json:"after"`
+}
+
+// SettledOutcome is the journal's versioned outcome record. Timestamp and
+// schema fields are gateway-fidelity additions (omitempty).
 type SettledOutcome struct {
+	SchemaVersion   int              `json:"schema_version,omitempty"`
+	EventType       string           `json:"event_type,omitempty"`
 	DecisionID      string           `json:"decision_id"`
 	JobID           string           `json:"job_id"`
 	Version         uint64           `json:"version"`
@@ -44,6 +81,9 @@ type SettledOutcome struct {
 	DecidingAttempt string           `json:"deciding_attempt"`
 	HumanReviewCost *float64         `json:"human_review_cost_usd,omitempty"`
 	VerifiedBy      string           `json:"verified_by,omitempty"`
+	VerifiedAt      string           `json:"verified_at,omitempty"`
+	CorrectedAt     string           `json:"corrected_at,omitempty"`
+	OccurredAt      string           `json:"occurred_at,omitempty"`
 }
 
 // SafetyTransition is a versioned operator/monitor safety action.
@@ -207,15 +247,26 @@ func (j *Journal) SettleOutcome(o SettledOutcome, cfgDigest string) (applied boo
 }
 
 // RecordSafety persists one safety transition before its effect is visible:
-// callers apply the effect only after this returns nil.
+// callers apply the effect only after this returns nil. An empty Nonce
+// disables idempotency (pure append, matching the gateway safety log);
+// a non-empty Nonce dedups operator retries.
 func (j *Journal) RecordSafety(s SafetyTransition, cfgDigest string) (seq uint64, applied bool, err error) {
-	if s.Actor == "" || s.Type == "" || s.Nonce == "" {
-		return 0, false, fmt.Errorf("journal: safety actor, type and nonce are required")
+	if s.Actor == "" || s.Type == "" {
+		return 0, false, fmt.Errorf("journal: safety actor and type are required")
 	}
 	switch s.Type {
 	case "ARM_SUSPENDED", "ARM_RESUMED", "ARM_DISABLED", "EMERGENCY_STOP", "EMERGENCY_RELEASED", "APPROVE":
 	default:
 		return 0, false, fmt.Errorf("journal: unknown safety type %q", s.Type)
+	}
+	if s.Nonce == "" {
+		// No idempotency key: mint a unique one so the append-only row
+		// never collides on the (kind, event_key) constraint.
+		var b [16]byte
+		if _, err := cryptorand.Read(b[:]); err != nil {
+			return 0, false, fmt.Errorf("journal: nonce: %w", err)
+		}
+		s.Nonce = fmt.Sprintf("%x", b[:])
 	}
 	raw, err := json.Marshal(s)
 	if err != nil {
@@ -226,13 +277,15 @@ func (j *Journal) RecordSafety(s SafetyTransition, cfgDigest string) (seq uint64
 		return 0, false, busyErr(err)
 	}
 	defer tx.Rollback()
-	var prev string
-	err = tx.QueryRow(`SELECT payload FROM events WHERE kind='safety' AND event_key=?`, s.Nonce).Scan(&prev)
-	if err == nil {
-		return 0, false, nil // idempotent operator retry
-	}
-	if err != sql.ErrNoRows {
-		return 0, false, busyErr(err)
+	if s.Nonce != "" {
+		var prev string
+		err = tx.QueryRow(`SELECT payload FROM events WHERE kind='safety' AND event_key=?`, s.Nonce).Scan(&prev)
+		if err == nil {
+			return 0, false, nil // idempotent operator retry
+		}
+		if err != sql.ErrNoRows {
+			return 0, false, busyErr(err)
+		}
 	}
 	res, err := tx.Exec(`INSERT INTO events(kind, job_id, version, event_key, payload, config_digest, created_ns) VALUES('safety','',0,?,?,?,?)`,
 		s.Nonce, string(raw), cfgDigest, nowNS())

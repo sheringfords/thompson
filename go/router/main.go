@@ -19,12 +19,14 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"syscall"
 	"time"
 
 	"github.com/wiramahendra/thompson-sampling/go/gateway"
+	"github.com/wiramahendra/thompson-sampling/go/gateway/journalstore"
 	"github.com/wiramahendra/thompson-sampling/go/outcome"
 	"github.com/wiramahendra/thompson-sampling/go/thompson"
 )
@@ -66,6 +68,10 @@ type appConfig struct {
 	safetyPath    string
 	safetyConfig  string
 	operatorToken string
+	// journalPath selects the experimental SQLite backend (T3 only).
+	// Empty (default) keeps JSONL. Set requires COSTAWARE=1; COSTAWARE=1
+	// without it keeps JSONL. Never switched mid-experiment.
+	journalPath string
 }
 
 // loadConfig reads the environment. It never touches the network or disk:
@@ -190,6 +196,7 @@ func loadConfig(getenv func(string) string) (appConfig, error) {
 	c.safetyPath = getenv("SAFETY_PATH")
 	c.safetyConfig = getenv("SAFETY_CONFIG")
 	c.operatorToken = getenv("OPERATOR_TOKEN")
+	c.journalPath = getenv("JOURNAL_PATH")
 	if c.costAware {
 		if c.mode != gateway.VerifiedMode {
 			return c, fmt.Errorf("router: COSTAWARE=1 requires ROUTER_MODE=verified (refusing silent cost-blind coexistence)")
@@ -197,6 +204,9 @@ func loadConfig(getenv func(string) string) (appConfig, error) {
 		if c.safetyConfig == "" || c.safetyPath == "" || c.operatorToken == "" {
 			return c, fmt.Errorf("router: COSTAWARE=1 requires SAFETY_CONFIG, SAFETY_PATH and OPERATOR_TOKEN")
 		}
+	}
+	if c.journalPath != "" && !c.costAware {
+		return c, fmt.Errorf("router: JOURNAL_PATH requires COSTAWARE=1 (journal backend is T3-experimental only)")
 	}
 	return c, nil
 }
@@ -277,29 +287,45 @@ func buildRouter(cfg appConfig) (*gateway.Router, func(), error) {
 		rc.RNGFactory = func() *rand.Rand { return rand.New(rand.NewPCG(sd, 0)) }
 	}
 	if cfg.mode == gateway.VerifiedMode {
-		decisions, err := gateway.NewFileDecisionStore(cfg.decisionsPath)
-		if err != nil {
-			cleanup()
-			return nil, nil, fmt.Errorf("decision store: %w", err)
-		}
-		outcomes, err := outcome.NewFileOutcomeStore(cfg.outcomesPath)
-		if err != nil {
-			_ = decisions.Close()
-			cleanup()
-			return nil, nil, fmt.Errorf("outcome store: %w", err)
-		}
-		cleanup = func() {
-			_ = outcomes.Close()
-			_ = decisions.Close()
-			_ = writer.Close()
-		}
-		rc.Decisions = decisions
-		rc.Outcomes = outcomes
-		rc.SettleAuth = bearerAuth(cfg.settleToken)
-		if cfg.costAware {
-			if err := wireCostAware(cfg, &rc, decisions, outcomes, &cleanup); err != nil {
+		if cfg.journalPath != "" {
+			if err := buildJournalVerified(cfg, &rc, &cleanup); err != nil {
 				cleanup()
 				return nil, nil, err
+			}
+		} else {
+			decisions, err := gateway.NewFileDecisionStore(cfg.decisionsPath)
+			if err != nil {
+				cleanup()
+				return nil, nil, fmt.Errorf("decision store: %w", err)
+			}
+			outcomes, err := outcome.NewFileOutcomeStore(cfg.outcomesPath)
+			if err != nil {
+				_ = decisions.Close()
+				cleanup()
+				return nil, nil, fmt.Errorf("outcome store: %w", err)
+			}
+			prevCleanup := cleanup
+			cleanup = func() {
+				_ = outcomes.Close()
+				_ = decisions.Close()
+				prevCleanup()
+			}
+			rc.Decisions = decisions
+			rc.Outcomes = outcomes
+			rc.SettleAuth = bearerAuth(cfg.settleToken)
+			if cfg.costAware {
+				// Cost-aware only: plain verified binaries never needed a
+				// safety store (main behavior); requiring SAFETY_PATH
+				// here would break non-cost-aware boot.
+				safetySink, err := gateway.NewSafetyStore(cfg.safetyPath)
+				if err != nil {
+					cleanup()
+					return nil, nil, fmt.Errorf("safety store: %w", err)
+				}
+				if err := wireCostAware(cfg, &rc, decisions, outcomes, safetySink, &cleanup); err != nil {
+					cleanup()
+					return nil, nil, err
+				}
 			}
 		}
 		switch cfg.mapper {
@@ -323,6 +349,31 @@ func buildRouter(cfg appConfig) (*gateway.Router, func(), error) {
 		}
 	}
 	return router, cleanup, nil
+}
+
+// buildJournalVerified wires the experimental SQLite backend: one shared
+// journal provides decisions, outcomes, and safety rows; the cost-aware
+// stack builds over the same interfaces as the JSONL path. Failures refuse
+// startup exactly like the file path.
+func buildJournalVerified(cfg appConfig, rc *gateway.RouterConfig, cleanup *func()) error {
+	be, err := journalstore.OpenBackend(filepath.Dir(cfg.journalPath), filepath.Base(cfg.journalPath))
+	if err != nil {
+		return err
+	}
+	prevCleanup := *cleanup
+	*cleanup = func() {
+		_ = be.Close()
+		prevCleanup()
+	}
+	rc.Decisions = be.Decisions()
+	rc.Outcomes = be.Outcomes()
+	rc.SettleAuth = bearerAuth(cfg.settleToken)
+	if cfg.costAware {
+		if err := wireCostAware(cfg, rc, be.Decisions(), be.Outcomes(), be.Safety(), cleanup); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func checkpointPath(cfg appConfig) string {
@@ -484,7 +535,7 @@ func shutdown(srv *servers, cfg appConfig, router *gateway.Router, cleanup func(
 // stores: frozen safety config, durable safety controller, cost book, and
 // cost-aware selection policy with operator auth. Every failure refuses
 // startup (fail closed); cost-aware mode can never half-enable.
-func wireCostAware(cfg appConfig, rc *gateway.RouterConfig, decisions *gateway.FileDecisionStore, outcomes *outcome.FileOutcomeStore, cleanup *func()) error {
+func wireCostAware(cfg appConfig, rc *gateway.RouterConfig, decisions gateway.DecisionStore, outcomes outcome.OutcomeStore, safetySink gateway.SafetyEventSink, cleanup *func()) error {
 	raw, err := os.ReadFile(cfg.safetyConfig)
 	if err != nil {
 		return fmt.Errorf("router: read SAFETY_CONFIG: %w", err)
@@ -508,20 +559,16 @@ func wireCostAware(cfg appConfig, rc *gateway.RouterConfig, decisions *gateway.F
 			return fmt.Errorf("router: binary arm %q is not prequalified in SAFETY_CONFIG (unapproved traffic refused)", a)
 		}
 	}
-	safetyStore, err := gateway.NewSafetyStore(cfg.safetyPath)
-	if err != nil {
-		return fmt.Errorf("router: %w", err)
-	}
 	prevCleanup := *cleanup
 	*cleanup = func() {
-		_ = safetyStore.Close()
+		_ = safetySink.Close()
 		prevCleanup()
 	}
 	cfgHash, err := safetyConfigHash(raw)
 	if err != nil {
 		return err
 	}
-	safety, err := gateway.NewSafetyController(scfg, cfgHash, safetyStore, decisions, outcomes)
+	safety, err := gateway.NewSafetyController(scfg, cfgHash, safetySink, decisions, outcomes)
 	if err != nil {
 		return fmt.Errorf("router: safety controller: %w", err)
 	}

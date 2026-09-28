@@ -1,6 +1,7 @@
 package journal
 
 import (
+	"encoding/json"
 	"path/filepath"
 	"testing"
 
@@ -290,3 +291,49 @@ func itoaJ(i int) string {
 
 func decID(p string, i int) string { return p + "-dec-" + itoaJ(i) }
 func jobID(p string, i int) string { return p + "-job-" + itoaJ(i) }
+
+// Gateway-fidelity extensions: old rows without the new fields replay
+// identically, and empty-nonce safety events append (never collide).
+func TestJournalSchemaExtensions(t *testing.T) {
+	j := mustOpen(t)
+	defer j.Close()
+	d := testDecision("dg", "jg", "cheap", false)
+	d.ScoreKind = "samples"
+	d.EligibleState = []ArmState{{ArmID: "cheap", Alpha: 2, Beta: 1, Pulls: 1}}
+	d.CostPerSuc = map[string]float64{"cheap": 0.01}
+	if _, ok, err := j.CommitDecision(d, "cfg"); err != nil || !ok {
+		t.Fatalf("commit with extensions: %v %v", err, ok)
+	}
+	for i := 0; i < 3; i++ {
+		s := SafetyTransition{Actor: "op", Type: "ARM_SUSPENDED", Arm: "cheap", Reason: "r"}
+		if _, ok, err := j.RecordSafety(s, "cfg"); err != nil || !ok {
+			t.Fatalf("empty-nonce append %d: %v %v", i, err, ok)
+		}
+	}
+	p, err := j.Replay()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if p.Safety["cheap"] != "SUSPENDED" {
+		t.Fatal("suspension lost")
+	}
+	evs, err := j.EventsSince(0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	found := false
+	for _, e := range evs {
+		if e.Kind == "decision" {
+			var dd Decision
+			if err := json.Unmarshal([]byte(e.Payload), &dd); err != nil {
+				t.Fatal(err)
+			}
+			if dd.ScoreKind == "samples" && dd.CostPerSuc["cheap"] == 0.01 {
+				found = true
+			}
+		}
+	}
+	if !found {
+		t.Fatal("extended decision fields lost in round-trip")
+	}
+}

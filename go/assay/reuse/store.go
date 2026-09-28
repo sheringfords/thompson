@@ -161,6 +161,67 @@ func (s *Store) Publish(key ExecutionKey, body PublishBody) (*Artifact, error) {
 		}
 		return nil, fmt.Errorf("%w: key digest %s already bound", ErrKeyConflict, kd[:16])
 	}
+	return s.publishLocked(key, body)
+}
+
+// publishLocked appends one publish record (caller holds s.mu).
+func (s *Store) publishLocked(key ExecutionKey, body PublishBody) (*Artifact, error) {
+	a := Artifact{
+		KeyDigest:      key.KeyDigest(),
+		KeyCanonical:   string(key.Canonical()),
+		ArtifactDigest: body.ArtifactDigest,
+		Verification:   body.Verification,
+		EvidenceID:     body.EvidenceID,
+		VerifiedAt:     body.VerifiedAt,
+		ActualCostUSD:  body.ActualCostUSD,
+		Deps:           key.CurrentDeps(),
+		ReceiptID:      body.ReceiptID,
+		OutcomeJobID:   body.OutcomeJobID,
+		OutcomeVersion: body.OutcomeVersion,
+		State:          ValidityValid,
+	}
+	if err := s.append(storedRecord{Type: "publish", Artifact: a}); err != nil {
+		return nil, err
+	}
+	return s.byKey[a.KeyDigest], nil
+}
+
+// Republish publishes a fresh verification over an existing NON-VALID
+// record (STALE/INVALID/UNKNOWN): e.g. recomputation after a correction
+// revoked the old evidence. The prior history is preserved in the log's
+// earlier state records; the new record binds fresh evidence and outcome.
+// Republication over a VALID record is refused (ErrKeyConflict): valid
+// results are never silently rebound.
+func (s *Store) Republish(key ExecutionKey, body PublishBody) (*Artifact, error) {
+	if err := key.Validate(); err != nil {
+		return nil, err
+	}
+	if body.Verification != VerificationAccepted {
+		return nil, fmt.Errorf("%w: got %s", ErrNotAccepted, body.Verification)
+	}
+	if !looksLikeDigest(body.ArtifactDigest) {
+		return nil, fmt.Errorf("%w: artifact_digest %q", ErrMissingDep, body.ArtifactDigest)
+	}
+	if body.EvidenceID == "" || body.ReceiptID == "" || body.OutcomeJobID == "" {
+		return nil, fmt.Errorf("%w: evidence, receipt and outcome job are required", ErrMissingDep)
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	kd := key.KeyDigest()
+	prev, ok := s.byKey[kd]
+	if !ok {
+		return s.publishLocked(key, body)
+	}
+	if prev.State == ValidityValid {
+		if prev.KeyCanonical == string(key.Canonical()) &&
+			prev.ArtifactDigest == body.ArtifactDigest &&
+			prev.EvidenceID == body.EvidenceID &&
+			prev.OutcomeJobID == body.OutcomeJobID &&
+			prev.OutcomeVersion == body.OutcomeVersion {
+			return prev, nil
+		}
+		return nil, fmt.Errorf("%w: key digest %s already bound to a VALID record", ErrKeyConflict, kd[:16])
+	}
 	a := Artifact{
 		KeyDigest:      kd,
 		KeyCanonical:   string(key.Canonical()),
@@ -174,6 +235,7 @@ func (s *Store) Publish(key ExecutionKey, body PublishBody) (*Artifact, error) {
 		OutcomeJobID:   body.OutcomeJobID,
 		OutcomeVersion: body.OutcomeVersion,
 		State:          ValidityValid,
+		Reason:         fmt.Sprintf("republished after %s", prev.State),
 	}
 	if err := s.append(storedRecord{Type: "publish", Artifact: a}); err != nil {
 		return nil, err

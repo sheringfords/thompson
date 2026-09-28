@@ -40,6 +40,11 @@ type TreatmentConfig struct {
 	// its gateway with COSTAWARE=1 and a frozen safety configuration.
 	// Absent/false preserves the legacy three-treatment behavior exactly.
 	CostAware bool `json:"cost_aware,omitempty"`
+	// StorageBackend selects the treatment's durable backend: "" (default)
+	// is JSONL; "journal" boots the experimental SQLite journal. Recorded
+	// and hashed with the manifest; omitempty keeps legacy manifests
+	// byte-identical. Only CostAware treatments may set it in this mission.
+	StorageBackend string `json:"storage_backend,omitempty"`
 	// GatewayDescribe only: ports and files are runner flags, not manifest.
 }
 

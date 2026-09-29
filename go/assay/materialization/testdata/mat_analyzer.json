@@ -1,0 +1,30 @@
+{
+  "materialization_opportunity_ns": {
+    "chg-1pc": 1350,
+    "full-replace": 0,
+    "no-change": 1500
+  },
+  "stale_work_rate": {
+    "chg-1pc": 0.1,
+    "full-replace": 1,
+    "no-change": 0
+  },
+  "recomputation_closure_sizes": {
+    "chg-1pc": 10,
+    "full-replace": 100,
+    "no-change": 0
+  },
+  "break_even": {
+    "no-change": "~1 repeats to repay 150ns overhead at 500ns/version"
+  },
+  "plan_counterfactuals_ns": {
+    "chg-1pc": -1,
+    "full-replace": -1,
+    "no-change": -1
+  },
+  "reuse_frequency": {
+    "A": 0,
+    "B": 190,
+    "C": 190
+  }
+}

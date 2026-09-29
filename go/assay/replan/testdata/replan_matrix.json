@@ -24,7 +24,7 @@
       "final_accepted": true,
       "final_eq_r0_oracle": false,
       "assessments": 2,
-      "replan_overhead_us": 4313
+      "replan_overhead_us": 375
     },
     {
       "scenario": "lint-switch",
@@ -37,7 +37,7 @@
       "final_accepted": true,
       "final_eq_r0_oracle": true,
       "assessments": 2,
-      "replan_overhead_us": 5141
+      "replan_overhead_us": 496
     },
     {
       "scenario": "arrival",
@@ -63,7 +63,7 @@
       "final_accepted": true,
       "final_eq_r0_oracle": true,
       "assessments": 2,
-      "replan_overhead_us": 3112
+      "replan_overhead_us": 460
     },
     {
       "scenario": "arrival",
@@ -76,7 +76,7 @@
       "final_accepted": true,
       "final_eq_r0_oracle": false,
       "assessments": 2,
-      "replan_overhead_us": 4541
+      "replan_overhead_us": 1321
     },
     {
       "scenario": "verify-failure",
@@ -102,7 +102,7 @@
       "final_accepted": false,
       "final_eq_r0_oracle": false,
       "assessments": 2,
-      "replan_overhead_us": 3338
+      "replan_overhead_us": 614
     },
     {
       "scenario": "verify-failure",
@@ -115,7 +115,7 @@
       "final_accepted": true,
       "final_eq_r0_oracle": false,
       "assessments": 2,
-      "replan_overhead_us": 3933
+      "replan_overhead_us": 568
     },
     {
       "scenario": "doc-rotation",
@@ -141,7 +141,7 @@
       "final_accepted": true,
       "final_eq_r0_oracle": true,
       "assessments": 2,
-      "replan_overhead_us": 1050
+      "replan_overhead_us": 364
     },
     {
       "scenario": "doc-rotation",
@@ -154,7 +154,7 @@
       "final_accepted": true,
       "final_eq_r0_oracle": true,
       "assessments": 2,
-      "replan_overhead_us": 1224
+      "replan_overhead_us": 273
     },
     {
       "scenario": "sunk-cost",
@@ -180,7 +180,7 @@
       "final_accepted": true,
       "final_eq_r0_oracle": true,
       "assessments": 2,
-      "replan_overhead_us": 2585
+      "replan_overhead_us": 1175
     },
     {
       "scenario": "sunk-cost",
@@ -193,7 +193,7 @@
       "final_accepted": true,
       "final_eq_r0_oracle": true,
       "assessments": 2,
-      "replan_overhead_us": 3790
+      "replan_overhead_us": 1241
     }
   ],
   "note": "R0 spent/wasted = n/a (isolated full recomputation). EqOracle compares final bytes against the R0 P3-chosen plan: R1 rows on a different frozen shape are EqOracle=false BY DESIGN (different computation, still terminal-ACCEPTED). Only post-trigger avoidance vs R1 counts as replanning value."

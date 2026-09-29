@@ -1,0 +1,239 @@
+{
+  "rows": [
+    {
+      "records": 100,
+      "mutation": "no-change",
+      "mode": "B",
+      "executed": 0,
+      "total_ms": 0,
+      "store_kb": 0,
+      "terminal_eq_a": true
+    },
+    {
+      "records": 100,
+      "mutation": "no-change",
+      "mode": "C",
+      "executed": 0,
+      "total_ms": 20,
+      "store_kb": 746,
+      "terminal_eq_a": true
+    },
+    {
+      "records": 100,
+      "mutation": "chg-1pc",
+      "mode": "B",
+      "executed": 9,
+      "total_ms": 33,
+      "store_kb": 0,
+      "terminal_eq_a": true
+    },
+    {
+      "records": 100,
+      "mutation": "chg-1pc",
+      "mode": "C",
+      "executed": 9,
+      "total_ms": 53,
+      "store_kb": 764,
+      "terminal_eq_a": true
+    },
+    {
+      "records": 100,
+      "mutation": "chg-5pc",
+      "mode": "B",
+      "executed": 27,
+      "total_ms": 101,
+      "store_kb": 0,
+      "terminal_eq_a": true
+    },
+    {
+      "records": 100,
+      "mutation": "chg-5pc",
+      "mode": "C",
+      "executed": 27,
+      "total_ms": 126,
+      "store_kb": 811,
+      "terminal_eq_a": true
+    },
+    {
+      "records": 100,
+      "mutation": "chg-20pc",
+      "mode": "B",
+      "executed": 89,
+      "total_ms": 366,
+      "store_kb": 0,
+      "terminal_eq_a": true
+    },
+    {
+      "records": 100,
+      "mutation": "chg-20pc",
+      "mode": "C",
+      "executed": 89,
+      "total_ms": 375,
+      "store_kb": 952,
+      "terminal_eq_a": true
+    },
+    {
+      "records": 100,
+      "mutation": "full-replace",
+      "mode": "B",
+      "executed": 519,
+      "total_ms": 2054,
+      "store_kb": 0,
+      "terminal_eq_a": true
+    },
+    {
+      "records": 100,
+      "mutation": "full-replace",
+      "mode": "C",
+      "executed": 519,
+      "total_ms": 2131,
+      "store_kb": 1699,
+      "terminal_eq_a": true
+    },
+    {
+      "records": 1000,
+      "mutation": "no-change",
+      "mode": "B",
+      "executed": 0,
+      "total_ms": 9,
+      "store_kb": 0,
+      "terminal_eq_a": true
+    },
+    {
+      "records": 1000,
+      "mutation": "no-change",
+      "mode": "C",
+      "executed": 0,
+      "total_ms": 137,
+      "store_kb": 7205,
+      "terminal_eq_a": true
+    },
+    {
+      "records": 1000,
+      "mutation": "chg-1pc",
+      "mode": "B",
+      "executed": 63,
+      "total_ms": 330,
+      "store_kb": 0,
+      "terminal_eq_a": true
+    },
+    {
+      "records": 1000,
+      "mutation": "chg-1pc",
+      "mode": "C",
+      "executed": 63,
+      "total_ms": 422,
+      "store_kb": 7426,
+      "terminal_eq_a": true
+    },
+    {
+      "records": 1000,
+      "mutation": "chg-5pc",
+      "mode": "B",
+      "executed": 216,
+      "total_ms": 936,
+      "store_kb": 0,
+      "terminal_eq_a": true
+    },
+    {
+      "records": 1000,
+      "mutation": "chg-5pc",
+      "mode": "C",
+      "executed": 216,
+      "total_ms": 1052,
+      "store_kb": 7889,
+      "terminal_eq_a": true
+    },
+    {
+      "records": 1000,
+      "mutation": "chg-20pc",
+      "mode": "B",
+      "executed": 769,
+      "total_ms": 3803,
+      "store_kb": 0,
+      "terminal_eq_a": true
+    },
+    {
+      "records": 1000,
+      "mutation": "chg-20pc",
+      "mode": "C",
+      "executed": 769,
+      "total_ms": 3227,
+      "store_kb": 9157,
+      "terminal_eq_a": true
+    },
+    {
+      "records": 1000,
+      "mutation": "full-replace",
+      "mode": "B",
+      "executed": 5019,
+      "total_ms": 20190,
+      "store_kb": 0,
+      "terminal_eq_a": true
+    },
+    {
+      "records": 1000,
+      "mutation": "full-replace",
+      "mode": "C",
+      "executed": 5019,
+      "total_ms": 20396,
+      "store_kb": 16368,
+      "terminal_eq_a": true
+    },
+    {
+      "records": 10000,
+      "mutation": "no-change",
+      "mode": "B",
+      "executed": 0,
+      "total_ms": 119,
+      "store_kb": 0,
+      "terminal_eq_a": true
+    },
+    {
+      "records": 10000,
+      "mutation": "no-change",
+      "mode": "C",
+      "executed": 0,
+      "total_ms": 1537,
+      "store_kb": 71921,
+      "terminal_eq_a": true
+    },
+    {
+      "records": 10000,
+      "mutation": "chg-1pc",
+      "mode": "B",
+      "executed": 519,
+      "total_ms": 2214,
+      "store_kb": 0,
+      "terminal_eq_a": true
+    },
+    {
+      "records": 10000,
+      "mutation": "chg-1pc",
+      "mode": "C",
+      "executed": 519,
+      "total_ms": 3591,
+      "store_kb": 74537,
+      "terminal_eq_a": true
+    },
+    {
+      "records": 10000,
+      "mutation": "full-replace",
+      "mode": "B",
+      "executed": 50019,
+      "total_ms": 204735,
+      "store_kb": 0,
+      "terminal_eq_a": true
+    },
+    {
+      "records": 10000,
+      "mutation": "full-replace",
+      "mode": "C",
+      "executed": 50019,
+      "total_ms": 206043,
+      "store_kb": 146493,
+      "terminal_eq_a": true
+    }
+  ],
+  "note": "N=10000 sampled to {0%,1%,100%} (per-record fsync store writes bound full-series cost); no 100k/1M claims. Fractions mutate leading records only; cross-scenario warm reuse is real behavior (leading-record overlap), not a bug."
+}

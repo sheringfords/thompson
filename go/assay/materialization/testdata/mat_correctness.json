@@ -1,0 +1,362 @@
+[
+  {
+    "Mutation": "no-change",
+    "Mode": "B",
+    "Exec": 0,
+    "Reused": 519,
+    "TermEq": true,
+    "VerdEq": true,
+    "False": 0
+  },
+  {
+    "Mutation": "no-change",
+    "Mode": "Bp",
+    "Exec": 0,
+    "Reused": 519,
+    "TermEq": true,
+    "VerdEq": true,
+    "False": 0
+  },
+  {
+    "Mutation": "no-change",
+    "Mode": "C",
+    "Exec": 0,
+    "Reused": 519,
+    "TermEq": true,
+    "VerdEq": true,
+    "False": 0
+  },
+  {
+    "Mutation": "no-change",
+    "Mode": "D",
+    "Exec": 0,
+    "Reused": 502,
+    "TermEq": true,
+    "VerdEq": true,
+    "False": 0
+  },
+  {
+    "Mutation": "chg-1pc",
+    "Mode": "B",
+    "Exec": 9,
+    "Reused": 510,
+    "TermEq": true,
+    "VerdEq": true,
+    "False": 0
+  },
+  {
+    "Mutation": "chg-1pc",
+    "Mode": "Bp",
+    "Exec": 9,
+    "Reused": 510,
+    "TermEq": true,
+    "VerdEq": true,
+    "False": 0
+  },
+  {
+    "Mutation": "chg-1pc",
+    "Mode": "C",
+    "Exec": 9,
+    "Reused": 510,
+    "TermEq": true,
+    "VerdEq": true,
+    "False": 0
+  },
+  {
+    "Mutation": "chg-1pc",
+    "Mode": "D",
+    "Exec": 7,
+    "Reused": 495,
+    "TermEq": true,
+    "VerdEq": true,
+    "False": 0
+  },
+  {
+    "Mutation": "chg-5pc",
+    "Mode": "B",
+    "Exec": 27,
+    "Reused": 492,
+    "TermEq": true,
+    "VerdEq": true,
+    "False": 0
+  },
+  {
+    "Mutation": "chg-5pc",
+    "Mode": "Bp",
+    "Exec": 27,
+    "Reused": 492,
+    "TermEq": true,
+    "VerdEq": true,
+    "False": 0
+  },
+  {
+    "Mutation": "chg-5pc",
+    "Mode": "C",
+    "Exec": 27,
+    "Reused": 492,
+    "TermEq": true,
+    "VerdEq": true,
+    "False": 0
+  },
+  {
+    "Mutation": "chg-5pc",
+    "Mode": "D",
+    "Exec": 22,
+    "Reused": 480,
+    "TermEq": true,
+    "VerdEq": true,
+    "False": 0
+  },
+  {
+    "Mutation": "chg-20pc",
+    "Mode": "B",
+    "Exec": 89,
+    "Reused": 430,
+    "TermEq": true,
+    "VerdEq": true,
+    "False": 0
+  },
+  {
+    "Mutation": "chg-20pc",
+    "Mode": "Bp",
+    "Exec": 89,
+    "Reused": 430,
+    "TermEq": true,
+    "VerdEq": true,
+    "False": 0
+  },
+  {
+    "Mutation": "chg-20pc",
+    "Mode": "C",
+    "Exec": 89,
+    "Reused": 430,
+    "TermEq": true,
+    "VerdEq": true,
+    "False": 0
+  },
+  {
+    "Mutation": "chg-20pc",
+    "Mode": "D",
+    "Exec": 77,
+    "Reused": 425,
+    "TermEq": true,
+    "VerdEq": true,
+    "False": 0
+  },
+  {
+    "Mutation": "schema-change",
+    "Mode": "B",
+    "Exec": 419,
+    "Reused": 100,
+    "TermEq": true,
+    "VerdEq": true,
+    "False": 0
+  },
+  {
+    "Mutation": "schema-change",
+    "Mode": "Bp",
+    "Exec": 419,
+    "Reused": 100,
+    "TermEq": true,
+    "VerdEq": true,
+    "False": 0
+  },
+  {
+    "Mutation": "schema-change",
+    "Mode": "C",
+    "Exec": 419,
+    "Reused": 100,
+    "TermEq": true,
+    "VerdEq": true,
+    "False": 0
+  },
+  {
+    "Mutation": "schema-change",
+    "Mode": "D",
+    "Exec": 402,
+    "Reused": 100,
+    "TermEq": true,
+    "VerdEq": true,
+    "False": 0
+  },
+  {
+    "Mutation": "verifier-change",
+    "Mode": "B",
+    "Exec": 0,
+    "Reused": 519,
+    "TermEq": true,
+    "VerdEq": true,
+    "False": 519
+  },
+  {
+    "Mutation": "verifier-change",
+    "Mode": "Bp",
+    "Exec": 0,
+    "Reused": 519,
+    "TermEq": true,
+    "VerdEq": true,
+    "False": 0
+  },
+  {
+    "Mutation": "verifier-change",
+    "Mode": "C",
+    "Exec": 519,
+    "Reused": 0,
+    "TermEq": true,
+    "VerdEq": true,
+    "False": 0
+  },
+  {
+    "Mutation": "verifier-change",
+    "Mode": "D",
+    "Exec": 502,
+    "Reused": 0,
+    "TermEq": true,
+    "VerdEq": true,
+    "False": 0
+  },
+  {
+    "Mutation": "enrichment-change",
+    "Mode": "B",
+    "Exec": 119,
+    "Reused": 400,
+    "TermEq": true,
+    "VerdEq": true,
+    "False": 0
+  },
+  {
+    "Mutation": "enrichment-change",
+    "Mode": "Bp",
+    "Exec": 119,
+    "Reused": 400,
+    "TermEq": true,
+    "VerdEq": true,
+    "False": 0
+  },
+  {
+    "Mutation": "enrichment-change",
+    "Mode": "C",
+    "Exec": 119,
+    "Reused": 400,
+    "TermEq": true,
+    "VerdEq": true,
+    "False": 0
+  },
+  {
+    "Mutation": "enrichment-change",
+    "Mode": "D",
+    "Exec": 102,
+    "Reused": 400,
+    "TermEq": true,
+    "VerdEq": true,
+    "False": 0
+  },
+  {
+    "Mutation": "aggregate-change",
+    "Mode": "B",
+    "Exec": 19,
+    "Reused": 500,
+    "TermEq": true,
+    "VerdEq": true,
+    "False": 0
+  },
+  {
+    "Mutation": "aggregate-change",
+    "Mode": "Bp",
+    "Exec": 19,
+    "Reused": 500,
+    "TermEq": true,
+    "VerdEq": true,
+    "False": 0
+  },
+  {
+    "Mutation": "aggregate-change",
+    "Mode": "C",
+    "Exec": 19,
+    "Reused": 500,
+    "TermEq": true,
+    "VerdEq": true,
+    "False": 0
+  },
+  {
+    "Mutation": "aggregate-change",
+    "Mode": "D",
+    "Exec": 2,
+    "Reused": 500,
+    "TermEq": true,
+    "VerdEq": true,
+    "False": 0
+  },
+  {
+    "Mutation": "revocation",
+    "Mode": "B",
+    "Exec": 0,
+    "Reused": 519,
+    "TermEq": true,
+    "VerdEq": true,
+    "False": 1
+  },
+  {
+    "Mutation": "revocation",
+    "Mode": "Bp",
+    "Exec": 1,
+    "Reused": 518,
+    "TermEq": true,
+    "VerdEq": true,
+    "False": 0
+  },
+  {
+    "Mutation": "revocation",
+    "Mode": "C",
+    "Exec": 1,
+    "Reused": 518,
+    "TermEq": true,
+    "VerdEq": true,
+    "False": 0
+  },
+  {
+    "Mutation": "revocation",
+    "Mode": "D",
+    "Exec": 1,
+    "Reused": 501,
+    "TermEq": true,
+    "VerdEq": true,
+    "False": 0
+  },
+  {
+    "Mutation": "full-replace",
+    "Mode": "B",
+    "Exec": 519,
+    "Reused": 0,
+    "TermEq": true,
+    "VerdEq": true,
+    "False": 0
+  },
+  {
+    "Mutation": "full-replace",
+    "Mode": "Bp",
+    "Exec": 519,
+    "Reused": 0,
+    "TermEq": true,
+    "VerdEq": true,
+    "False": 0
+  },
+  {
+    "Mutation": "full-replace",
+    "Mode": "C",
+    "Exec": 519,
+    "Reused": 0,
+    "TermEq": true,
+    "VerdEq": true,
+    "False": 0
+  },
+  {
+    "Mutation": "full-replace",
+    "Mode": "D",
+    "Exec": 502,
+    "Reused": 0,
+    "TermEq": true,
+    "VerdEq": true,
+    "False": 0
+  }
+]

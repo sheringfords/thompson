@@ -1,0 +1,105 @@
+{
+  "rows": [
+    {
+      "workload": "W2",
+      "burn": 1,
+      "rotations": 4,
+      "r0_prod_ns": 17213279,
+      "r0_verify_ns": 84712,
+      "r1_prod_ns": 0,
+      "r1_verify_ns": 59705,
+      "r1_overhead_ns": 815857,
+      "production_avoided_ns": 17213279,
+      "regime": "above-10:1"
+    },
+    {
+      "workload": "W2",
+      "burn": 10,
+      "rotations": 4,
+      "r0_prod_ns": 313897538,
+      "r0_verify_ns": 88432,
+      "r1_prod_ns": 0,
+      "r1_verify_ns": 57054,
+      "r1_overhead_ns": 842035,
+      "production_avoided_ns": 313897538,
+      "regime": "above-10:1"
+    },
+    {
+      "workload": "W2",
+      "burn": 100,
+      "rotations": 4,
+      "r0_prod_ns": 1695166993,
+      "r0_verify_ns": 520499,
+      "r1_prod_ns": 0,
+      "r1_verify_ns": 53398,
+      "r1_overhead_ns": 1017977,
+      "production_avoided_ns": 1695166993,
+      "regime": "above-10:1"
+    },
+    {
+      "workload": "W1",
+      "burn": 0,
+      "rotations": 5,
+      "r0_prod_ns": 7541369,
+      "r0_verify_ns": 87460,
+      "r1_prod_ns": 0,
+      "r1_verify_ns": 117557,
+      "r1_overhead_ns": 3184623,
+      "production_avoided_ns": 7541369,
+      "regime": "near-1:1"
+    },
+    {
+      "workload": "W2-freq",
+      "burn": 10,
+      "rotations": 0,
+      "r0_prod_ns": 0,
+      "r0_verify_ns": 0,
+      "r1_prod_ns": 0,
+      "r1_verify_ns": 0,
+      "r1_overhead_ns": 0,
+      "production_avoided_ns": 0,
+      "regime": "sweep"
+    },
+    {
+      "workload": "W2-freq",
+      "burn": 10,
+      "rotations": 1,
+      "r0_prod_ns": 39321191,
+      "r0_verify_ns": 9119,
+      "r1_prod_ns": 0,
+      "r1_verify_ns": 6065,
+      "r1_overhead_ns": 201187,
+      "production_avoided_ns": 39321191,
+      "regime": "sweep"
+    },
+    {
+      "workload": "W2-freq",
+      "burn": 10,
+      "rotations": 2,
+      "r0_prod_ns": 67335176,
+      "r0_verify_ns": 51325,
+      "r1_prod_ns": 0,
+      "r1_verify_ns": 26176,
+      "r1_overhead_ns": 359844,
+      "production_avoided_ns": 67335176,
+      "regime": "sweep"
+    },
+    {
+      "workload": "W2-freq",
+      "burn": 10,
+      "rotations": 4,
+      "r0_prod_ns": 160508653,
+      "r0_verify_ns": 83324,
+      "r1_prod_ns": 0,
+      "r1_verify_ns": 49346,
+      "r1_overhead_ns": 806690,
+      "production_avoided_ns": 160508653,
+      "regime": "sweep"
+    }
+  ],
+  "break_even": [
+    "W2 burn=1: production ≈ verification scale — VERIFY saves little after overhead (see rows)",
+    "W2 burn\u003e=10 with ≥3 rotations: avoided production exceeds overhead by \u003e5x (see rows)",
+    "W1 near-1:1: VERIFY avoids production 1:1 minus overhead — marginal, reported as such"
+  ]
+}

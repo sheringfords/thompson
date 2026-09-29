@@ -1,0 +1,604 @@
+{
+  "scenarios": [
+    {
+      "name": "rotation-verify",
+      "ops": [
+        {
+          "type": "artifact",
+          "comp": {
+            "Op": "produce",
+            "OpVer": "v1",
+            "Exec": "test/1.0",
+            "Env": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "Gen": "cd0aa9856147b6c5b4ff2b7dfee5da20aa38253099ef1b4a64aced233c9afe29",
+            "Inputs": [
+              {
+                "Name": "in",
+                "Digest": "f7218970d1a5858b1d37bd7f2935222ceb12c787fc91ee5e9ebf03584d5b2a02"
+              }
+            ],
+            "Deps": null
+          },
+          "body": "bytes-1",
+          "receipt": "r1"
+        },
+        {
+          "type": "claim",
+          "vkey": {
+            "Artifact": "2d4bfca022009cc8077571be69a39db647bbd31234a784b63de8e388c158aff7",
+            "Contract": "98b1ad43fb0e3623f5deb433b6ef7ce02d9ab6e1fc43807bc3764cfd8884a137",
+            "VID": "v",
+            "VVer": "v1",
+            "Deps": null
+          },
+          "status": "ACCEPTED",
+          "evidence": "job1",
+          "auth_version": 1
+        }
+      ],
+      "resolves": [
+        {
+          "comp": {
+            "Op": "produce",
+            "OpVer": "v1",
+            "Exec": "test/1.0",
+            "Env": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "Gen": "cd0aa9856147b6c5b4ff2b7dfee5da20aa38253099ef1b4a64aced233c9afe29",
+            "Inputs": [
+              {
+                "Name": "in",
+                "Digest": "f7218970d1a5858b1d37bd7f2935222ceb12c787fc91ee5e9ebf03584d5b2a02"
+              }
+            ],
+            "Deps": null
+          },
+          "vkey": {
+            "Artifact": "2d4bfca022009cc8077571be69a39db647bbd31234a784b63de8e388c158aff7",
+            "Contract": "98b1ad43fb0e3623f5deb433b6ef7ce02d9ab6e1fc43807bc3764cfd8884a137",
+            "VID": "v",
+            "VVer": "v1",
+            "Deps": null
+          },
+          "live_comp": {
+            "in": "f7218970d1a5858b1d37bd7f2935222ceb12c787fc91ee5e9ebf03584d5b2a02"
+          },
+          "live_ver": {},
+          "auth": {
+            "job1": {
+              "version": 1,
+              "status": "ACCEPTED",
+              "found": true
+            }
+          }
+        },
+        {
+          "comp": {
+            "Op": "produce",
+            "OpVer": "v1",
+            "Exec": "test/1.0",
+            "Env": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "Gen": "cd0aa9856147b6c5b4ff2b7dfee5da20aa38253099ef1b4a64aced233c9afe29",
+            "Inputs": [
+              {
+                "Name": "in",
+                "Digest": "f7218970d1a5858b1d37bd7f2935222ceb12c787fc91ee5e9ebf03584d5b2a02"
+              }
+            ],
+            "Deps": null
+          },
+          "vkey": {
+            "Artifact": "2d4bfca022009cc8077571be69a39db647bbd31234a784b63de8e388c158aff7",
+            "Contract": "ac0197c1ea4946cbe15fe40ef02d62499ae9222eb95a3da5b3a25931bac530ad",
+            "VID": "v",
+            "VVer": "v1",
+            "Deps": null
+          },
+          "live_comp": {
+            "in": "f7218970d1a5858b1d37bd7f2935222ceb12c787fc91ee5e9ebf03584d5b2a02"
+          },
+          "live_ver": {},
+          "auth": {
+            "job1": {
+              "version": 1,
+              "status": "ACCEPTED",
+              "found": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "comp-change-recompute",
+      "ops": [
+        {
+          "type": "artifact",
+          "comp": {
+            "Op": "produce",
+            "OpVer": "v1",
+            "Exec": "test/1.0",
+            "Env": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "Gen": "cd0aa9856147b6c5b4ff2b7dfee5da20aa38253099ef1b4a64aced233c9afe29",
+            "Inputs": [
+              {
+                "Name": "in",
+                "Digest": "f7218970d1a5858b1d37bd7f2935222ceb12c787fc91ee5e9ebf03584d5b2a02"
+              }
+            ],
+            "Deps": null
+          },
+          "body": "bytes-1",
+          "receipt": "r1"
+        },
+        {
+          "type": "claim",
+          "vkey": {
+            "Artifact": "2d4bfca022009cc8077571be69a39db647bbd31234a784b63de8e388c158aff7",
+            "Contract": "98b1ad43fb0e3623f5deb433b6ef7ce02d9ab6e1fc43807bc3764cfd8884a137",
+            "VID": "v",
+            "VVer": "v1",
+            "Deps": null
+          },
+          "status": "ACCEPTED",
+          "evidence": "job1",
+          "auth_version": 1
+        }
+      ],
+      "resolves": [
+        {
+          "comp": {
+            "Op": "produce",
+            "OpVer": "v1",
+            "Exec": "test/1.0",
+            "Env": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "Gen": "cd0aa9856147b6c5b4ff2b7dfee5da20aa38253099ef1b4a64aced233c9afe29",
+            "Inputs": [
+              {
+                "Name": "in",
+                "Digest": "f7218970d1a5858b1d37bd7f2935222ceb12c787fc91ee5e9ebf03584d5b2a02"
+              }
+            ],
+            "Deps": null
+          },
+          "vkey": {
+            "Artifact": "2d4bfca022009cc8077571be69a39db647bbd31234a784b63de8e388c158aff7",
+            "Contract": "98b1ad43fb0e3623f5deb433b6ef7ce02d9ab6e1fc43807bc3764cfd8884a137",
+            "VID": "v",
+            "VVer": "v1",
+            "Deps": null
+          },
+          "live_comp": {
+            "in": "c7eecf410e5f1762cd663f0095b8fd5afb11343a08218ab27a83085228d07e54"
+          },
+          "live_ver": {},
+          "auth": {
+            "job1": {
+              "version": 1,
+              "status": "ACCEPTED",
+              "found": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "revoke-verify",
+      "ops": [
+        {
+          "type": "artifact",
+          "comp": {
+            "Op": "op2",
+            "OpVer": "v1",
+            "Exec": "test/1.0",
+            "Env": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "Gen": "cd0aa9856147b6c5b4ff2b7dfee5da20aa38253099ef1b4a64aced233c9afe29",
+            "Inputs": [
+              {
+                "Name": "in",
+                "Digest": "f7218970d1a5858b1d37bd7f2935222ceb12c787fc91ee5e9ebf03584d5b2a02"
+              }
+            ],
+            "Deps": null
+          },
+          "body": "bytes-2",
+          "receipt": "r1"
+        },
+        {
+          "type": "claim",
+          "vkey": {
+            "Artifact": "eb5972366748402264e74a0ac771f2a4c8c218b2f1ad6ee61b27c4add924d868",
+            "Contract": "98b1ad43fb0e3623f5deb433b6ef7ce02d9ab6e1fc43807bc3764cfd8884a137",
+            "VID": "v",
+            "VVer": "v1",
+            "Deps": null
+          },
+          "status": "ACCEPTED",
+          "evidence": "job9",
+          "auth_version": 1
+        },
+        {
+          "type": "revoke",
+          "revoke_key": "PENDING",
+          "sup_by": "authority"
+        }
+      ],
+      "resolves": [
+        {
+          "comp": {
+            "Op": "op2",
+            "OpVer": "v1",
+            "Exec": "test/1.0",
+            "Env": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "Gen": "cd0aa9856147b6c5b4ff2b7dfee5da20aa38253099ef1b4a64aced233c9afe29",
+            "Inputs": [
+              {
+                "Name": "in",
+                "Digest": "f7218970d1a5858b1d37bd7f2935222ceb12c787fc91ee5e9ebf03584d5b2a02"
+              }
+            ],
+            "Deps": null
+          },
+          "vkey": {
+            "Artifact": "eb5972366748402264e74a0ac771f2a4c8c218b2f1ad6ee61b27c4add924d868",
+            "Contract": "98b1ad43fb0e3623f5deb433b6ef7ce02d9ab6e1fc43807bc3764cfd8884a137",
+            "VID": "v",
+            "VVer": "v1",
+            "Deps": null
+          },
+          "live_comp": {
+            "in": "f7218970d1a5858b1d37bd7f2935222ceb12c787fc91ee5e9ebf03584d5b2a02"
+          },
+          "live_ver": {},
+          "auth": {
+            "job9": {
+              "version": 2,
+              "status": "REJECTED",
+              "found": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "corrupt-recompute",
+      "ops": [
+        {
+          "type": "artifact",
+          "comp": {
+            "Op": "op3",
+            "OpVer": "v1",
+            "Exec": "test/1.0",
+            "Env": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "Gen": "cd0aa9856147b6c5b4ff2b7dfee5da20aa38253099ef1b4a64aced233c9afe29",
+            "Inputs": [
+              {
+                "Name": "in",
+                "Digest": "f7218970d1a5858b1d37bd7f2935222ceb12c787fc91ee5e9ebf03584d5b2a02"
+              }
+            ],
+            "Deps": null
+          },
+          "body": "bytes-3",
+          "receipt": "r1"
+        },
+        {
+          "type": "claim",
+          "vkey": {
+            "Artifact": "c45447659af238f083dafb7b3b85492e617541611860b37aa81e67c51cf15dc6",
+            "Contract": "98b1ad43fb0e3623f5deb433b6ef7ce02d9ab6e1fc43807bc3764cfd8884a137",
+            "VID": "v",
+            "VVer": "v1",
+            "Deps": null
+          },
+          "status": "ACCEPTED",
+          "evidence": "job3",
+          "auth_version": 1
+        },
+        {
+          "type": "corrupt",
+          "body": "evil",
+          "revoke_key": "c45447659af238f083dafb7b3b85492e617541611860b37aa81e67c51cf15dc6"
+        }
+      ],
+      "resolves": [
+        {
+          "comp": {
+            "Op": "op3",
+            "OpVer": "v1",
+            "Exec": "test/1.0",
+            "Env": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "Gen": "cd0aa9856147b6c5b4ff2b7dfee5da20aa38253099ef1b4a64aced233c9afe29",
+            "Inputs": [
+              {
+                "Name": "in",
+                "Digest": "f7218970d1a5858b1d37bd7f2935222ceb12c787fc91ee5e9ebf03584d5b2a02"
+              }
+            ],
+            "Deps": null
+          },
+          "vkey": {
+            "Artifact": "c45447659af238f083dafb7b3b85492e617541611860b37aa81e67c51cf15dc6",
+            "Contract": "98b1ad43fb0e3623f5deb433b6ef7ce02d9ab6e1fc43807bc3764cfd8884a137",
+            "VID": "v",
+            "VVer": "v1",
+            "Deps": null
+          },
+          "live_comp": {
+            "in": "f7218970d1a5858b1d37bd7f2935222ceb12c787fc91ee5e9ebf03584d5b2a02"
+          },
+          "live_ver": {},
+          "auth": {
+            "job3": {
+              "version": 1,
+              "status": "ACCEPTED",
+              "found": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "unknown-authority",
+      "ops": [
+        {
+          "type": "artifact",
+          "comp": {
+            "Op": "op4",
+            "OpVer": "v1",
+            "Exec": "test/1.0",
+            "Env": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "Gen": "cd0aa9856147b6c5b4ff2b7dfee5da20aa38253099ef1b4a64aced233c9afe29",
+            "Inputs": [
+              {
+                "Name": "in",
+                "Digest": "f7218970d1a5858b1d37bd7f2935222ceb12c787fc91ee5e9ebf03584d5b2a02"
+              }
+            ],
+            "Deps": null
+          },
+          "body": "bytes-4",
+          "receipt": "r1"
+        },
+        {
+          "type": "claim",
+          "vkey": {
+            "Artifact": "ab260822512c101d9662dc65e673eb24688cb143f4a1ea2963b419de999ce2d2",
+            "Contract": "98b1ad43fb0e3623f5deb433b6ef7ce02d9ab6e1fc43807bc3764cfd8884a137",
+            "VID": "v",
+            "VVer": "v1",
+            "Deps": null
+          },
+          "status": "ACCEPTED",
+          "evidence": "job4",
+          "auth_version": 1
+        }
+      ],
+      "resolves": [
+        {
+          "comp": {
+            "Op": "op4",
+            "OpVer": "v1",
+            "Exec": "test/1.0",
+            "Env": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "Gen": "cd0aa9856147b6c5b4ff2b7dfee5da20aa38253099ef1b4a64aced233c9afe29",
+            "Inputs": [
+              {
+                "Name": "in",
+                "Digest": "f7218970d1a5858b1d37bd7f2935222ceb12c787fc91ee5e9ebf03584d5b2a02"
+              }
+            ],
+            "Deps": null
+          },
+          "vkey": {
+            "Artifact": "ab260822512c101d9662dc65e673eb24688cb143f4a1ea2963b419de999ce2d2",
+            "Contract": "98b1ad43fb0e3623f5deb433b6ef7ce02d9ab6e1fc43807bc3764cfd8884a137",
+            "VID": "v",
+            "VVer": "v1",
+            "Deps": null
+          },
+          "live_comp": {
+            "in": "f7218970d1a5858b1d37bd7f2935222ceb12c787fc91ee5e9ebf03584d5b2a02"
+          },
+          "live_ver": {},
+          "auth": {}
+        }
+      ]
+    },
+    {
+      "name": "heldout-shape",
+      "ops": [
+        {
+          "type": "artifact",
+          "comp": {
+            "Op": "heldout-op",
+            "OpVer": "v1",
+            "Exec": "test/1.0",
+            "Env": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "Gen": "cd0aa9856147b6c5b4ff2b7dfee5da20aa38253099ef1b4a64aced233c9afe29",
+            "Inputs": [
+              {
+                "Name": "seed",
+                "Digest": "13b7994fae9387c2e1b598524ba1204ae404d02fa67016ed86c74183ab1aafca"
+              }
+            ],
+            "Deps": null
+          },
+          "body": "heldout-bytes",
+          "receipt": "rh"
+        },
+        {
+          "type": "claim",
+          "vkey": {
+            "Artifact": "5444b6025dfd828ec97fc77d588cc2e03d3c33aa14bce89005f8a5d4d5fcd995",
+            "Contract": "b440502b09b38245b703754341143f126853149d6c409051142d2f64596cece3",
+            "VID": "hv",
+            "VVer": "v9",
+            "Deps": null
+          },
+          "status": "ACCEPTED",
+          "evidence": "jobh",
+          "auth_version": 3
+        }
+      ],
+      "resolves": [
+        {
+          "comp": {
+            "Op": "heldout-op",
+            "OpVer": "v1",
+            "Exec": "test/1.0",
+            "Env": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "Gen": "cd0aa9856147b6c5b4ff2b7dfee5da20aa38253099ef1b4a64aced233c9afe29",
+            "Inputs": [
+              {
+                "Name": "seed",
+                "Digest": "13b7994fae9387c2e1b598524ba1204ae404d02fa67016ed86c74183ab1aafca"
+              }
+            ],
+            "Deps": null
+          },
+          "vkey": {
+            "Artifact": "5444b6025dfd828ec97fc77d588cc2e03d3c33aa14bce89005f8a5d4d5fcd995",
+            "Contract": "49a0837461ae9b4ced1e1954718c0ddc35844599b0576d096e1a85140723d0fd",
+            "VID": "hv",
+            "VVer": "v9",
+            "Deps": null
+          },
+          "live_comp": {
+            "seed": "13b7994fae9387c2e1b598524ba1204ae404d02fa67016ed86c74183ab1aafca"
+          },
+          "live_ver": {},
+          "auth": {
+            "jobh": {
+              "version": 3,
+              "status": "ACCEPTED",
+              "found": true
+            }
+          }
+        },
+        {
+          "comp": {
+            "Op": "heldout-op",
+            "OpVer": "v1",
+            "Exec": "test/1.0",
+            "Env": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "Gen": "cd0aa9856147b6c5b4ff2b7dfee5da20aa38253099ef1b4a64aced233c9afe29",
+            "Inputs": [
+              {
+                "Name": "seed",
+                "Digest": "13b7994fae9387c2e1b598524ba1204ae404d02fa67016ed86c74183ab1aafca"
+              }
+            ],
+            "Deps": null
+          },
+          "vkey": {
+            "Artifact": "5444b6025dfd828ec97fc77d588cc2e03d3c33aa14bce89005f8a5d4d5fcd995",
+            "Contract": "b440502b09b38245b703754341143f126853149d6c409051142d2f64596cece3",
+            "VID": "hv",
+            "VVer": "v9",
+            "Deps": null
+          },
+          "live_comp": {
+            "seed": "13b7994fae9387c2e1b598524ba1204ae404d02fa67016ed86c74183ab1aafca"
+          },
+          "live_ver": {},
+          "auth": {
+            "jobh": {
+              "version": 3,
+              "status": "ACCEPTED",
+              "found": true
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "expected": [
+    {
+      "scenario": "rotation-verify",
+      "resolves": [
+        {
+          "state": "REUSE",
+          "reason": "exact artifact + current ACCEPTED claim",
+          "artifact": "2d4bfca022009cc8077571be69a39db647bbd31234a784b63de8e388c158aff7"
+        },
+        {
+          "state": "VERIFY",
+          "reason": "no current claim; 1 prior claim(s), e.g. ef4177937132",
+          "artifact": "2d4bfca022009cc8077571be69a39db647bbd31234a784b63de8e388c158aff7"
+        }
+      ],
+      "artifacts": 1,
+      "claims": 1,
+      "revoked": null
+    },
+    {
+      "scenario": "comp-change-recompute",
+      "resolves": [
+        {
+          "state": "RECOMPUTE",
+          "reason": "computation dep in changed",
+          "artifact": "2d4bfca022009cc8077571be69a39db647bbd31234a784b63de8e388c158aff7"
+        }
+      ],
+      "artifacts": 1,
+      "claims": 1,
+      "revoked": null
+    },
+    {
+      "scenario": "revoke-verify",
+      "resolves": [
+        {
+          "state": "VERIFY",
+          "reason": "claim ACCEPTED revoked=true",
+          "artifact": "eb5972366748402264e74a0ac771f2a4c8c218b2f1ad6ee61b27c4add924d868"
+        }
+      ],
+      "artifacts": 1,
+      "claims": 1,
+      "revoked": null
+    },
+    {
+      "scenario": "corrupt-recompute",
+      "resolves": [
+        {
+          "state": "RECOMPUTE",
+          "reason": "artifact bytes untrusted",
+          "artifact": "c45447659af238f083dafb7b3b85492e617541611860b37aa81e67c51cf15dc6"
+        }
+      ],
+      "artifacts": 1,
+      "claims": 1,
+      "revoked": null
+    },
+    {
+      "scenario": "unknown-authority",
+      "resolves": [
+        {
+          "state": "UNKNOWN",
+          "reason": "evidence authority unknown",
+          "artifact": ""
+        }
+      ],
+      "artifacts": 1,
+      "claims": 1,
+      "revoked": null
+    },
+    {
+      "scenario": "heldout-shape",
+      "resolves": [
+        {
+          "state": "VERIFY",
+          "reason": "no current claim; 1 prior claim(s), e.g. 7dae7a767e60",
+          "artifact": "5444b6025dfd828ec97fc77d588cc2e03d3c33aa14bce89005f8a5d4d5fcd995"
+        },
+        {
+          "state": "REUSE",
+          "reason": "exact artifact + current ACCEPTED claim",
+          "artifact": "5444b6025dfd828ec97fc77d588cc2e03d3c33aa14bce89005f8a5d4d5fcd995"
+        }
+      ],
+      "artifacts": 1,
+      "claims": 1,
+      "revoked": null
+    }
+  ]
+}

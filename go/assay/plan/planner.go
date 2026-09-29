@@ -30,7 +30,8 @@ type PlanQuote struct {
 	PlanID     string
 	Legal      bool
 	TotalUnits int
-	NodePrices map[string]int // node -> 0 (reuse) or CostUnits+verify
+	NodePrices map[string]int    // node -> 0 (reuse) or CostUnits+verify
+	NodeKeys   map[string]string // node -> derived execution-key digest ("": uncomputable)
 	Reason     string
 }
 
@@ -39,7 +40,8 @@ type PlanQuote struct {
 // an unknowable fresh digest → downstream keys uncomputable → downstream priced
 // as must-execute (conservative, no future information used).
 func (e *Executor) Quote(plan PhysicalPlan) PlanQuote {
-	q := PlanQuote{PlanID: plan.PlanID, Legal: true, NodePrices: map[string]int{}}
+	q := PlanQuote{PlanID: plan.PlanID, Legal: true,
+		NodePrices: map[string]int{}, NodeKeys: map[string]string{}}
 	if err := plan.Validate(); err != nil {
 		q.Legal = false
 		q.Reason = "invalid plan: " + err.Error()
@@ -96,6 +98,7 @@ func (e *Executor) Quote(plan PhysicalPlan) PlanQuote {
 				return q
 			}
 			upKeys[id] = key.KeyDigest()
+			q.NodeKeys[id] = key.KeyDigest()
 			if stored, hit := e.Store.Lookup(key.KeyDigest()); hit {
 				dec := e.Store.Evaluate(key, reuse.LiveOf(key), e.lookup)
 				switch dec.Validity {

@@ -60,6 +60,11 @@ type RunReport struct {
 	OpWorkNS       int64                     `json:"op_work_ns"`
 	StoreWriteB    int64                     `json:"store_write_bytes"`
 	ExecutionsOf   map[string]int            `json:"executions_of_key"`
+	// NodeKeys maps resolved node id -> derived execution-key digest, live
+	// through the run (set for every node whose key was derived, including
+	// reused and blocked nodes). Downstream assay tooling uses it for
+	// cross-run execution accounting.
+	NodeKeys map[string]string `json:"node_keys"`
 }
 
 // Treatments.
@@ -168,9 +173,37 @@ func splitLines(raw []byte) []string {
 	return out
 }
 
-// Run executes plan under treatment. runID scopes restart state ("crash-N"
-// style ids let tests crash mid-run then resume with the same runID).
+// HookAction controls RunWithHook after each resolved node.
+type HookAction int
+
+const (
+	// HookContinue proceeds to the next node.
+	HookContinue HookAction = iota
+	// HookAbort stops the run after the current node (durable progress kept).
+	// RunWithHook returns the partial report with ErrHookAbort.
+	HookAbort
+)
+
+// NodeHook observes each resolved node. Returning HookAbort stops the run.
+type NodeHook func(afterNode string, rep *RunReport) HookAction
+
+// ErrHookAbort is returned by RunWithHook when a hook aborts the run.
+var ErrHookAbort = errHookAbort{}
+
+type errHookAbort struct{}
+
+func (errHookAbort) Error() string { return "plan: hook aborted run" }
+
+// Run executes plan under treatment (no hooks).
 func (e *Executor) Run(plan PhysicalPlan, treatment, runID string, crashAfter int) (*RunReport, error) {
+	return e.RunWithHook(plan, treatment, runID, crashAfter, nil)
+}
+
+// RunWithHook executes plan under treatment, invoking hook after each node
+// reaches a resolution (including skips and blocks). HookAbort stops the run
+// after the current node, keeping durable progress; the partial report is
+// returned with ErrHookAbort and finalize is deferred to the resuming run.
+func (e *Executor) RunWithHook(plan PhysicalPlan, treatment, runID string, crashAfter int, hook NodeHook) (*RunReport, error) {
 	if err := plan.Validate(); err != nil {
 		return nil, err
 	}
@@ -201,12 +234,24 @@ func (e *Executor) Run(plan PhysicalPlan, treatment, runID string, crashAfter in
 	upArts := map[string]string{}  // nodeID -> artifact digest
 	upBytes := map[string][]byte{} // nodeID -> content bytes (in-run only)
 	blocked := map[string]bool{}
+	rep.NodeKeys = upKeys // live view for hooks and post-run accounting
+	// fireHook runs the hook (if any); true means abort the run now.
+	fireHook := func(id string) (*RunReport, error) {
+		if hook != nil && hook(id, rep) == HookAbort {
+			rep.PlanOverheadNS = time.Since(t0).Nanoseconds() - rep.OpWorkNS
+			return rep, ErrHookAbort
+		}
+		return nil, nil
+	}
 
 	for _, id := range order {
 		n := byID[id]
 		if treatment == TreatP2 && !closure[id] {
 			rep.Skipped = append(rep.Skipped, id)
 			rep.Reasons[id] = "outside required terminal closure"
+			if r, err := fireHook(id); err != nil {
+				return r, err
+			}
 			continue
 		}
 		// Upstream failure/block propagates: never consume bad inputs.
@@ -225,6 +270,9 @@ func (e *Executor) Run(plan PhysicalPlan, treatment, runID string, crashAfter in
 			rep.Resolutions[id] = ResolveBlockedUnknown
 			rep.Reasons[id] = "upstream " + blockedUp + " not valid"
 			blocked[id] = true
+			if r, err := fireHook(id); err != nil {
+				return r, err
+			}
 			continue
 		}
 		key, err := NodeKey(n, selectKeys(upKeys, n.Upstreams), selectKeys(upArts, n.Upstreams))
@@ -232,6 +280,9 @@ func (e *Executor) Run(plan PhysicalPlan, treatment, runID string, crashAfter in
 			rep.Resolutions[id] = ResolveBlockedUnknown
 			rep.Reasons[id] = err.Error()
 			blocked[id] = true
+			if r, err := fireHook(id); err != nil {
+				return r, err
+			}
 			continue
 		}
 		upKeys[id] = key.KeyDigest()
@@ -248,6 +299,9 @@ func (e *Executor) Run(plan PhysicalPlan, treatment, runID string, crashAfter in
 					rep.Resolutions[id] = ResolveReuseValid
 					rep.Reasons[id] = "restart: prior verified completion"
 					rep.Reused = append(rep.Reused, id)
+					if r, err := fireHook(id); err != nil {
+						return r, err
+					}
 					continue
 				}
 			}
@@ -260,6 +314,9 @@ func (e *Executor) Run(plan PhysicalPlan, treatment, runID string, crashAfter in
 			e.resolveP1(plan, n, key, upBytes, runID, rep, upArts, upBytes)
 		case TreatP2:
 			e.resolveP2(plan, n, key, upBytes, runID, rep, upArts, upBytes)
+		}
+		if r, err := fireHook(id); err != nil {
+			return r, err
 		}
 		if crashAfter > 0 && len(rep.Executed) >= crashAfter {
 			return rep, fmt.Errorf("plan: injected crash after %d executions", len(rep.Executed))

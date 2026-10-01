@@ -325,3 +325,224 @@ func TestWorstCaseCensoringFlips(t *testing.T) {
 		t.Fatalf("verdict=%s want INCONCLUSIVE", rep.Verdict)
 	}
 }
+
+// A2: zero candidate success → zero valid draws → conclusive refused.
+func TestBootstrapZeroSuccessRefused(t *testing.T) {
+	at := fixtureBase
+	var as []Assignment
+	var evs []outcome.OutcomeEvent
+	for i := 0; i < 5; i++ {
+		j := "z" + itoa(i)
+		as = append(as, fxAssign(j, "t2", at))
+		evs = append(evs, fxEvent(j, "t2", 1, outcome.StatusRejected, []float64{1.0}, at))
+		k := "y" + itoa(i)
+		as = append(as, fxAssign(k, "t0", at))
+		evs = append(evs, fxEvent(k, "t0", 1, outcome.StatusAccepted, []float64{1.0}, at))
+	}
+	recs := MatureJobs(as, evs, at.Add(24*time.Hour), 24*time.Hour)
+	rep := Analyze(recs, testCfg(), "t0", "t2", nil, true, true)
+	c := rep.Comparisons[0]
+	if c.ValidDraws != 0 || c.ValidFraction != 0 {
+		t.Fatalf("valid=%d frac=%v want 0", c.ValidDraws, c.ValidFraction)
+	}
+	if c.InvalidReasons["no-candidate-success"] != 200 {
+		t.Fatalf("reasons wrong: %+v", c.InvalidReasons)
+	}
+	if rep.Verdict == "CONCLUSIVE_T2_WINS" {
+		t.Fatal("conclusive verdict on zero information")
+	}
+}
+
+// A2: sparse successes on both arms → fractional coverage → refused.
+func TestBootstrapSparseCoverageRefused(t *testing.T) {
+	at := fixtureBase
+	var as []Assignment
+	var evs []outcome.OutcomeEvent
+	for i := 0; i < 30; i++ {
+		j := "s" + itoa(i)
+		as = append(as, fxAssign(j, "t2", at))
+		st := outcome.StatusRejected
+		if i == 0 {
+			st = outcome.StatusAccepted
+		}
+		evs = append(evs, fxEvent(j, "t2", 1, st, []float64{1.0}, at))
+		k := "b" + itoa(i)
+		as = append(as, fxAssign(k, "t0", at))
+		st0 := outcome.StatusRejected
+		if i == 0 {
+			st0 = outcome.StatusAccepted
+		}
+		evs = append(evs, fxEvent(k, "t0", 1, st0, []float64{1.0}, at))
+	}
+	recs := MatureJobs(as, evs, at.Add(24*time.Hour), 24*time.Hour)
+	cfg := testCfg()
+	cfg.BootstrapN = 2000
+	rep := Analyze(recs, cfg, "t0", "t2", nil, true, true)
+	c := rep.Comparisons[0]
+	if c.ValidFraction <= 0 || c.ValidFraction >= 0.5 {
+		t.Fatalf("fraction=%v want in (0, 0.5)", c.ValidFraction)
+	}
+	if rep.Verdict == "CONCLUSIVE_T2_WINS" {
+		t.Fatal("conclusive verdict on fractional coverage")
+	}
+	found := false
+	for _, r := range rep.Reasons {
+		if strings.Contains(r, "bootstrap coverage") {
+			found = true
+		}
+	}
+	if !found {
+		t.Fatalf("coverage reason missing: %v", rep.Reasons)
+	}
+}
+
+// A2: fully valid ordinary case keeps fraction 1.
+func TestBootstrapFullyValid(t *testing.T) {
+	at := fixtureBase
+	var as []Assignment
+	var evs []outcome.OutcomeEvent
+	for i := 0; i < 3; i++ {
+		j2, j0 := "v2"+itoa(i), "v0"+itoa(i)
+		as = append(as, fxAssign(j2, "t2", at), fxAssign(j0, "t0", at))
+		evs = append(evs,
+			fxEvent(j2, "t2", 1, outcome.StatusAccepted, []float64{1.0}, at),
+			fxEvent(j0, "t0", 1, outcome.StatusAccepted, []float64{4.0}, at))
+	}
+	recs := MatureJobs(as, evs, at.Add(24*time.Hour), 24*time.Hour)
+	rep := Analyze(recs, testCfg(), "t0", "t2", nil, true, true)
+	c := rep.Comparisons[0]
+	if c.ValidFraction != 1 || c.InvalidDraws != 0 {
+		t.Fatalf("valid=%v invalid=%d", c.ValidFraction, c.InvalidDraws)
+	}
+}
+
+// A3: nonuniform allocation is refused, not silently analyzed.
+func TestAllocationRefusal(t *testing.T) {
+	at := fixtureBase
+	mk := func(job, tx string, prob float64) (Assignment, outcome.OutcomeEvent) {
+		a := fxAssign(job, tx, at)
+		a.Probability = prob
+		return a, fxEvent(job, tx, 1, outcome.StatusAccepted, []float64{1.0}, at)
+	}
+	a1, e1 := mk("j1", "t2", 0.5)
+	a2, e2 := mk("j2", "t0", 0.5)
+	recs := MatureJobs([]Assignment{a1, a2}, []outcome.OutcomeEvent{e1, e2}, at.Add(24*time.Hour), 24*time.Hour)
+	cfg := testCfg()
+	cfg.ExpectedWeights = map[string]float64{"t2": 1.0 / 3, "t0": 1.0 / 3}
+	rep := Analyze(recs, cfg, "t0", "t2", nil, true, true)
+	if rep.Verdict != "NOT_RANKABLE" {
+		t.Fatalf("verdict=%s want NOT_RANKABLE", rep.Verdict)
+	}
+	found := false
+	for _, g := range rep.Gates {
+		if g.Name == "allocation" && !g.Pass {
+			found = true
+		}
+	}
+	if !found {
+		t.Fatalf("allocation gate missing: %+v", rep.Gates)
+	}
+	// Charter-matching weights pass the gate (verdict decided elsewhere).
+	a3, e3 := mk("j3", "t2", 1.0/3)
+	a4, e4 := mk("j4", "t0", 1.0/3)
+	recs2 := MatureJobs([]Assignment{a3, a4}, []outcome.OutcomeEvent{e3, e4}, at.Add(24*time.Hour), 24*time.Hour)
+	rep2 := Analyze(recs2, cfg, "t0", "t2", nil, true, true)
+	for _, g := range rep2.Gates {
+		if g.Name == "allocation" && !g.Pass {
+			t.Fatalf("charter-matching allocation refused: %+v", g)
+		}
+	}
+}
+
+// A4: high-PENDING treatment previously passed the floor and censor gates;
+// unresolved mass must now trip the censor gate.
+func TestHighPendingTripsCensor(t *testing.T) {
+	at := fixtureBase
+	var as []Assignment
+	var evs []outcome.OutcomeEvent
+	as = append(as, fxAssign("ok", "t2", at))
+	evs = append(evs, fxEvent("ok", "t2", 1, outcome.StatusAccepted, []float64{1.0}, at))
+	for i := 0; i < 9; i++ {
+		j := "p" + itoa(i)
+		as = append(as, fxAssign(j, "t2", at))
+		evs = append(evs, fxEvent(j, "t2", 1, outcome.StatusPending, []float64{1.0}, at))
+	}
+	recs := MatureJobs(as, evs, at.Add(24*time.Hour), 24*time.Hour)
+	cfg := testCfg()
+	cfg.CensorGate = 0.05
+	rep := Analyze(recs, cfg, "t0", "t2", nil, true, true)
+	if rep.Treatments["t2"].CensoredFraction != 0.9 {
+		t.Fatalf("censored=%v want 0.9", rep.Treatments["t2"].CensoredFraction)
+	}
+	if rep.Verdict != "NOT_RANKABLE" {
+		t.Fatalf("verdict=%s want NOT_RANKABLE", rep.Verdict)
+	}
+}
+
+// A4: missing-cost gate trips on heavy unmetered share.
+func TestMissingCostGateTrips(t *testing.T) {
+	at := fixtureBase
+	var as []Assignment
+	var evs []outcome.OutcomeEvent
+	for i := 0; i < 4; i++ {
+		j := "m" + itoa(i)
+		as = append(as, fxAssign(j, "t2", at))
+		ev := fxEvent(j, "t2", 1, outcome.StatusAccepted, []float64{1.0}, at)
+		if i > 0 {
+			ev.Attempts[0].CostUSD = nil
+		}
+		evs = append(evs, ev)
+	}
+	recs := MatureJobs(as, evs, at.Add(24*time.Hour), 24*time.Hour)
+	cfg := testCfg() // MaxUnmeteredShare 0 -> default 0.10; share here 0.75
+	rep := Analyze(recs, cfg, "t0", "t2", nil, true, true)
+	found := false
+	for _, g := range rep.Gates {
+		if len(g.Name) >= 12 && g.Name[:12] == "missing-cost" && !g.Pass {
+			found = true
+		}
+	}
+	if !found {
+		t.Fatalf("missing-cost gate missing: %+v", rep.Gates)
+	}
+	if rep.Verdict != "NOT_RANKABLE" {
+		t.Fatalf("verdict=%s want NOT_RANKABLE", rep.Verdict)
+	}
+}
+
+// A5: commercial gate needs BOTH baselines: t2 beats t0 on the bar but not
+// t1 -> INCONCLUSIVE with the bar reason.
+func TestCommercialGateNeedsBothBaselines(t *testing.T) {
+	at := fixtureBase
+	var as []Assignment
+	var evs []outcome.OutcomeEvent
+	for i := 0; i < 4; i++ {
+		for _, tc := range []struct {
+			tx string
+			c  float64
+		}{{"t2", 1.0}, {"t0", 4.0}, {"t1", 1.1}} {
+			j := tc.tx + itoa(i)
+			as = append(as, fxAssign(j, tc.tx, at))
+			evs = append(evs, fxEvent(j, tc.tx, 1, outcome.StatusAccepted, []float64{tc.c}, at))
+		}
+	}
+	recs := MatureJobs(as, evs, at.Add(24*time.Hour), 24*time.Hour)
+	cfg := testCfg()
+	cfg.MinJobs = 4
+	rep := Analyze(recs, cfg, "t0", "t2", []string{"t1"}, true, true)
+	if len(rep.Comparisons) != 2 {
+		t.Fatalf("comparisons=%d", len(rep.Comparisons))
+	}
+	if rep.Verdict != "INCONCLUSIVE" {
+		t.Fatalf("verdict=%s reasons=%v (want INCONCLUSIVE)", rep.Verdict, rep.Reasons)
+	}
+	found := false
+	for _, r := range rep.Reasons {
+		if strings.Contains(r, "commercial bar") {
+			found = true
+		}
+	}
+	if !found {
+		t.Fatalf("bar reason missing: %v", rep.Reasons)
+	}
+}

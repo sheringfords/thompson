@@ -1,0 +1,102 @@
+{
+  "change": "cross1-premise",
+  "l1_redo_tokens": 34195,
+  "l2_discard_tokens": 34195,
+  "l3_discard_tokens": 24687,
+  "l3_preserved_tokens": 9508,
+  "median_premises": 4,
+  "opaque_frac": 0.7110396256762684,
+  "oracle_pass": true,
+  "parser": "v1-stream-state",
+  "probe_note": "ok  \tledgercalc/api\t4.423s\nok  \tledgercalc/calc\t3.354s [no tests to run]\nok  \tledgercalc/format\t1.110s [no tests to run]\n?   \tledgercalc/money\t[no test files]\n?   \tledgercalc/net\t[no test files]\nok  \tledgercalc/store\t2.226s [no tests to run]",
+  "probes_pass": true,
+  "sarf": 0.28896037432373156,
+  "slices": 13,
+  "slices_audit": [
+    {
+      "index": 0,
+      "premises": 1,
+      "tokens": 9508,
+      "tool_calls": 1
+    },
+    {
+      "index": 1,
+      "premises": 3,
+      "tokens": 373,
+      "tool_calls": 2
+    },
+    {
+      "index": 2,
+      "premises": 4,
+      "tokens": 594,
+      "tool_calls": 1
+    },
+    {
+      "index": 3,
+      "premises": 4,
+      "tokens": 463,
+      "tool_calls": 1
+    },
+    {
+      "index": 4,
+      "premises": 4,
+      "tokens": 8972,
+      "tool_calls": 1
+    },
+    {
+      "index": 5,
+      "premises": 4,
+      "tokens": 309,
+      "tool_calls": 1
+    },
+    {
+      "index": 6,
+      "premises": 4,
+      "tokens": 603,
+      "tool_calls": 1
+    },
+    {
+      "index": 7,
+      "premises": 4,
+      "tokens": 9806,
+      "tool_calls": 1
+    },
+    {
+      "index": 8,
+      "premises": 4,
+      "tokens": 651,
+      "tool_calls": 1
+    },
+    {
+      "index": 9,
+      "premises": 4,
+      "tokens": 973,
+      "tool_calls": 1
+    },
+    {
+      "index": 10,
+      "premises": 4,
+      "tokens": 958,
+      "tool_calls": 1
+    },
+    {
+      "index": 11,
+      "premises": 4,
+      "tokens": 521,
+      "tool_calls": 1
+    },
+    {
+      "index": 12,
+      "premises": 4,
+      "tokens": 464,
+      "tool_calls": 0
+    }
+  ],
+  "stale": [
+    "file:store/item.go"
+  ],
+  "task": "cross1",
+  "total_reads": 4,
+  "unknown_frac": 0,
+  "workdir": "/private/tmp/pilot-runs/run-3879145388"
+}

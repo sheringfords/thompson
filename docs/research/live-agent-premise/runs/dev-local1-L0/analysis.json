@@ -1,0 +1,70 @@
+{
+  "change": "",
+  "l1_redo_tokens": 0,
+  "l2_discard_tokens": 0,
+  "l3_discard_tokens": 0,
+  "l3_preserved_tokens": 0,
+  "median_premises": 4,
+  "opaque_frac": 0.1839470284237726,
+  "oracle_pass": true,
+  "parser": "v1-stream-state",
+  "probe_note": "ok  \tledgercalc/api\t0.946s [no tests to run]\nok  \tledgercalc/calc\t2.703s\nok  \tledgercalc/format\t1.748s [no tests to run]\n?   \tledgercalc/money\t[no test files]\n?   \tledgercalc/net\t[no test files]\nok  \tledgercalc/store\t3.552s [no tests to run]",
+  "probes_pass": true,
+  "sarf": 0.8160529715762274,
+  "slices": 8,
+  "slices_audit": [
+    {
+      "index": 0,
+      "premises": 1,
+      "tokens": 9556,
+      "tool_calls": 1
+    },
+    {
+      "index": 1,
+      "premises": 3,
+      "tokens": 550,
+      "tool_calls": 2
+    },
+    {
+      "index": 2,
+      "premises": 4,
+      "tokens": 524,
+      "tool_calls": 1
+    },
+    {
+      "index": 3,
+      "premises": 4,
+      "tokens": 426,
+      "tool_calls": 1
+    },
+    {
+      "index": 4,
+      "premises": 4,
+      "tokens": 351,
+      "tool_calls": 1
+    },
+    {
+      "index": 5,
+      "premises": 4,
+      "tokens": 368,
+      "tool_calls": 1
+    },
+    {
+      "index": 6,
+      "premises": 4,
+      "tokens": 608,
+      "tool_calls": 1
+    },
+    {
+      "index": 7,
+      "premises": 4,
+      "tokens": 0,
+      "tool_calls": 0
+    }
+  ],
+  "stale": null,
+  "task": "local1",
+  "total_reads": 4,
+  "unknown_frac": 0,
+  "workdir": "/private/tmp/pilot-runs/run-532013139"
+}

@@ -1,0 +1,15 @@
+{
+  "run_id": "ho-local2-L0",
+  "task_id": "local2",
+  "schedule": "clean",
+  "model": "opencode/muse-spark-1.3-contributor-free",
+  "parser": "v1-stream-state",
+  "session_id": "ses_f0757112fffeyVM7tGkfPbb1Gl",
+  "exit": 0,
+  "agent_ms": 23348,
+  "reads": 5,
+  "model_calls": 2,
+  "change_landed": false,
+  "tests_pass": true,
+  "final_diff_stat": "2 files changed, 5 insertions(+), 4 deletions(-)"
+}

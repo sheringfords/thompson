@@ -1,0 +1,15 @@
+{
+  "run_id": "dev-cross1-conflict",
+  "task_id": "cross1",
+  "schedule": "conflicting:cross1-premise",
+  "model": "opencode/muse-spark-1.3-contributor-free",
+  "parser": "v1-stream-state",
+  "session_id": "ses_f0768962cffesSNuGziujlLydi",
+  "exit": 0,
+  "agent_ms": 54052,
+  "reads": 10,
+  "model_calls": 4,
+  "change_landed": true,
+  "tests_pass": true,
+  "final_diff_stat": "2 files changed, 11 insertions(+), 1 deletion(-)"
+}

@@ -1,0 +1,66 @@
+{
+  "change": "disjoint-b",
+  "l1_redo_tokens": 11728,
+  "l2_discard_tokens": 11728,
+  "l3_discard_tokens": 2207,
+  "l3_preserved_tokens": 9521,
+  "median_premises": 3,
+  "opaque_frac": 0.18818212824010913,
+  "oracle_pass": true,
+  "parser": "v1-stream-state",
+  "probe_note": "ok  \tledgercalc/api\t1.882s [no tests to run]\nok  \tledgercalc/calc\t1.007s\nok  \tledgercalc/format\t3.701s [no tests to run]\n?   \tledgercalc/money\t[no test files]\n?   \tledgercalc/net\t[no test files]\nok  \tledgercalc/store\t2.806s",
+  "probes_pass": true,
+  "sarf": 0.8118178717598908,
+  "slices": 7,
+  "slices_audit": [
+    {
+      "index": 0,
+      "premises": 1,
+      "tokens": 9521,
+      "tool_calls": 1
+    },
+    {
+      "index": 1,
+      "premises": 3,
+      "tokens": 385,
+      "tool_calls": 2
+    },
+    {
+      "index": 2,
+      "premises": 3,
+      "tokens": 752,
+      "tool_calls": 1
+    },
+    {
+      "index": 3,
+      "premises": 3,
+      "tokens": 491,
+      "tool_calls": 1
+    },
+    {
+      "index": 4,
+      "premises": 3,
+      "tokens": 285,
+      "tool_calls": 1
+    },
+    {
+      "index": 5,
+      "premises": 3,
+      "tokens": 293,
+      "tool_calls": 1
+    },
+    {
+      "index": 6,
+      "premises": 3,
+      "tokens": 0,
+      "tool_calls": 0
+    }
+  ],
+  "stale": [
+    "file:store/item.go"
+  ],
+  "task": "disjoint1",
+  "total_reads": 3,
+  "unknown_frac": 0,
+  "workdir": "/private/tmp/pilot-runs/run-3972720356"
+}

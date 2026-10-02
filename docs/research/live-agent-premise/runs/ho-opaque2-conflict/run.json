@@ -1,0 +1,15 @@
+{
+  "run_id": "ho-opaque2-conflict",
+  "task_id": "opaque2",
+  "schedule": "conflicting:opaque2-premise",
+  "model": "opencode/muse-spark-1.3-contributor-free",
+  "parser": "v1-stream-state",
+  "session_id": "ses_f0753ea85ffegdC1jyH0Fu1iTM",
+  "exit": 0,
+  "agent_ms": 33058,
+  "reads": 10,
+  "model_calls": 3,
+  "change_landed": true,
+  "tests_pass": true,
+  "final_diff_stat": "1 file changed, 1 insertion(+), 3 deletions(-)"
+}

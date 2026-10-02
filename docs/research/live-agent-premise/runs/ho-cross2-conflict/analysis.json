@@ -1,0 +1,108 @@
+{
+  "change": "cross2-premise",
+  "l1_redo_tokens": 15952,
+  "l2_discard_tokens": 15952,
+  "l3_discard_tokens": 7972,
+  "l3_preserved_tokens": 7980,
+  "median_premises": 4,
+  "opaque_frac": 0.4997492477432297,
+  "oracle_pass": true,
+  "parser": "v1-stream-state",
+  "probe_note": "ok  \tledgercalc/api\t1.141s [no tests to run]\nok  \tledgercalc/calc\t2.972s\nok  \tledgercalc/format\t1.959s [no tests to run]\n?   \tledgercalc/money\t[no test files]\n?   \tledgercalc/net\t[no test files]\nok  \tledgercalc/store\t4.003s [no tests to run]",
+  "probes_pass": true,
+  "sarf": 0.5002507522567703,
+  "slices": 14,
+  "slices_audit": [
+    {
+      "index": 0,
+      "premises": 1,
+      "tokens": 7980,
+      "tool_calls": 1
+    },
+    {
+      "index": 1,
+      "premises": 4,
+      "tokens": 432,
+      "tool_calls": 3
+    },
+    {
+      "index": 2,
+      "premises": 4,
+      "tokens": 1210,
+      "tool_calls": 1
+    },
+    {
+      "index": 3,
+      "premises": 4,
+      "tokens": 1302,
+      "tool_calls": 1
+    },
+    {
+      "index": 4,
+      "premises": 4,
+      "tokens": 854,
+      "tool_calls": 1
+    },
+    {
+      "index": 5,
+      "premises": 4,
+      "tokens": 432,
+      "tool_calls": 1
+    },
+    {
+      "index": 6,
+      "premises": 4,
+      "tokens": 629,
+      "tool_calls": 1
+    },
+    {
+      "index": 7,
+      "premises": 4,
+      "tokens": 542,
+      "tool_calls": 1
+    },
+    {
+      "index": 8,
+      "premises": 4,
+      "tokens": 507,
+      "tool_calls": 1
+    },
+    {
+      "index": 9,
+      "premises": 4,
+      "tokens": 651,
+      "tool_calls": 1
+    },
+    {
+      "index": 10,
+      "premises": 4,
+      "tokens": 760,
+      "tool_calls": 1
+    },
+    {
+      "index": 11,
+      "premises": 4,
+      "tokens": 387,
+      "tool_calls": 1
+    },
+    {
+      "index": 12,
+      "premises": 4,
+      "tokens": 265,
+      "tool_calls": 1
+    },
+    {
+      "index": 13,
+      "premises": 4,
+      "tokens": 0,
+      "tool_calls": 0
+    }
+  ],
+  "stale": [
+    "file:calc/discount.go"
+  ],
+  "task": "cross2",
+  "total_reads": 4,
+  "unknown_frac": 0,
+  "workdir": "/private/tmp/pilot-runs/run-944410383"
+}

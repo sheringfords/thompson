@@ -1,0 +1,100 @@
+{
+  "change": "cross2-premise",
+  "l1_redo_tokens": 0,
+  "l2_discard_tokens": 0,
+  "l3_discard_tokens": 0,
+  "l3_preserved_tokens": 0,
+  "median_premises": 8,
+  "opaque_frac": 0.3012109300703734,
+  "oracle_pass": true,
+  "parser": "v1-stream-state",
+  "probe_note": "ok  \tledgercalc/api\t1.799s [no tests to run]\nok  \tledgercalc/calc\t0.964s\nok  \tledgercalc/format\t2.664s [no tests to run]\n?   \tledgercalc/money\t[no test files]\n?   \tledgercalc/net\t[no test files]\nok  \tledgercalc/store\t3.542s [no tests to run]",
+  "probes_pass": true,
+  "sarf": 0.6987890699296265,
+  "slices": 13,
+  "slices_audit": [
+    {
+      "index": 0,
+      "premises": 3,
+      "tokens": 9586,
+      "tool_calls": 3
+    },
+    {
+      "index": 1,
+      "premises": 3,
+      "tokens": 810,
+      "tool_calls": 1
+    },
+    {
+      "index": 2,
+      "premises": 4,
+      "tokens": 389,
+      "tool_calls": 1
+    },
+    {
+      "index": 3,
+      "premises": 5,
+      "tokens": 237,
+      "tool_calls": 1
+    },
+    {
+      "index": 4,
+      "premises": 8,
+      "tokens": 514,
+      "tool_calls": 3
+    },
+    {
+      "index": 5,
+      "premises": 8,
+      "tokens": 1457,
+      "tool_calls": 1
+    },
+    {
+      "index": 6,
+      "premises": 8,
+      "tokens": 918,
+      "tool_calls": 1
+    },
+    {
+      "index": 7,
+      "premises": 8,
+      "tokens": 464,
+      "tool_calls": 1
+    },
+    {
+      "index": 8,
+      "premises": 8,
+      "tokens": 410,
+      "tool_calls": 1
+    },
+    {
+      "index": 9,
+      "premises": 8,
+      "tokens": 418,
+      "tool_calls": 1
+    },
+    {
+      "index": 10,
+      "premises": 8,
+      "tokens": 310,
+      "tool_calls": 1
+    },
+    {
+      "index": 11,
+      "premises": 8,
+      "tokens": 259,
+      "tool_calls": 1
+    },
+    {
+      "index": 12,
+      "premises": 8,
+      "tokens": 0,
+      "tool_calls": 0
+    }
+  ],
+  "stale": null,
+  "task": "cross2",
+  "total_reads": 8,
+  "unknown_frac": 0,
+  "workdir": "/tmp/pilot-runs/run-2376465989"
+}

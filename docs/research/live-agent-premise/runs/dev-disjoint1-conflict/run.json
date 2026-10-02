@@ -1,0 +1,15 @@
+{
+  "run_id": "dev-disjoint1-conflict",
+  "task_id": "disjoint1",
+  "schedule": "conflicting:disjoint-b",
+  "model": "opencode/muse-spark-1.3-contributor-free",
+  "parser": "v1-stream-state",
+  "session_id": "ses_f07639a90ffeJgq0UDzKIldrSB",
+  "exit": 0,
+  "agent_ms": 29738,
+  "reads": 6,
+  "model_calls": 3,
+  "change_landed": true,
+  "tests_pass": true,
+  "final_diff_stat": "2 files changed, 9 insertions(+), 1 deletion(-)"
+}

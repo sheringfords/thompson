@@ -1,0 +1,15 @@
+{
+  "run_id": "dev-local1-L0",
+  "task_id": "local1",
+  "schedule": "clean",
+  "model": "opencode/muse-spark-1.3-contributor-free",
+  "parser": "v1-stream-state",
+  "session_id": "ses_f07600fbdffe4vB7IbrN594P3B",
+  "exit": 0,
+  "agent_ms": 23217,
+  "reads": 5,
+  "model_calls": 3,
+  "change_landed": false,
+  "tests_pass": true,
+  "final_diff_stat": "2 files changed, 6 insertions(+), 3 deletions(-)"
+}

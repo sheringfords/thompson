@@ -1,0 +1,39 @@
+[
+  {
+    "kind": "git",
+    "key": "names:",
+    "witness": "names:c4623f394f4417e8",
+    "call": 0,
+    "tool": "read"
+  },
+  {
+    "kind": "unknown",
+    "key": "execute",
+    "witness": "",
+    "call": 1,
+    "tool": "execute",
+    "why": "unclassified tool"
+  },
+  {
+    "kind": "git",
+    "key": "customer.md",
+    "witness": "absent",
+    "call": 2,
+    "tool": "write"
+  },
+  {
+    "kind": "unknown",
+    "key": "execute",
+    "witness": "",
+    "call": 3,
+    "tool": "execute",
+    "why": "unclassified tool"
+  },
+  {
+    "kind": "git",
+    "key": "quote.json",
+    "witness": "absent",
+    "call": 4,
+    "tool": "write"
+  }
+]

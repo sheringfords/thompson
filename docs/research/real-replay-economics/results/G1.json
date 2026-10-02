@@ -1,0 +1,151 @@
+{
+  "scenario": {
+    "id": "G1",
+    "family": "git",
+    "qualifying": true,
+    "mutation": "G1",
+    "s0_calls": 9,
+    "first_stale_call": 2,
+    "preserved_calls": 2,
+    "preserved_post_first_calls": 1,
+    "r2_mode": "resume",
+    "r2_replay_rounds": 1,
+    "r1_full_restart": {
+      "model_calls": 19,
+      "tool_calls": 24,
+      "tokens_all_calls": {
+        "input": 22480,
+        "output": 2837,
+        "reasoning": 441,
+        "cache_read": 175474,
+        "cache_write": 0,
+        "reasoning_exposed": false
+      },
+      "tokens_excluding_fresh_first_calls": {
+        "input": 6059,
+        "output": 2599,
+        "reasoning": 414,
+        "cache_read": 173953,
+        "cache_write": 0,
+        "reasoning_exposed": false
+      },
+      "fresh_starts": 2,
+      "calls_without_usage": 0,
+      "agent_wall_ms": 56770
+    },
+    "r2_selective_replay": {
+      "model_calls": 16,
+      "tool_calls": 19,
+      "tokens_all_calls": {
+        "input": 23549,
+        "output": 2918,
+        "reasoning": 744,
+        "cache_read": 151967,
+        "cache_write": 0,
+        "reasoning_exposed": false
+      },
+      "tokens_excluding_fresh_first_calls": {
+        "input": 14577,
+        "output": 2798,
+        "reasoning": 728,
+        "cache_read": 151967,
+        "cache_write": 0,
+        "reasoning_exposed": false
+      },
+      "fresh_starts": 1,
+      "calls_without_usage": 0,
+      "agent_wall_ms": 76393
+    },
+    "r0_oracle_pass": true,
+    "r2_oracle_pass": true,
+    "r1_oracle_pass": true,
+    "stale_s0_result_fails_s1_oracle": true,
+    "r2_committed": true,
+    "r0_committed": true,
+    "missed_stale_premises": 0,
+    "unknown_premises": 0,
+    "discard_classification": {
+      "r2_true_dependency": 6,
+      "r2_opaque_forced": 0,
+      "r1_true_dependency": 6,
+      "r1_false_conflict": 3,
+      "r1_opaque_forced": 0
+    }
+  },
+  "gates": {
+    "primary_new_work_reduction_excl_first": -0.9954805996472662,
+    "primary_pass": false,
+    "new_work_reduction_incl_first": -0.05640965913502605,
+    "recovery_only_new_work_reduction_excl_first": -2.276531383917318,
+    "fewer_repeated_calls": true,
+    "visible_tokens_r2_over_r1": 0.8904051045559355,
+    "visible_within_10pct": true,
+    "preserves_post_first_call": true,
+    "correctness": true,
+    "usage_complete": true,
+    "win": false
+  },
+  "s0_validation_against_s1": {
+    "git_head": "0546d0a6b85be5143d7a7fdd217b84502beaf62a",
+    "stale": [
+      {
+        "kind": "git",
+        "key": "pricing/discount_test.go",
+        "witness": "945c4ad5923958d74f782fbd59b2f91b3f31efb3",
+        "call": 2,
+        "tool": "read"
+      },
+      {
+        "kind": "git",
+        "key": "pricing/discount.go",
+        "witness": "873c618cfad31569563cddd9d254431b22bca979",
+        "call": 2,
+        "tool": "read"
+      },
+      {
+        "kind": "git",
+        "key": "",
+        "witness": "6439d3cc90615ac83529a42ab8026de58597b849",
+        "call": 7,
+        "tool": "shell",
+        "why": "shell is opaque"
+      }
+    ],
+    "unknown": null,
+    "first_stale_call": 2,
+    "checked": 12
+  },
+  "r2_final_validation": {
+    "git_head": "0546d0a6b85be5143d7a7fdd217b84502beaf62a",
+    "stale": null,
+    "unknown": null,
+    "first_stale_call": -1,
+    "checked": 12
+  },
+  "r0_final_validation": {
+    "git_head": "0546d0a6b85be5143d7a7fdd217b84502beaf62a",
+    "stale": null,
+    "unknown": null,
+    "first_stale_call": -1,
+    "checked": 12
+  },
+  "oracle_output": {
+    "r0": "ok  \tshopcalc/format\t0.655s\nok  \tshopcalc/pricing\t1.168s\n",
+    "r2": "ok  \tshopcalc/format\t1.191s\nok  \tshopcalc/pricing\t0.601s\n",
+    "stale_s0_on_s1": "ok  \tshopcalc/format\t1.131s\n--- FAIL: TestLineTotal (0.00s)\n    line_test.go:7: got 199.5\n--- FAIL: TestProbeLineTotal (0.00s)\n    zz_probe_test.go:10: LineTotal(10,2,25)=19.950000000000003 want 15\nFAIL\nFAIL\tshopcalc/pricing\t0.616s\nFAIL\n"
+  },
+  "continuations": [
+    {
+      "source_session": "ses_f0340db7affenpXucdVxkjsaKt",
+      "new_session": "ses_f0340db7affenpXucdVxkjG111",
+      "kept_assistant_messages": 2,
+      "dropped_assistant_messages": 7,
+      "hidden_items_removed": 9,
+      "kept_source_message_ids": [
+        "msg_0fcbf24f9001PIOLIxU8vuYGh0",
+        "msg_0fcbf284e001ibKl8lEy31TFTc",
+        "msg_0fcbf32e8001IFv0qA6pAD42zA"
+      ]
+    }
+  ]
+}

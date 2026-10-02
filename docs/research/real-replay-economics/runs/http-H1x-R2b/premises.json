@@ -1,0 +1,44 @@
+[
+  {
+    "kind": "http",
+    "key": "/customers/c42",
+    "witness": "\"717397117e3f5f6d\"",
+    "call": 1,
+    "tool": "webfetch"
+  },
+  {
+    "kind": "http",
+    "key": "/policy/discounts",
+    "witness": "\"54bf52bcd43a340f\"",
+    "call": 2,
+    "tool": "webfetch"
+  },
+  {
+    "kind": "git",
+    "key": "customer.md",
+    "witness": "absent",
+    "call": 3,
+    "tool": "write"
+  },
+  {
+    "kind": "http",
+    "key": "/pricing/widget",
+    "witness": "\"e76c04c68857af75\"",
+    "call": 4,
+    "tool": "webfetch"
+  },
+  {
+    "kind": "git",
+    "key": "quote.json",
+    "witness": "absent",
+    "call": 5,
+    "tool": "write"
+  },
+  {
+    "kind": "git",
+    "key": "quote.json",
+    "witness": "absent",
+    "call": 6,
+    "tool": "write"
+  }
+]

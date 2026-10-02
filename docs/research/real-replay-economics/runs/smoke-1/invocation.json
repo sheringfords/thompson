@@ -1,0 +1,9 @@
+{
+  "label": "smoke-1",
+  "session": "",
+  "resume": false,
+  "exit": 0,
+  "wall_ms": 34932,
+  "timed_out": false,
+  "stream": "../docs/research/real-replay-economics/runs/smoke-1/stream.jsonl"
+}

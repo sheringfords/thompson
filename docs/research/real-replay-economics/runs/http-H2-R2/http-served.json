@@ -1,0 +1,17 @@
+[
+  {
+    "path": "/customers/c42",
+    "etag": "\"717397117e3f5f6d\"",
+    "at_ms": 1790947206660
+  },
+  {
+    "path": "/policy/discounts",
+    "etag": "\"f08eafbce8d88c02\"",
+    "at_ms": 1790947206663
+  },
+  {
+    "path": "/pricing/widget",
+    "etag": "\"89916a0f82d77988\"",
+    "at_ms": 1790947227374
+  }
+]

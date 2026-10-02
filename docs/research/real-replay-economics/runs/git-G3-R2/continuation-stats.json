@@ -1,0 +1,17 @@
+{
+  "source_session": "ses_f0340db7affenpXucdVxkjsaKt",
+  "new_session": "ses_f0340db7affenpXucdVxkjG311",
+  "kept_assistant_messages": 7,
+  "dropped_assistant_messages": 2,
+  "hidden_items_removed": 22,
+  "kept_source_message_ids": [
+    "msg_0fcbf24f9001PIOLIxU8vuYGh0",
+    "msg_0fcbf284e001ibKl8lEy31TFTc",
+    "msg_0fcbf32e8001IFv0qA6pAD42zA",
+    "msg_0fcbf3f3d001uWCWGwKHUJWD1l",
+    "msg_0fcbf47fb00141If9beMYfzNTv",
+    "msg_0fcbf54b9001NUxm59fu2A1X92",
+    "msg_0fcbf6721001XYXYpE2JjFZ7vd",
+    "msg_0fcbf843f001Qp8eYsuy6zemRl"
+  ]
+}

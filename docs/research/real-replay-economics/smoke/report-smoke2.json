@@ -1,0 +1,136 @@
+{
+  "s0_calls": 7,
+  "s0_tools": {
+    "resume:read": 2,
+    "resume:webfetch": 1,
+    "resume:write": 2
+  },
+  "s0_premises": null,
+  "first_stale_call_under_H1": 4,
+  "continuation": {
+    "source_session": "ses_f0344bf03ffeg9TbIixp7XvDsu",
+    "new_session": "ses_f0344bf03ffeg9TbIixp7XSm02",
+    "kept_assistant_messages": 4,
+    "dropped_assistant_messages": 3,
+    "hidden_items_removed": 12,
+    "kept_source_message_ids": [
+      "msg_0fcbb4162001yp4KIgv3Lx1V4k",
+      "msg_0fcbb4588001DuOrWY52FZbJtc",
+      "msg_0fcbb5f28001S6ndhXInz9Eml7",
+      "msg_0fcbb68c90019Gxhh0INujpCGt",
+      "msg_0fcbb708c001aeJCYrCBXNzLbl"
+    ]
+  },
+  "resume_calls": 6,
+  "resume_call_tokens": [
+    {
+      "input": 8038,
+      "output": 99,
+      "reasoning": 86,
+      "cache_read": 1521,
+      "cache_write": 0,
+      "reasoning_exposed": true
+    },
+    {
+      "input": 325,
+      "output": 50,
+      "reasoning": 250,
+      "cache_read": 9457,
+      "cache_write": 0,
+      "reasoning_exposed": true
+    },
+    {
+      "input": 434,
+      "output": 105,
+      "reasoning": 53,
+      "cache_read": 9713,
+      "cache_write": 0,
+      "reasoning_exposed": true
+    },
+    {
+      "input": 235,
+      "output": 67,
+      "reasoning": 178,
+      "cache_read": 10097,
+      "cache_write": 0,
+      "reasoning_exposed": true
+    },
+    {
+      "input": 428,
+      "output": 105,
+      "reasoning": 43,
+      "cache_read": 10225,
+      "cache_write": 0,
+      "reasoning_exposed": true
+    },
+    {
+      "input": 220,
+      "output": 37,
+      "reasoning": 7,
+      "cache_read": 10609,
+      "cache_write": 0,
+      "reasoning_exposed": true
+    }
+  ],
+  "s0_call_tokens": [
+    {
+      "input": 7477,
+      "output": 116,
+      "reasoning": 81,
+      "cache_read": 1521,
+      "cache_write": 0,
+      "reasoning_exposed": true
+    },
+    {
+      "input": 338,
+      "output": 80,
+      "reasoning": 10,
+      "cache_read": 8945,
+      "cache_write": 0,
+      "reasoning_exposed": true
+    },
+    {
+      "input": 214,
+      "output": 80,
+      "reasoning": 12,
+      "cache_read": 9201,
+      "cache_write": 0,
+      "reasoning_exposed": true
+    },
+    {
+      "input": 220,
+      "output": 105,
+      "reasoning": 35,
+      "cache_read": 9329,
+      "cache_write": 0,
+      "reasoning_exposed": true
+    },
+    {
+      "input": 259,
+      "output": 79,
+      "reasoning": 8,
+      "cache_read": 9457,
+      "cache_write": 0,
+      "reasoning_exposed": true
+    },
+    {
+      "input": 128,
+      "output": 105,
+      "reasoning": 689,
+      "cache_read": 9713,
+      "cache_write": 0,
+      "reasoning_exposed": true
+    },
+    {
+      "input": 821,
+      "output": 44,
+      "reasoning": 102,
+      "cache_read": 9841,
+      "cache_write": 0,
+      "reasoning_exposed": true
+    }
+  ],
+  "notes": [
+    "resume quote.json={\"customer\": \"c42\", \"sku\": \"widget\", \"qty\": 3, \"unit_price\": 52.0, \"discount_pct\": 10, \"total\": 140.4} oracle(S1) pass=true ok"
+  ]
+}

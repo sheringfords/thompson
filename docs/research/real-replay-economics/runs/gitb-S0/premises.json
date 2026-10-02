@@ -1,0 +1,95 @@
+[
+  {
+    "kind": "git",
+    "key": "names:",
+    "witness": "names:fa3ac3cb97bf93dd",
+    "call": 0,
+    "tool": "read"
+  },
+  {
+    "kind": "git",
+    "key": "go.mod",
+    "witness": "e253bb661c93c49e95936a761ea7e0db0582f228",
+    "call": 1,
+    "tool": "read"
+  },
+  {
+    "kind": "git",
+    "key": "format/money.go",
+    "witness": "8189999fd3779e35b82a98146dc736894daa0aae",
+    "call": 1,
+    "tool": "read"
+  },
+  {
+    "kind": "git",
+    "key": "names:pricing",
+    "witness": "names:b46a83453d102c16",
+    "call": 1,
+    "tool": "read"
+  },
+  {
+    "kind": "git",
+    "key": "format/money_test.go",
+    "witness": "7418823c13f03ed82093be306e65e5e03a949664",
+    "call": 1,
+    "tool": "read"
+  },
+  {
+    "kind": "git",
+    "key": "pricing/discount.go",
+    "witness": "873c618cfad31569563cddd9d254431b22bca979",
+    "call": 2,
+    "tool": "read"
+  },
+  {
+    "kind": "git",
+    "key": "pricing/discount_test.go",
+    "witness": "945c4ad5923958d74f782fbd59b2f91b3f31efb3",
+    "call": 2,
+    "tool": "read"
+  },
+  {
+    "kind": "git",
+    "key": "format/money.go",
+    "witness": "8189999fd3779e35b82a98146dc736894daa0aae",
+    "call": 3,
+    "tool": "edit"
+  },
+  {
+    "kind": "git",
+    "key": "format/money_test.go",
+    "witness": "7418823c13f03ed82093be306e65e5e03a949664",
+    "call": 4,
+    "tool": "edit"
+  },
+  {
+    "kind": "git",
+    "key": "pricing/line.go",
+    "witness": "absent",
+    "call": 5,
+    "tool": "write"
+  },
+  {
+    "kind": "git",
+    "key": "pricing/line_test.go",
+    "witness": "absent",
+    "call": 6,
+    "tool": "write"
+  },
+  {
+    "kind": "git",
+    "key": "",
+    "witness": "6439d3cc90615ac83529a42ab8026de58597b849",
+    "call": 7,
+    "tool": "shell",
+    "why": "shell is opaque"
+  },
+  {
+    "kind": "git",
+    "key": "",
+    "witness": "6439d3cc90615ac83529a42ab8026de58597b849",
+    "call": 8,
+    "tool": "shell",
+    "why": "shell is opaque"
+  }
+]

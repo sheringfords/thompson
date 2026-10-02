@@ -1,0 +1,210 @@
+{
+  "scenario": {
+    "id": "H2",
+    "family": "http",
+    "qualifying": false,
+    "mutation": "H2",
+    "s0_calls": 6,
+    "first_stale_call": 1,
+    "preserved_calls": 1,
+    "preserved_post_first_calls": 0,
+    "r2_mode": "resume",
+    "r2_replay_rounds": 1,
+    "r1_full_restart": {
+      "model_calls": 15,
+      "tool_calls": 14,
+      "tokens_all_calls": {
+        "input": 45724,
+        "output": 1633,
+        "reasoning": 1980,
+        "cache_read": 132782,
+        "cache_write": 0,
+        "reasoning_exposed": false
+      },
+      "tokens_excluding_fresh_first_calls": {
+        "input": 30773,
+        "output": 1344,
+        "reasoning": 1565,
+        "cache_read": 129740,
+        "cache_write": 0,
+        "reasoning_exposed": false
+      },
+      "fresh_starts": 2,
+      "calls_without_usage": 0,
+      "agent_wall_ms": 71956
+    },
+    "r2_selective_replay": {
+      "model_calls": 14,
+      "tool_calls": 13,
+      "tokens_all_calls": {
+        "input": 48720,
+        "output": 1321,
+        "reasoning": 1678,
+        "cache_read": 190540,
+        "cache_write": 0,
+        "reasoning_exposed": false
+      },
+      "tokens_excluding_fresh_first_calls": {
+        "input": 41244,
+        "output": 1207,
+        "reasoning": 1613,
+        "cache_read": 189019,
+        "cache_write": 0,
+        "reasoning_exposed": false
+      },
+      "fresh_starts": 1,
+      "calls_without_usage": 0,
+      "agent_wall_ms": 69712
+    },
+    "r0_oracle_pass": false,
+    "r2_oracle_pass": false,
+    "r1_oracle_pass": false,
+    "stale_s0_result_fails_s1_oracle": true,
+    "r2_committed": false,
+    "r0_committed": false,
+    "missed_stale_premises": 0,
+    "unknown_premises": 4,
+    "discard_classification": {
+      "r2_true_dependency": 0,
+      "r2_opaque_forced": 4,
+      "r1_true_dependency": 0,
+      "r1_false_conflict": 2,
+      "r1_opaque_forced": 4
+    }
+  },
+  "gates": {
+    "primary_new_work_reduction_excl_first": -0.3082358529778517,
+    "primary_pass": false,
+    "new_work_reduction_incl_first": -0.04828019539088313,
+    "recovery_only_new_work_reduction_excl_first": -0.4568737898257349,
+    "fewer_repeated_calls": true,
+    "visible_tokens_r2_over_r1": 1.3302236449793816,
+    "visible_within_10pct": false,
+    "preserves_post_first_call": false,
+    "correctness": false,
+    "usage_complete": true,
+    "win": false
+  },
+  "s0_validation_against_s1": {
+    "git_head": "dde1656b2a8b579d3024e5d6573af04c53dff069",
+    "stale": null,
+    "unknown": [
+      {
+        "kind": "unknown",
+        "key": "execute",
+        "witness": "",
+        "call": 1,
+        "tool": "execute",
+        "why": "unclassified tool"
+      },
+      {
+        "kind": "unknown",
+        "key": "execute",
+        "witness": "",
+        "call": 3,
+        "tool": "execute",
+        "why": "unclassified tool"
+      }
+    ],
+    "first_stale_call": 1,
+    "checked": 5
+  },
+  "r2_final_validation": {
+    "git_head": "dde1656b2a8b579d3024e5d6573af04c53dff069",
+    "stale": null,
+    "unknown": [
+      {
+        "kind": "unknown",
+        "key": "execute",
+        "witness": "",
+        "call": 1,
+        "tool": "execute",
+        "why": "unclassified tool"
+      },
+      {
+        "kind": "unknown",
+        "key": "execute",
+        "witness": "",
+        "call": 2,
+        "tool": "execute",
+        "why": "unclassified tool"
+      },
+      {
+        "kind": "unknown",
+        "key": "execute",
+        "witness": "",
+        "call": 3,
+        "tool": "execute",
+        "why": "unclassified tool"
+      },
+      {
+        "kind": "unknown",
+        "key": "execute",
+        "witness": "",
+        "call": 5,
+        "tool": "execute",
+        "why": "unclassified tool"
+      }
+    ],
+    "first_stale_call": 1,
+    "checked": 9
+  },
+  "r0_final_validation": {
+    "git_head": "dde1656b2a8b579d3024e5d6573af04c53dff069",
+    "stale": null,
+    "unknown": [
+      {
+        "kind": "unknown",
+        "key": "execute",
+        "witness": "",
+        "call": 0,
+        "tool": "execute",
+        "why": "unclassified tool"
+      },
+      {
+        "kind": "unknown",
+        "key": "execute",
+        "witness": "",
+        "call": 1,
+        "tool": "execute",
+        "why": "unclassified tool"
+      },
+      {
+        "kind": "unknown",
+        "key": "execute",
+        "witness": "",
+        "call": 2,
+        "tool": "execute",
+        "why": "unclassified tool"
+      },
+      {
+        "kind": "unknown",
+        "key": "execute",
+        "witness": "",
+        "call": 5,
+        "tool": "execute",
+        "why": "unclassified tool"
+      }
+    ],
+    "first_stale_call": 0,
+    "checked": 9
+  },
+  "oracle_output": {
+    "r0": "premises not fresh at commit; not committed",
+    "r2": "premises not fresh at commit; not committed",
+    "stale_s0_on_s1": "discount_pct=10 want 15; total=108 want 102; customer.md lacks name/tier/15"
+  },
+  "continuations": [
+    {
+      "source_session": "ses_f033d23b2ffejv9p4LXXscZW4o",
+      "new_session": "ses_f033d23b2ffejv9p4LXXscH211",
+      "kept_assistant_messages": 1,
+      "dropped_assistant_messages": 5,
+      "hidden_items_removed": 3,
+      "kept_source_message_ids": [
+        "msg_0fcc2dc8d0011sd3hz2w1GeeDj",
+        "msg_0fcc2e07200183L5UDtPvO5Tvm"
+      ]
+    }
+  ]
+}

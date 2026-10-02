@@ -1,0 +1,18 @@
+[
+  {
+    "kind": "git",
+    "key": "",
+    "witness": "8fb2512dadf847654a6743005912aee5f0c0f474",
+    "call": 7,
+    "tool": "shell",
+    "why": "shell is opaque"
+  },
+  {
+    "kind": "git",
+    "key": "",
+    "witness": "8fb2512dadf847654a6743005912aee5f0c0f474",
+    "call": 8,
+    "tool": "shell",
+    "why": "shell is opaque"
+  }
+]

@@ -1,0 +1,164 @@
+{
+  "scenario": {
+    "id": "G2",
+    "family": "git",
+    "qualifying": false,
+    "mutation": "G2",
+    "s0_calls": 9,
+    "first_stale_call": 1,
+    "preserved_calls": 1,
+    "preserved_post_first_calls": 0,
+    "r2_mode": "resume",
+    "r2_replay_rounds": 1,
+    "r1_full_restart": {
+      "model_calls": 19,
+      "tool_calls": 25,
+      "tokens_all_calls": {
+        "input": 23037,
+        "output": 2834,
+        "reasoning": 744,
+        "cache_read": 178546,
+        "cache_write": 0,
+        "reasoning_exposed": false
+      },
+      "tokens_excluding_fresh_first_calls": {
+        "input": 6616,
+        "output": 2596,
+        "reasoning": 720,
+        "cache_read": 177025,
+        "cache_write": 0,
+        "reasoning_exposed": false
+      },
+      "fresh_starts": 2,
+      "calls_without_usage": 0,
+      "agent_wall_ms": 64244
+    },
+    "r2_selective_replay": {
+      "model_calls": 18,
+      "tool_calls": 25,
+      "tokens_all_calls": {
+        "input": 22762,
+        "output": 2824,
+        "reasoning": 516,
+        "cache_read": 168705,
+        "cache_write": 0,
+        "reasoning_exposed": false
+      },
+      "tokens_excluding_fresh_first_calls": {
+        "input": 13790,
+        "output": 2704,
+        "reasoning": 500,
+        "cache_read": 168705,
+        "cache_write": 0,
+        "reasoning_exposed": false
+      },
+      "fresh_starts": 1,
+      "calls_without_usage": 0,
+      "agent_wall_ms": 57904
+    },
+    "r0_oracle_pass": true,
+    "r2_oracle_pass": true,
+    "r1_oracle_pass": true,
+    "stale_s0_result_fails_s1_oracle": true,
+    "r2_committed": true,
+    "r0_committed": true,
+    "missed_stale_premises": 0,
+    "unknown_premises": 0,
+    "discard_classification": {
+      "r2_true_dependency": 7,
+      "r2_opaque_forced": 0,
+      "r1_true_dependency": 7,
+      "r1_false_conflict": 2,
+      "r1_opaque_forced": 0
+    }
+  },
+  "gates": {
+    "primary_new_work_reduction_excl_first": -0.7110350382601691,
+    "primary_pass": false,
+    "new_work_reduction_incl_first": 0.019274845012211106,
+    "recovery_only_new_work_reduction_excl_first": -1.4630205096333126,
+    "fewer_repeated_calls": true,
+    "visible_tokens_r2_over_r1": 0.9495323185205765,
+    "visible_within_10pct": true,
+    "preserves_post_first_call": false,
+    "correctness": true,
+    "usage_complete": true,
+    "win": false
+  },
+  "s0_validation_against_s1": {
+    "git_head": "34a11745bf2fe8515fcd0aa929861e7260297326",
+    "stale": [
+      {
+        "kind": "git",
+        "key": "format/money.go",
+        "witness": "8189999fd3779e35b82a98146dc736894daa0aae",
+        "call": 1,
+        "tool": "read"
+      },
+      {
+        "kind": "git",
+        "key": "format/money_test.go",
+        "witness": "7418823c13f03ed82093be306e65e5e03a949664",
+        "call": 1,
+        "tool": "read"
+      },
+      {
+        "kind": "git",
+        "key": "format/money.go",
+        "witness": "8189999fd3779e35b82a98146dc736894daa0aae",
+        "call": 3,
+        "tool": "edit"
+      },
+      {
+        "kind": "git",
+        "key": "format/money_test.go",
+        "witness": "7418823c13f03ed82093be306e65e5e03a949664",
+        "call": 4,
+        "tool": "edit"
+      },
+      {
+        "kind": "git",
+        "key": "",
+        "witness": "6439d3cc90615ac83529a42ab8026de58597b849",
+        "call": 7,
+        "tool": "shell",
+        "why": "shell is opaque"
+      }
+    ],
+    "unknown": null,
+    "first_stale_call": 1,
+    "checked": 12
+  },
+  "r2_final_validation": {
+    "git_head": "34a11745bf2fe8515fcd0aa929861e7260297326",
+    "stale": null,
+    "unknown": null,
+    "first_stale_call": -1,
+    "checked": 14
+  },
+  "r0_final_validation": {
+    "git_head": "34a11745bf2fe8515fcd0aa929861e7260297326",
+    "stale": null,
+    "unknown": null,
+    "first_stale_call": -1,
+    "checked": 13
+  },
+  "oracle_output": {
+    "r0": "ok  \tshopcalc/format\t1.537s\nok  \tshopcalc/pricing\t0.990s\n",
+    "r2": "ok  \tshopcalc/format\t0.658s\nok  \tshopcalc/pricing\t1.222s\n",
+    "stale_s0_on_s1": "conflict: [format/money.go format/money_test.go]"
+  },
+  "continuations": [
+    {
+      "source_session": "ses_f0340db7affenpXucdVxkjsaKt",
+      "new_session": "ses_f0340db7affenpXucdVxkjG211",
+      "kept_assistant_messages": 1,
+      "dropped_assistant_messages": 8,
+      "hidden_items_removed": 3,
+      "kept_source_message_ids": [
+        "msg_0fcbf24f9001PIOLIxU8vuYGh0",
+        "msg_0fcbf284e001ibKl8lEy31TFTc"
+      ]
+    }
+  ]
+}

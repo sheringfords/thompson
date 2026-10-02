@@ -1,0 +1,3 @@
+pass=true
+ok  	shopcalc/format	0.659s
+ok  	shopcalc/pricing	1.178s

@@ -1,0 +1,142 @@
+{
+  "scenario": {
+    "id": "G3",
+    "family": "git",
+    "qualifying": false,
+    "mutation": "G3",
+    "s0_calls": 9,
+    "first_stale_call": 7,
+    "preserved_calls": 7,
+    "preserved_post_first_calls": 6,
+    "r2_mode": "resume",
+    "r2_replay_rounds": 1,
+    "r1_full_restart": {
+      "model_calls": 20,
+      "tool_calls": 25,
+      "tokens_all_calls": {
+        "input": 25119,
+        "output": 3495,
+        "reasoning": 461,
+        "cache_read": 189170,
+        "cache_write": 0,
+        "reasoning_exposed": false
+      },
+      "tokens_excluding_fresh_first_calls": {
+        "input": 7177,
+        "output": 3260,
+        "reasoning": 434,
+        "cache_read": 189170,
+        "cache_write": 0,
+        "reasoning_exposed": false
+      },
+      "fresh_starts": 2,
+      "calls_without_usage": 0,
+      "agent_wall_ms": 68991
+    },
+    "r2_selective_replay": {
+      "model_calls": 12,
+      "tool_calls": 14,
+      "tokens_all_calls": {
+        "input": 24439,
+        "output": 1986,
+        "reasoning": 290,
+        "cache_read": 106602,
+        "cache_write": 0,
+        "reasoning_exposed": false
+      },
+      "tokens_excluding_fresh_first_calls": {
+        "input": 15467,
+        "output": 1866,
+        "reasoning": 274,
+        "cache_read": 106602,
+        "cache_write": 0,
+        "reasoning_exposed": false
+      },
+      "fresh_starts": 1,
+      "calls_without_usage": 0,
+      "agent_wall_ms": 53065
+    },
+    "r0_oracle_pass": true,
+    "r2_oracle_pass": true,
+    "r1_oracle_pass": true,
+    "stale_s0_result_fails_s1_oracle": false,
+    "r2_committed": true,
+    "r0_committed": true,
+    "missed_stale_premises": 0,
+    "unknown_premises": 0,
+    "discard_classification": {
+      "r2_true_dependency": 0,
+      "r2_opaque_forced": 1,
+      "r1_true_dependency": 0,
+      "r1_false_conflict": 8,
+      "r1_opaque_forced": 1
+    }
+  },
+  "gates": {
+    "primary_new_work_reduction_excl_first": -0.6196302088124368,
+    "primary_pass": false,
+    "new_work_reduction_incl_first": 0.08116938950988817,
+    "recovery_only_new_work_reduction_excl_first": -1.1682275407561566,
+    "fewer_repeated_calls": true,
+    "visible_tokens_r2_over_r1": 0.610859355311691,
+    "visible_within_10pct": true,
+    "preserves_post_first_call": true,
+    "correctness": true,
+    "usage_complete": true,
+    "win": false
+  },
+  "s0_validation_against_s1": {
+    "git_head": "f178b9f31bbff237a40c9fc7d14d6a24b7c75c4c",
+    "stale": [
+      {
+        "kind": "git",
+        "key": "",
+        "witness": "6439d3cc90615ac83529a42ab8026de58597b849",
+        "call": 7,
+        "tool": "shell",
+        "why": "shell is opaque"
+      }
+    ],
+    "unknown": null,
+    "first_stale_call": 7,
+    "checked": 12
+  },
+  "r2_final_validation": {
+    "git_head": "f178b9f31bbff237a40c9fc7d14d6a24b7c75c4c",
+    "stale": null,
+    "unknown": null,
+    "first_stale_call": -1,
+    "checked": 13
+  },
+  "r0_final_validation": {
+    "git_head": "f178b9f31bbff237a40c9fc7d14d6a24b7c75c4c",
+    "stale": null,
+    "unknown": null,
+    "first_stale_call": -1,
+    "checked": 13
+  },
+  "oracle_output": {
+    "r0": "ok  \tshopcalc/format\t1.506s\nok  \tshopcalc/pricing\t0.653s\n",
+    "r2": "ok  \tshopcalc/format\t0.810s\nok  \tshopcalc/pricing\t1.439s\n",
+    "stale_s0_on_s1": "ok  \tshopcalc/format\t0.489s\nok  \tshopcalc/pricing\t0.997s\n"
+  },
+  "continuations": [
+    {
+      "source_session": "ses_f0340db7affenpXucdVxkjsaKt",
+      "new_session": "ses_f0340db7affenpXucdVxkjG311",
+      "kept_assistant_messages": 7,
+      "dropped_assistant_messages": 2,
+      "hidden_items_removed": 22,
+      "kept_source_message_ids": [
+        "msg_0fcbf24f9001PIOLIxU8vuYGh0",
+        "msg_0fcbf284e001ibKl8lEy31TFTc",
+        "msg_0fcbf32e8001IFv0qA6pAD42zA",
+        "msg_0fcbf3f3d001uWCWGwKHUJWD1l",
+        "msg_0fcbf47fb00141If9beMYfzNTv",
+        "msg_0fcbf54b9001NUxm59fu2A1X92",
+        "msg_0fcbf6721001XYXYpE2JjFZ7vd",
+        "msg_0fcbf843f001Qp8eYsuy6zemRl"
+      ]
+    }
+  ]
+}

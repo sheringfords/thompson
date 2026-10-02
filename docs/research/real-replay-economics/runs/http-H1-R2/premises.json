@@ -1,0 +1,89 @@
+[
+  {
+    "kind": "unknown",
+    "key": "execute",
+    "witness": "",
+    "call": 1,
+    "tool": "execute",
+    "why": "unclassified tool"
+  },
+  {
+    "kind": "unknown",
+    "key": "execute",
+    "witness": "",
+    "call": 2,
+    "tool": "execute",
+    "why": "unclassified tool"
+  },
+  {
+    "kind": "unknown",
+    "key": "execute",
+    "witness": "",
+    "call": 3,
+    "tool": "execute",
+    "why": "unclassified tool"
+  },
+  {
+    "kind": "git",
+    "key": "README.md",
+    "witness": "21c77486b28e66d516b3b8a8ce03b315033c1057",
+    "call": 4,
+    "tool": "read"
+  },
+  {
+    "kind": "git",
+    "key": "opencode.json",
+    "witness": "fd59f9a573e8461419bc7cef7e4faccd97a0098d",
+    "call": 4,
+    "tool": "read"
+  },
+  {
+    "kind": "http",
+    "key": "/customers/c42",
+    "witness": "\"717397117e3f5f6d\"",
+    "call": 5,
+    "tool": "webfetch"
+  },
+  {
+    "kind": "http",
+    "key": "/policy/discounts",
+    "witness": "\"54bf52bcd43a340f\"",
+    "call": 6,
+    "tool": "webfetch"
+  },
+  {
+    "kind": "git",
+    "key": "customer.md",
+    "witness": "absent",
+    "call": 7,
+    "tool": "write"
+  },
+  {
+    "kind": "http",
+    "key": "/pricing/widget",
+    "witness": "\"62ef3e63541429d9\"",
+    "call": 8,
+    "tool": "webfetch"
+  },
+  {
+    "kind": "git",
+    "key": "quote.json",
+    "witness": "absent",
+    "call": 9,
+    "tool": "write"
+  },
+  {
+    "kind": "git",
+    "key": "customer.md",
+    "witness": "absent",
+    "call": 10,
+    "tool": "read"
+  },
+  {
+    "kind": "git",
+    "key": "quote.json",
+    "witness": "absent",
+    "call": 10,
+    "tool": "read"
+  }
+]

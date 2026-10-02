@@ -1,0 +1,9 @@
+{
+  "label": "smoke-2",
+  "session": "ses_f0344bf03ffeg9TbIixp7XSm02",
+  "resume": true,
+  "exit": 0,
+  "wall_ms": 26940,
+  "timed_out": false,
+  "stream": "/private/tmp/claude-501/-Users-wira-Documents-thompson-sampling/3fabd393-52f5-436f-9d93-ac4c7273ffdd/scratchpad/rre/docs/research/real-replay-economics/runs/smoke-2/stream.jsonl"
+}

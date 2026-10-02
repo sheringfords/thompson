@@ -1,0 +1,620 @@
+{
+  "G1": {
+    "family": "git",
+    "qualifying": true,
+    "mutation": "G1",
+    "r2_mode": "resume",
+    "s0_calls": 9,
+    "first_stale_call": 2,
+    "preserved_model_calls": 2,
+    "preserved_post_first_calls": 1,
+    "replayed_model_calls_r2": 7,
+    "replayed_model_calls_r1": 10,
+    "r1": {
+      "model_calls": 19,
+      "tool_calls": 24,
+      "tokens_all_calls": {
+        "input": 22480,
+        "output": 2837,
+        "reasoning": 441,
+        "cache_read": 175474,
+        "cache_write": 0,
+        "reasoning_exposed": false
+      },
+      "tokens_excluding_fresh_first_calls": {
+        "input": 6059,
+        "output": 2599,
+        "reasoning": 414,
+        "cache_read": 173953,
+        "cache_write": 0,
+        "reasoning_exposed": false
+      },
+      "fresh_starts": 2,
+      "calls_without_usage": 0,
+      "agent_wall_ms": 56770
+    },
+    "r2": {
+      "model_calls": 16,
+      "tool_calls": 19,
+      "tokens_all_calls": {
+        "input": 23549,
+        "output": 2918,
+        "reasoning": 744,
+        "cache_read": 151967,
+        "cache_write": 0,
+        "reasoning_exposed": false
+      },
+      "tokens_excluding_fresh_first_calls": {
+        "input": 14577,
+        "output": 2798,
+        "reasoning": 728,
+        "cache_read": 151967,
+        "cache_write": 0,
+        "reasoning_exposed": false
+      },
+      "fresh_starts": 1,
+      "calls_without_usage": 0,
+      "agent_wall_ms": 76393
+    },
+    "gates": {
+      "primary_new_work_reduction_excl_first": -0.9954805996472662,
+      "primary_pass": false,
+      "new_work_reduction_incl_first": -0.05640965913502605,
+      "recovery_only_new_work_reduction_excl_first": -2.276531383917318,
+      "fewer_repeated_calls": true,
+      "visible_tokens_r2_over_r1": 0.8904051045559355,
+      "visible_within_10pct": true,
+      "preserves_post_first_call": true,
+      "correctness": true,
+      "usage_complete": true,
+      "win": false
+    },
+    "actual_goodput_r1": 0.448,
+    "actual_goodput_r2": 0.837,
+    "resume_first_call_tokens": {
+      "input": 8521,
+      "output": 225,
+      "reasoning": 6,
+      "cache_read": 1521,
+      "cache_write": 0,
+      "reasoning_exposed": true
+    },
+    "r0_call1_tokens": {
+      "input": 250,
+      "output": 146,
+      "reasoning": 15,
+      "cache_read": 8945,
+      "cache_write": 0,
+      "reasoning_exposed": true
+    },
+    "r2_committed": true,
+    "r0_committed": true,
+    "r2_oracle": true,
+    "r0_oracle": true,
+    "stale_s0_result_fails_s1": true,
+    "missed_stale": 0,
+    "unknown_premises": 0,
+    "discard": {
+      "r2_true_dependency": 6,
+      "r2_opaque_forced": 0,
+      "r1_true_dependency": 6,
+      "r1_false_conflict": 3,
+      "r1_opaque_forced": 0
+    }
+  },
+  "G1b": {
+    "family": "git",
+    "qualifying": true,
+    "mutation": "G1",
+    "r2_mode": "resume",
+    "s0_calls": 10,
+    "first_stale_call": 2,
+    "preserved_model_calls": 2,
+    "preserved_post_first_calls": 1,
+    "replayed_model_calls_r2": 8,
+    "replayed_model_calls_r1": 10,
+    "r1": {
+      "model_calls": 20,
+      "tool_calls": 26,
+      "tokens_all_calls": {
+        "input": 32954,
+        "output": 3597,
+        "reasoning": 616,
+        "cache_read": 183907,
+        "cache_write": 0,
+        "reasoning_exposed": false
+      },
+      "tokens_excluding_fresh_first_calls": {
+        "input": 18053,
+        "output": 3362,
+        "reasoning": 596,
+        "cache_read": 180865,
+        "cache_write": 0,
+        "reasoning_exposed": false
+      },
+      "fresh_starts": 2,
+      "calls_without_usage": 0,
+      "agent_wall_ms": 63388
+    },
+    "r2": {
+      "model_calls": 18,
+      "tool_calls": 21,
+      "tokens_all_calls": {
+        "input": 32950,
+        "output": 3113,
+        "reasoning": 752,
+        "cache_read": 166401,
+        "cache_write": 0,
+        "reasoning_exposed": false
+      },
+      "tokens_excluding_fresh_first_calls": {
+        "input": 25500,
+        "output": 2996,
+        "reasoning": 744,
+        "cache_read": 164880,
+        "cache_write": 0,
+        "reasoning_exposed": false
+      },
+      "fresh_starts": 1,
+      "calls_without_usage": 0,
+      "agent_wall_ms": 72024
+    },
+    "gates": {
+      "primary_new_work_reduction_excl_first": -0.3284266957430375,
+      "primary_pass": false,
+      "new_work_reduction_incl_first": 0.009470767078322173,
+      "recovery_only_new_work_reduction_excl_first": -1.173158065563129,
+      "fewer_repeated_calls": true,
+      "visible_tokens_r2_over_r1": 0.9192216181007264,
+      "visible_within_10pct": true,
+      "preserves_post_first_call": true,
+      "correctness": true,
+      "usage_complete": true,
+      "win": false
+    },
+    "actual_goodput_r1": 0.37,
+    "actual_goodput_r2": 0.587,
+    "resume_first_call_tokens": {
+      "input": 8517,
+      "output": 223,
+      "reasoning": 9,
+      "cache_read": 1521,
+      "cache_write": 0,
+      "reasoning_exposed": true
+    },
+    "r0_call1_tokens": {
+      "input": 253,
+      "output": 389,
+      "reasoning": 13,
+      "cache_read": 8945,
+      "cache_write": 0,
+      "reasoning_exposed": true
+    },
+    "r2_committed": true,
+    "r0_committed": true,
+    "r2_oracle": true,
+    "r0_oracle": true,
+    "stale_s0_result_fails_s1": true,
+    "missed_stale": 0,
+    "unknown_premises": 0,
+    "discard": {
+      "r2_true_dependency": 7,
+      "r2_opaque_forced": 0,
+      "r1_true_dependency": 7,
+      "r1_false_conflict": 3,
+      "r1_opaque_forced": 0
+    }
+  },
+  "G2": {
+    "family": "git",
+    "qualifying": false,
+    "mutation": "G2",
+    "r2_mode": "resume",
+    "s0_calls": 9,
+    "first_stale_call": 1,
+    "preserved_model_calls": 1,
+    "preserved_post_first_calls": 0,
+    "replayed_model_calls_r2": 9,
+    "replayed_model_calls_r1": 10,
+    "r1": {
+      "model_calls": 19,
+      "tool_calls": 25,
+      "tokens_all_calls": {
+        "input": 23037,
+        "output": 2834,
+        "reasoning": 744,
+        "cache_read": 178546,
+        "cache_write": 0,
+        "reasoning_exposed": false
+      },
+      "tokens_excluding_fresh_first_calls": {
+        "input": 6616,
+        "output": 2596,
+        "reasoning": 720,
+        "cache_read": 177025,
+        "cache_write": 0,
+        "reasoning_exposed": false
+      },
+      "fresh_starts": 2,
+      "calls_without_usage": 0,
+      "agent_wall_ms": 64244
+    },
+    "r2": {
+      "model_calls": 18,
+      "tool_calls": 25,
+      "tokens_all_calls": {
+        "input": 22762,
+        "output": 2824,
+        "reasoning": 516,
+        "cache_read": 168705,
+        "cache_write": 0,
+        "reasoning_exposed": false
+      },
+      "tokens_excluding_fresh_first_calls": {
+        "input": 13790,
+        "output": 2704,
+        "reasoning": 500,
+        "cache_read": 168705,
+        "cache_write": 0,
+        "reasoning_exposed": false
+      },
+      "fresh_starts": 1,
+      "calls_without_usage": 0,
+      "agent_wall_ms": 57904
+    },
+    "gates": {
+      "primary_new_work_reduction_excl_first": -0.7110350382601691,
+      "primary_pass": false,
+      "new_work_reduction_incl_first": 0.019274845012211106,
+      "recovery_only_new_work_reduction_excl_first": -1.4630205096333126,
+      "fewer_repeated_calls": true,
+      "visible_tokens_r2_over_r1": 0.9495323185205765,
+      "visible_within_10pct": true,
+      "preserves_post_first_call": false,
+      "correctness": true,
+      "usage_complete": true,
+      "win": false
+    },
+    "actual_goodput_r1": 0.466,
+    "actual_goodput_r2": 0.804,
+    "resume_first_call_tokens": {
+      "input": 7666,
+      "output": 260,
+      "reasoning": 5,
+      "cache_read": 1521,
+      "cache_write": 0,
+      "reasoning_exposed": true
+    },
+    "r0_call1_tokens": {
+      "input": 247,
+      "output": 192,
+      "reasoning": 13,
+      "cache_read": 8945,
+      "cache_write": 0,
+      "reasoning_exposed": true
+    },
+    "r2_committed": true,
+    "r0_committed": true,
+    "r2_oracle": true,
+    "r0_oracle": true,
+    "stale_s0_result_fails_s1": true,
+    "missed_stale": 0,
+    "unknown_premises": 0,
+    "discard": {
+      "r2_true_dependency": 7,
+      "r2_opaque_forced": 0,
+      "r1_true_dependency": 7,
+      "r1_false_conflict": 2,
+      "r1_opaque_forced": 0
+    }
+  },
+  "G3": {
+    "family": "git",
+    "qualifying": false,
+    "mutation": "G3",
+    "r2_mode": "resume",
+    "s0_calls": 9,
+    "first_stale_call": 7,
+    "preserved_model_calls": 7,
+    "preserved_post_first_calls": 6,
+    "replayed_model_calls_r2": 3,
+    "replayed_model_calls_r1": 11,
+    "r1": {
+      "model_calls": 20,
+      "tool_calls": 25,
+      "tokens_all_calls": {
+        "input": 25119,
+        "output": 3495,
+        "reasoning": 461,
+        "cache_read": 189170,
+        "cache_write": 0,
+        "reasoning_exposed": false
+      },
+      "tokens_excluding_fresh_first_calls": {
+        "input": 7177,
+        "output": 3260,
+        "reasoning": 434,
+        "cache_read": 189170,
+        "cache_write": 0,
+        "reasoning_exposed": false
+      },
+      "fresh_starts": 2,
+      "calls_without_usage": 0,
+      "agent_wall_ms": 68991
+    },
+    "r2": {
+      "model_calls": 12,
+      "tool_calls": 14,
+      "tokens_all_calls": {
+        "input": 24439,
+        "output": 1986,
+        "reasoning": 290,
+        "cache_read": 106602,
+        "cache_write": 0,
+        "reasoning_exposed": false
+      },
+      "tokens_excluding_fresh_first_calls": {
+        "input": 15467,
+        "output": 1866,
+        "reasoning": 274,
+        "cache_read": 106602,
+        "cache_write": 0,
+        "reasoning_exposed": false
+      },
+      "fresh_starts": 1,
+      "calls_without_usage": 0,
+      "agent_wall_ms": 53065
+    },
+    "gates": {
+      "primary_new_work_reduction_excl_first": -0.6196302088124368,
+      "primary_pass": false,
+      "new_work_reduction_incl_first": 0.08116938950988817,
+      "recovery_only_new_work_reduction_excl_first": -1.1682275407561566,
+      "fewer_repeated_calls": true,
+      "visible_tokens_r2_over_r1": 0.610859355311691,
+      "visible_within_10pct": true,
+      "preserves_post_first_call": true,
+      "correctness": true,
+      "usage_complete": true,
+      "win": false
+    },
+    "actual_goodput_r1": 0.511,
+    "actual_goodput_r2": 0.977,
+    "resume_first_call_tokens": {
+      "input": 11474,
+      "output": 136,
+      "reasoning": 27,
+      "cache_read": 0,
+      "cache_write": 0,
+      "reasoning_exposed": true
+    },
+    "r0_call1_tokens": {
+      "input": 247,
+      "output": 294,
+      "reasoning": 6,
+      "cache_read": 8945,
+      "cache_write": 0,
+      "reasoning_exposed": true
+    },
+    "r2_committed": true,
+    "r0_committed": true,
+    "r2_oracle": true,
+    "r0_oracle": true,
+    "stale_s0_result_fails_s1": false,
+    "missed_stale": 0,
+    "unknown_premises": 0,
+    "discard": {
+      "r2_true_dependency": 0,
+      "r2_opaque_forced": 1,
+      "r1_true_dependency": 0,
+      "r1_false_conflict": 8,
+      "r1_opaque_forced": 1
+    }
+  },
+  "H1": {
+    "family": "http",
+    "qualifying": true,
+    "mutation": "H1",
+    "r2_mode": "resume",
+    "s0_calls": 6,
+    "first_stale_call": 1,
+    "preserved_model_calls": 1,
+    "preserved_post_first_calls": 0,
+    "replayed_model_calls_r2": 11,
+    "replayed_model_calls_r1": 10,
+    "r1": {
+      "model_calls": 16,
+      "tool_calls": 15,
+      "tokens_all_calls": {
+        "input": 79228,
+        "output": 1360,
+        "reasoning": 2539,
+        "cache_read": 206894,
+        "cache_write": 0,
+        "reasoning_exposed": false
+      },
+      "tokens_excluding_fresh_first_calls": {
+        "input": 64276,
+        "output": 1104,
+        "reasoning": 2102,
+        "cache_read": 203852,
+        "cache_write": 0,
+        "reasoning_exposed": false
+      },
+      "fresh_starts": 2,
+      "calls_without_usage": 0,
+      "agent_wall_ms": 90810
+    },
+    "r2": {
+      "model_calls": 17,
+      "tool_calls": 17,
+      "tokens_all_calls": {
+        "input": 38858,
+        "output": 1843,
+        "reasoning": 2504,
+        "cache_read": 222352,
+        "cache_write": 0,
+        "reasoning_exposed": false
+      },
+      "tokens_excluding_fresh_first_calls": {
+        "input": 31382,
+        "output": 1729,
+        "reasoning": 2439,
+        "cache_read": 220831,
+        "cache_write": 0,
+        "reasoning_exposed": false
+      },
+      "fresh_starts": 1,
+      "calls_without_usage": 0,
+      "agent_wall_ms": 98746
+    },
+    "gates": {
+      "primary_new_work_reduction_excl_first": 0.47319285142704726,
+      "primary_pass": true,
+      "new_work_reduction_incl_first": 0.4802531066921698,
+      "recovery_only_new_work_reduction_excl_first": 0.564928172103885,
+      "fewer_repeated_calls": false,
+      "visible_tokens_r2_over_r1": 0.9156474875957258,
+      "visible_within_10pct": true,
+      "preserves_post_first_call": false,
+      "correctness": false,
+      "usage_complete": true,
+      "win": false
+    },
+    "actual_goodput_r1": 0.0,
+    "actual_goodput_r2": 0.0,
+    "resume_first_call_tokens": {
+      "input": 7676,
+      "output": 79,
+      "reasoning": 428,
+      "cache_read": 1521,
+      "cache_write": 0,
+      "reasoning_exposed": true
+    },
+    "r0_call1_tokens": {
+      "input": 641,
+      "output": 61,
+      "reasoning": 132,
+      "cache_read": 8945,
+      "cache_write": 0,
+      "reasoning_exposed": true
+    },
+    "r2_committed": false,
+    "r0_committed": false,
+    "r2_oracle": false,
+    "r0_oracle": false,
+    "stale_s0_result_fails_s1": true,
+    "missed_stale": 0,
+    "unknown_premises": 3,
+    "discard": {
+      "r2_true_dependency": 0,
+      "r2_opaque_forced": 4,
+      "r1_true_dependency": 0,
+      "r1_false_conflict": 2,
+      "r1_opaque_forced": 4
+    }
+  },
+  "H2": {
+    "family": "http",
+    "qualifying": false,
+    "mutation": "H2",
+    "r2_mode": "resume",
+    "s0_calls": 6,
+    "first_stale_call": 1,
+    "preserved_model_calls": 1,
+    "preserved_post_first_calls": 0,
+    "replayed_model_calls_r2": 8,
+    "replayed_model_calls_r1": 9,
+    "r1": {
+      "model_calls": 15,
+      "tool_calls": 14,
+      "tokens_all_calls": {
+        "input": 45724,
+        "output": 1633,
+        "reasoning": 1980,
+        "cache_read": 132782,
+        "cache_write": 0,
+        "reasoning_exposed": false
+      },
+      "tokens_excluding_fresh_first_calls": {
+        "input": 30773,
+        "output": 1344,
+        "reasoning": 1565,
+        "cache_read": 129740,
+        "cache_write": 0,
+        "reasoning_exposed": false
+      },
+      "fresh_starts": 2,
+      "calls_without_usage": 0,
+      "agent_wall_ms": 71956
+    },
+    "r2": {
+      "model_calls": 14,
+      "tool_calls": 13,
+      "tokens_all_calls": {
+        "input": 48720,
+        "output": 1321,
+        "reasoning": 1678,
+        "cache_read": 190540,
+        "cache_write": 0,
+        "reasoning_exposed": false
+      },
+      "tokens_excluding_fresh_first_calls": {
+        "input": 41244,
+        "output": 1207,
+        "reasoning": 1613,
+        "cache_read": 189019,
+        "cache_write": 0,
+        "reasoning_exposed": false
+      },
+      "fresh_starts": 1,
+      "calls_without_usage": 0,
+      "agent_wall_ms": 69712
+    },
+    "gates": {
+      "primary_new_work_reduction_excl_first": -0.3082358529778517,
+      "primary_pass": false,
+      "new_work_reduction_incl_first": -0.04828019539088313,
+      "recovery_only_new_work_reduction_excl_first": -0.4568737898257349,
+      "fewer_repeated_calls": true,
+      "visible_tokens_r2_over_r1": 1.3302236449793816,
+      "visible_within_10pct": false,
+      "preserves_post_first_call": false,
+      "correctness": false,
+      "usage_complete": true,
+      "win": false
+    },
+    "actual_goodput_r1": 0.0,
+    "actual_goodput_r2": 0.0,
+    "resume_first_call_tokens": {
+      "input": 9197,
+      "output": 159,
+      "reasoning": 283,
+      "cache_read": 0,
+      "cache_write": 0,
+      "reasoning_exposed": true
+    },
+    "r0_call1_tokens": {
+      "input": 670,
+      "output": 62,
+      "reasoning": 56,
+      "cache_read": 8945,
+      "cache_write": 0,
+      "reasoning_exposed": true
+    },
+    "r2_committed": false,
+    "r0_committed": false,
+    "r2_oracle": false,
+    "r0_oracle": false,
+    "stale_s0_result_fails_s1": true,
+    "missed_stale": 0,
+    "unknown_premises": 4,
+    "discard": {
+      "r2_true_dependency": 0,
+      "r2_opaque_forced": 4,
+      "r1_true_dependency": 0,
+      "r1_false_conflict": 2,
+      "r1_opaque_forced": 4
+    }
+  }
+}

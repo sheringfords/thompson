@@ -1,0 +1,17 @@
+[
+  {
+    "name": "git-cas",
+    "rejected": true,
+    "detail": "conditional commit rejected (main moved): git update-ref refs/heads/main 04077a5a9f26f0aa2708f3c3aeeba4cbfa09b7d5 833681e362b1f30a0c2afc9c36eff2f835498677: exit status 128: fatal: update_ref failed for ref 'refs/heads/main': cannot lock ref 'refs/heads/main': is at eb3b352f896ce698cfb75578235dea8ab4be1427 but expected 833681e362b1f30a0c2afc9c36eff2f835498677\n"
+  },
+  {
+    "name": "http-premise-precondition",
+    "rejected": true,
+    "detail": "Precondition Failed"
+  },
+  {
+    "name": "http-target-if-match",
+    "rejected": true,
+    "detail": "Precondition Failed"
+  }
+]

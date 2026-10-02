@@ -1,0 +1,313 @@
+{
+  "session_id": "ses_f0340db7affenpXucdVxkjG211",
+  "calls": [
+    {
+      "message_id": "msg_0fcc0d1bf001XqbHQrO29TPdiI",
+      "steps": 1,
+      "finish": "tool-calls",
+      "snapshot": "9c39c6c9909090ef56758af17c0d76e03cd1dd08",
+      "tokens": {
+        "input": 7666,
+        "output": 260,
+        "reasoning": 5,
+        "cache_read": 1521,
+        "cache_write": 0,
+        "reasoning_exposed": true
+      },
+      "usage_reported": true,
+      "tools": [
+        {
+          "tool": "read",
+          "input": {
+            "path": "pricing/line.go"
+          },
+          "output": "",
+          "status": "error",
+          "start_ms": 1790946891871,
+          "end_ms": 1790946892653
+        },
+        {
+          "tool": "read",
+          "input": {
+            "path": "pricing/line_test.go"
+          },
+          "output": "",
+          "status": "error",
+          "start_ms": 1790946892106,
+          "end_ms": 1790946892657
+        },
+        {
+          "tool": "read",
+          "input": {
+            "path": "go.mod"
+          },
+          "output": "Read file go.mod, lines 1-3\n1: module shopcalc\n2: \n3: go 1.22",
+          "status": "completed",
+          "start_ms": 1790946892366,
+          "end_ms": 1790946892662
+        },
+        {
+          "tool": "read",
+          "input": {
+            "path": "format/money.go"
+          },
+          "output": "Read file format/money.go, lines 1-21\n1: package format\n2: \n3: import (\n4: \t\"fmt\"\n5: \t\"strings\"\n6: )\n7: \n8: // FormatUSD renders a dollar amount like \"$1,234.50\" (thousands\n9: // separated).\n10: func FormatUSD(amount float64) string {\n11: \ts := fmt.Sprintf(\"%.2f\", amount)\n12: \twhole, frac := s[:len(s)-3], s[len(s)-3:]\n13: \tvar b strings.Builder\n14: \tfor i, r := range whole {\n15: \t\tif i \u003e 0 \u0026\u0026 (len(whole)-i)%3 == 0 {\n16: \t\t\tb.WriteByte(',')\n17: \t\t}\n18: \t\tb.WriteRune(r)\n19: \t}\n20: \treturn \"$\" + b.String() + frac\n21: }",
+          "status": "completed",
+          "start_ms": 1790946891484,
+          "end_ms": 1790946892665
+        },
+        {
+          "tool": "read",
+          "input": {
+            "path": "format/money_test.go"
+          },
+          "output": "Read file format/money_test.go, lines 1-12\n1: package format\n2: \n3: import \"testing\"\n4: \n5: func TestFormatUSD(t *testing.T) {\n6: \tif got := FormatUSD(1.5); got != \"$1.50\" {\n7: \t\tt.Fatalf(\"got %q\", got)\n8: \t}\n9: \tif got := FormatUSD(1234.5); got != \"$1,234.50\" {\n10: \t\tt.Fatalf(\"got %q\", got)\n11: \t}\n12: }",
+          "status": "completed",
+          "start_ms": 1790946891663,
+          "end_ms": 1790946892670
+        }
+      ],
+      "start_ms": 1790946891448,
+      "end_ms": 1790946892863
+    },
+    {
+      "message_id": "msg_0fcc0dc5b00116StDoi2mDs4T5",
+      "steps": 1,
+      "finish": "tool-calls",
+      "snapshot": "9c39c6c9909090ef56758af17c0d76e03cd1dd08",
+      "tokens": {
+        "input": 865,
+        "output": 49,
+        "reasoning": 4,
+        "cache_read": 9073,
+        "cache_write": 0,
+        "reasoning_exposed": true
+      },
+      "usage_reported": true,
+      "tools": [
+        {
+          "tool": "read",
+          "input": {
+            "path": "pricing"
+          },
+          "output": "Read directory pricing, entries 1-2\ndiscount_test.go\ndiscount.go",
+          "status": "completed",
+          "start_ms": 1790946894029,
+          "end_ms": 1790946894232
+        }
+      ],
+      "start_ms": 1790946894015,
+      "end_ms": 1790946894337
+    },
+    {
+      "message_id": "msg_0fcc0e217001leKm7qLkJ3dT8V",
+      "steps": 1,
+      "finish": "tool-calls",
+      "snapshot": "9c39c6c9909090ef56758af17c0d76e03cd1dd08",
+      "tokens": {
+        "input": 187,
+        "output": 95,
+        "reasoning": 0,
+        "cache_read": 9841,
+        "cache_write": 0,
+        "reasoning_exposed": true
+      },
+      "usage_reported": true,
+      "tools": [
+        {
+          "tool": "read",
+          "input": {
+            "path": "pricing/discount.go"
+          },
+          "output": "Read file pricing/discount.go, lines 1-6\n1: package pricing\n2: \n3: // Discount returns price reduced by pct percent (pct=25 takes 25% off).\n4: func Discount(price, pct float64) float64 {\n5: \treturn price * (1 - pct/100)\n6: }",
+          "status": "completed",
+          "start_ms": 1790946895996,
+          "end_ms": 1790946896107
+        },
+        {
+          "tool": "read",
+          "input": {
+            "path": "pricing/discount_test.go"
+          },
+          "output": "Read file pricing/discount_test.go, lines 1-9\n1: package pricing\n2: \n3: import \"testing\"\n4: \n5: func TestDiscount(t *testing.T) {\n6: \tif got := Discount(100, 25); got != 75 {\n7: \t\tt.Fatalf(\"got %v\", got)\n8: \t}\n9: }",
+          "status": "completed",
+          "start_ms": 1790946896001,
+          "end_ms": 1790946896114
+        }
+      ],
+      "start_ms": 1790946895984,
+      "end_ms": 1790946896410
+    },
+    {
+      "message_id": "msg_0fcc0ea29001iazntLT2NsnXUU",
+      "steps": 1,
+      "finish": "tool-calls",
+      "snapshot": "9c39c6c9909090ef56758af17c0d76e03cd1dd08",
+      "tokens": {
+        "input": 342,
+        "output": 217,
+        "reasoning": 312,
+        "cache_read": 9969,
+        "cache_write": 0,
+        "reasoning_exposed": true
+      },
+      "usage_reported": true,
+      "tools": [
+        {
+          "tool": "edit",
+          "input": {
+            "newString": "// FormatUSD renders a dollar amount like \"$1,234.50\" (thousands\n// separated). Negative amounts use accounting style, e.g. \"($1.50)\".\nfunc FormatUSD(amount float64) string {\n\tif amount \u003c 0 {\n\t\treturn \"(\" + FormatUSD(-amount) + \")\"\n\t}\n\ts := fmt.Sprintf(\"%.2f\", amount)",
+            "oldString": "// FormatUSD renders a dollar amount like \"$1,234.50\" (thousands\n// separated).\nfunc FormatUSD(amount float64) string {\n\ts := fmt.Sprintf(\"%.2f\", amount)",
+            "path": "format/money.go"
+          },
+          "output": "Edited format/money.go (1 replacement)",
+          "status": "completed",
+          "start_ms": 1790946900290,
+          "end_ms": 1790946901168
+        }
+      ],
+      "start_ms": 1790946897858,
+      "end_ms": 1790946901362
+    },
+    {
+      "message_id": "msg_0fcc0fd81001fhhB4C5ZQJMxxV",
+      "steps": 1,
+      "finish": "tool-calls",
+      "snapshot": "6541f9c55667a2bf4a22a2a3ccf0bf1631a8c4a3",
+      "tokens": {
+        "input": 644,
+        "output": 170,
+        "reasoning": 0,
+        "cache_read": 10225,
+        "cache_write": 0,
+        "reasoning_exposed": true
+      },
+      "usage_reported": true,
+      "tools": [
+        {
+          "tool": "edit",
+          "input": {
+            "newString": "\tif got := FormatUSD(1234.5); got != \"$1,234.50\" {\n\t\tt.Fatalf(\"got %q\", got)\n\t}\n\tif got := FormatUSD(-1.5); got != \"($1.50)\" {\n\t\tt.Fatalf(\"got %q\", got)\n\t}",
+            "oldString": "\tif got := FormatUSD(1234.5); got != \"$1,234.50\" {\n\t\tt.Fatalf(\"got %q\", got)\n\t}",
+            "path": "format/money_test.go"
+          },
+          "output": "Edited format/money_test.go (1 replacement)",
+          "status": "completed",
+          "start_ms": 1790946902968,
+          "end_ms": 1790946903499
+        }
+      ],
+      "start_ms": 1790946902963,
+      "end_ms": 1790946903624
+    },
+    {
+      "message_id": "msg_0fcc10657001qH1enPAM5dmgot",
+      "steps": 1,
+      "finish": "tool-calls",
+      "snapshot": "ca98b9da27f0cfb7ead9548e9f4e98c77e6221f9",
+      "tokens": {
+        "input": 204,
+        "output": 146,
+        "reasoning": 8,
+        "cache_read": 10865,
+        "cache_write": 0,
+        "reasoning_exposed": true
+      },
+      "usage_reported": true,
+      "tools": [
+        {
+          "tool": "write",
+          "input": {
+            "content": "package pricing\n\n// LineTotal returns the total for qty units after a percentage discount\n// (discountPct=25 means 25% off).\nfunc LineTotal(unitPrice float64, qty int, discountPct float64) float64 {\n\treturn Discount(unitPrice*float64(qty), discountPct)\n}\n",
+            "path": "pricing/line.go"
+          },
+          "output": "Created file successfully: pricing/line.go",
+          "status": "completed",
+          "start_ms": 1790946904926,
+          "end_ms": 1790946905587
+        }
+      ],
+      "start_ms": 1790946904785,
+      "end_ms": 1790946905731
+    },
+    {
+      "message_id": "msg_0fcc10e96001UPEHhe1M0sqGki",
+      "steps": 1,
+      "finish": "tool-calls",
+      "snapshot": "d5ce5b7df4ec559caaca90b7e42de48431861c7d",
+      "tokens": {
+        "input": 259,
+        "output": 111,
+        "reasoning": 0,
+        "cache_read": 10993,
+        "cache_write": 0,
+        "reasoning_exposed": true
+      },
+      "usage_reported": true,
+      "tools": [
+        {
+          "tool": "write",
+          "input": {
+            "content": "package pricing\n\nimport \"testing\"\n\nfunc TestLineTotal(t *testing.T) {\n\tif got := LineTotal(10, 3, 25); got != 22.5 {\n\t\tt.Fatalf(\"got %v\", got)\n\t}\n}\n",
+            "path": "pricing/line_test.go"
+          },
+          "output": "Created file successfully: pricing/line_test.go",
+          "status": "completed",
+          "start_ms": 1790946906969,
+          "end_ms": 1790946907322
+        }
+      ],
+      "start_ms": 1790946906965,
+      "end_ms": 1790946907507
+    },
+    {
+      "message_id": "msg_0fcc11580001sGOqVoLbLuyCXB",
+      "steps": 1,
+      "finish": "tool-calls",
+      "snapshot": "7ae92c86606082a8def835fbe4bfcd0c019e8a20",
+      "tokens": {
+        "input": 144,
+        "output": 47,
+        "reasoning": 0,
+        "cache_read": 11249,
+        "cache_write": 0,
+        "reasoning_exposed": true
+      },
+      "usage_reported": true,
+      "tools": [
+        {
+          "tool": "shell",
+          "input": {
+            "command": "go test ./..."
+          },
+          "output": "ok  \tshopcalc/format\t0.481s\nok  \tshopcalc/pricing\t(cached)\n",
+          "status": "completed",
+          "start_ms": 1790946908932,
+          "end_ms": 1790946910071
+        }
+      ],
+      "start_ms": 1790946908929,
+      "end_ms": 1790946910100
+    },
+    {
+      "message_id": "msg_0fcc11fa5001qSdd6zT4dGnB3P",
+      "steps": 1,
+      "finish": "stop",
+      "snapshot": "7ae92c86606082a8def835fbe4bfcd0c019e8a20",
+      "tokens": {
+        "input": 108,
+        "output": 38,
+        "reasoning": 8,
+        "cache_read": 11377,
+        "cache_write": 0,
+        "reasoning_exposed": true
+      },
+      "usage_reported": true,
+      "tools": null,
+      "start_ms": 1790946911139,
+      "end_ms": 1790946911470
+    }
+  ],
+  "unknown_event_types": null,
+  "errors": null
+}

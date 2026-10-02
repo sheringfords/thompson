@@ -1,0 +1,12 @@
+{
+  "adversarial": 1,
+  "decision": "KILL_INCREMENTAL_REPLAY_ECONOMICS",
+  "guard_notes": null,
+  "guard_ok": true,
+  "scenarios": 6,
+  "why": [
+    "H1: correctness gate failed",
+    "H2: correctness gate failed",
+    "correct selective replay not completed in every scenario"
+  ]
+}

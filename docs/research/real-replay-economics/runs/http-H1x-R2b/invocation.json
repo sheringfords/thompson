@@ -1,0 +1,9 @@
+{
+  "label": "http-H1x-R2b",
+  "session": "ses_f033d23b2ffejv9p4LXXscHx12",
+  "resume": true,
+  "exit": 0,
+  "wall_ms": 42929,
+  "timed_out": false,
+  "stream": "/private/tmp/claude-501/-Users-wira-Documents-thompson-sampling/3fabd393-52f5-436f-9d93-ac4c7273ffdd/scratchpad/rre/docs/research/real-replay-economics/runs/http-H1x-R2b/stream.jsonl"
+}

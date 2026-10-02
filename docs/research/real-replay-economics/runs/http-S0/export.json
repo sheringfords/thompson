@@ -1,0 +1,540 @@
+{
+  "info": {
+    "id": "ses_f033d23b2ffejv9p4LXXscZW4o",
+    "projectID": "dde1656b2a8b579d3024e5d6573af04c53dff069",
+    "model": {
+      "id": "muse-spark-1.3-contributor-free",
+      "providerID": "opencode",
+      "variant": "default"
+    },
+    "cost": 0,
+    "tokens": {
+      "input": 17900,
+      "output": 571,
+      "reasoning": 492,
+      "cache": {
+        "read": 39974,
+        "write": 0
+      }
+    },
+    "outcome": "succeeded",
+    "time": {
+      "created": 1790947024004,
+      "updated": 1790947028993,
+      "idle": 1790947045049
+    },
+    "title": "Widget quote for c42 with discount",
+    "location": {
+      "directory": "/private/tmp/claude-501/-Users-wira-Documents-thompson-sampling/3fabd393-52f5-436f-9d93-ac4c7273ffdd/scratchpad/rre-work/ws-http"
+    }
+  },
+  "messages": [
+    {
+      "id": "msg_0fcc2dc8d0011sd3hz2w1GeeDj",
+      "time": {
+        "created": 1790947024994
+      },
+      "text": "\"An HTTP API is running at http://127.0.0.1:18741 . Do two things, in this order:\n1. Fetch http://127.0.0.1:18741/customers/c42 and http://127.0.0.1:18741/policy/discounts. Write customer.md containing the customer's name, their tier, and the discount percent their tier receives.\n2. Then fetch http://127.0.0.1:18741/pricing/widget and write quote.json containing exactly these fields: {\\\"customer\\\": <customer id>, \\\"sku\\\": \\\"widget\\\", \\\"qty\\\": 3, \\\"unit_price\\\": <unit price>, \\\"discount_pct\\\": <discount percent>, \\\"total\\\": <qty * unit_price * (1 - discount_pct/100), rounded to 2 decimals>}.\nDo not modify any HTTP resource. Do not commit. Reply with a one-line summary.\"",
+      "files": [],
+      "type": "user"
+    },
+    {
+      "id": "msg_0fcc2e07200183L5UDtPvO5Tvm",
+      "time": {
+        "created": 1790947025131,
+        "streamed": 1790947028660,
+        "completed": 1790947028699
+      },
+      "type": "assistant",
+      "agent": "build",
+      "model": {
+        "id": "muse-spark-1.3-contributor-free",
+        "providerID": "opencode",
+        "variant": "default"
+      },
+      "content": [
+        {
+          "type": "reasoning",
+          "text": "",
+          "state": {
+            "itemId": "rs_6abfaed23400d09bc85c4dad:rs_01a0fcc2e6d2746faf4fa9328a3d832e",
+            "reasoningEncryptedContent": "Q-PaDgELoYAB6sIC5KUvrrjsRAEk-1Xe6_y_3THEnniI1XAtSW17GpwAMZ7RIg-i3qZbJo_Gor_IKsGnuUXfuilen0tH61uuPZ0JpfHtaecUMZtQMldhMMZ-4msC-b1e5-GGTlvUrltxkrmHNRQjuCmqylr7V_Z55qZn-Q-M9ZE2h8ks-yTXJy1YL3r5BJwc4FG6fWJy_hEs15XkauBwTvG1JEt3ggOeMAiikJ2aDmMytD8Aa-UyqGZpoI_P3FLbrBtlSnu1_vWZ0GU0BCgrfeTSFRAp35NfXwnDeVacI6TFKe10PVPPEc8e6rrH6bOWzBWgtXbO3aGYr9H7wYiMvJnEQMTCDRE5UulpTy9O-zcFsIQKRanrB92XwE-Mt2M2XIfkbMt6A9QfggFudiQfLMq6tgXeWwVS-VAFg24qyN3kfO4-uAcDfcO5bMsVr6J4x4SzE7DbrxG-93UZEoNUcbhHnEj2nqipU7hHqdQv0yqNjKGrNn_fH_sCurwjldxMYgnlIgVMOzMkWpr1uDFsaD3gJDizrHjxV5cKKDZiiSBBFbEEArcMeZqpX2J6mYHGCUZheKLiHsqd8rIMUR62SgCbBrb7imWuD7OZg99KylTwaeYljM7VjTZkuI5VUWd3wtq57ITEtXPWMzOOpj8ikl4jXPOlNngNSxrDt0yACKNRbrU4b3kGZLE4Szzozr1NXkZ3W0WebTyO8azFcZtufBSXvKtMg0DOFCEIjM07CeWZCnQr7wmWAQ36yyojQgMrNUatzdNUES7Pzp7fikZguVO5qc9lP_JAPNDVmBYWYD3BxdfRNQVfNT9QQAkD8p0CukEx26GJiV26CiN_9Wl6VV1NACz1oiR-qG-URzOsTJDn7k0DJyg0i5tY80R19Z1gwdlajkj8MFel5Uzwpdhje4-5efcOIkZSW7nnmaIjoGKrBu0Mez6Mdq9j5RUJJh0RUI9AUdjYqvDNHRNfgx4OmBQ1lUyagsz_ZARrIvnB_ZEwROUWJ6jUpvLvl_G4DWYS26Tk9peHuczlhIn1jYITXsKa6Y9yUV5TPwfOGy3-d34Wotc4NS8ckcZgonlbzbSEvUifSADPD1dZ1O19T8Z7bJqXzdJvvlLAjPoUvu6PLLafKG0SnOb5D58gUOHe2rPkX9GOfactumC_-Bz8x5Ay7Xldqkh-b3te2jnF6_2qGT6M1RAoPO9kAJhKrNNK2tv8IqcOVIgUIGQwzMrR9iDKBOkCTz8E6Nbdq0ps5XmQSk7mh4B3h8sLCGzX0KoiyKuKW15qTbihuamBVqmzAFSQTzlmHriM3BP6CnswNrg5gayKxYHLwJ3s5LRYiNbRzhfah7HaNbrwU72x3TNNflGWA3EKVHEaye5h0ER0D6Icb0Nmtse0lC9wl2O2Zhns11RVh1fHKoRCGw_BKv9rvA"
+          },
+          "time": {
+            "created": 1790947026744,
+            "completed": 1790947027494
+          }
+        },
+        {
+          "type": "text",
+          "text": "Fetching your customer and pricing data in order.",
+          "state": {
+            "itemId": "rs_01a0fcc2ea617770bd478575ad723749",
+            "phase": "commentary"
+          }
+        },
+        {
+          "type": "tool",
+          "id": "call_01a0fcc2eb69767eabc86e0cd902d7d7",
+          "name": "read",
+          "executed": false,
+          "providerState": {
+            "itemId": "fc_01a0fcc2eb69767eabc86e0cd902d7d7"
+          },
+          "state": {
+            "status": "completed",
+            "input": {
+              "path": "/private/tmp/claude-501/-Users-wira-Documents-thompson-sampling/3fabd393-52f5-436f-9d93-ac4c7273ffdd/scratchpad/rre-work/ws-http"
+            },
+            "content": [
+              {
+                "type": "text",
+                "text": "Read directory /private/tmp/claude-501/-Users-wira-Documents-thompson-sampling/3fabd393-52f5-436f-9d93-ac4c7273ffdd/scratchpad/rre-work/ws-http, entries 1-3\n.git/\nopencode.json\nREADME.md"
+              }
+            ],
+            "metadata": {
+              "truncated": false
+            }
+          },
+          "time": {
+            "created": 1790947027807,
+            "ran": 1790947028650,
+            "completed": 1790947028665
+          }
+        }
+      ],
+      "snapshot": {
+        "start": "03055ef09fc8cc405a101b27c1b6292bcf376b1e",
+        "end": "03055ef09fc8cc405a101b27c1b6292bcf376b1e",
+        "files": []
+      },
+      "finish": "tool-calls",
+      "providerState": {
+        "responseId": "resp_6abfaed23400d09bc85c4dad"
+      },
+      "cost": 0,
+      "tokens": {
+        "input": 7476,
+        "output": 114,
+        "reasoning": 65,
+        "cache": {
+          "read": 1521,
+          "write": 0
+        }
+      }
+    },
+    {
+      "id": "msg_0fcc2eeed001FRvdihLytThD35",
+      "time": {
+        "created": 1790947028818,
+        "streamed": 1790947031829,
+        "completed": 1790947031857
+      },
+      "type": "assistant",
+      "agent": "build",
+      "model": {
+        "id": "muse-spark-1.3-contributor-free",
+        "providerID": "opencode",
+        "variant": "default"
+      },
+      "content": [
+        {
+          "type": "reasoning",
+          "text": "",
+          "state": {
+            "itemId": "rs_6abfaed6a7a43fd79e8940e6:rs_01a0fcc2f53877119cbf33b381a5e0f0",
+            "reasoningEncryptedContent": "Q-PaDgE5K8FEyOiOKYCfFhr-nswmTrn8FhwpEaLCf7u6hyUXcTvd49R8ype0sazJcqRq9whbh6IIQmdtwNdUupkzQKUuy3R2jHdhqRUKexYN2p5v0QSVaLFw4OK1RW1OSt56larpdJQRrC9gc7MVScxLQwddOnEKE_X4egSH4bRTq2bZGz-VaPCF_BFS3WfjVKlFgkMZiT9M8oE4cAdZxTluWCLTyY4fZz1ndYASOHs7muca-muHypoYNn2sm6u9CnySyIviFqqzjcBpyg0SlCUJsTl4BBhy3J5xc3dWs0tNti5bLG1gKblK6N9qg2okNhH_qf8vgvjrexTsz1VWNEQ0OJnjHreC5JmUUsyDr0XSZJYt4hW1QAcO5m895P-FcjEqmSPJNC1rsUnq6aNTdfAqjJUatI-WEcIDFOmy8okndJ2qO_rG_o0o1g5Es5pNgUlMmVMLbzRo_k6VPkaE5yjfoPbNcQxkc-fFScZ9lagVPHTp8yCm-5bHcJgW9H_zE0kw89Bwd9i1xghCren0f46mLs6cn2Gq5v2aPFPB1wa7bjsx2XwQ7dR1_OY0kkx8kQipyLn379cVM9B6nTXjV0umJ8vNAgGK7NnR9Rg8TTZw-xnTGEngtGEYJSurQu5sAlQglvxqp1ADG2vGDU0oGTYLL2O3I4kfLR-7_cBz3SVSmVmQ3yNZzThQpTIFP0C84741JNGR4OP9P-JsTb4NshSaunIMMsHGvohEAmAJirsPrZoe5VCzWWtR7ahwMpxpyYaqF3bNYOf_efa3n1gZmpUao8oKoqFDn8TP422lP2G6hz2BYFsuGkePYkFrWpDdBeStVDfsxANSfriLHWceH7lsdsWtoK5L7pI3nDeOFvowXXgApK_7shtmzhqKyPSePkrbnqovzYjov7AmddPgWXk0tUQ69FI31PM8ZvkgP24MkPtmBsVadnT5RlraEheFTgfq56ZDqGU2xOIszCjaPHrLUiyVhfKe6i3zP4jSrMUe-7I5CbNOiO3Jd4xzdHnE_FgWhPNHzkJ_GLekYQ8a4JFeR1Afa737UQMe1_ZD-wPP_R_UHZgdvhn9DJeuHVok78MymukCs80ZqegNEKC97u8eYWXnusDZSdEsyp0vDbOYWPxx0cxYmIVz0HGm_ICzYACXv_puarezW-q67ml-4aEuP5Q6auscSJ-YLXgrQmp2pthF14tHtfVM2hmNVc1FqJGXmxCnvXDyo9R7UAkBwYhc5XtTPEZemnRCEhVs0hS8TCEQ3nMo1BDRssdLgmw954zTinoie7ZNGBntQ4M8FDGkIdCir2Kg4hjHafwcyoULT9f5lrykwIu61J8cuN3Ul0-J9K1YOPK4Yy0Nk2NaxMI_gVI_jVowU6sU-NKx0-N_Q3SbCHzSGjkyjQRRBD1ZyoOvKvD0O93iRd9fUw"
+          },
+          "time": {
+            "created": 1790947030591,
+            "completed": 1790947030595
+          }
+        },
+        {
+          "type": "tool",
+          "id": "call_01a0fcc2f60b74e38bf3935399efff2e",
+          "name": "execute",
+          "executed": false,
+          "providerState": {
+            "itemId": "fc_01a0fcc2f60b74e38bf3935399efff2e"
+          },
+          "state": {
+            "status": "completed",
+            "input": {
+              "code": "const [c, d] = await Promise.all([\n  fetch(\"http://127.0.0.1:18741/customers/c42\").then(r => r.text()),\n  fetch(\"http://127.0.0.1:18741/policy/discounts\").then(r => r.text())\n]);\nreturn {customer: c, discounts: d};"
+            },
+            "content": [
+              {
+                "type": "text",
+                "text": "{\n  \"customer\": \"{\\\"id\\\":\\\"c42\\\",\\\"name\\\":\\\"Acme Ltd\\\",\\\"tier\\\":\\\"gold\\\",\\\"country\\\":\\\"DE\\\"}\",\n  \"discounts\": \"{\\\"unit\\\":\\\"percent\\\",\\\"tiers\\\":{\\\"gold\\\":10,\\\"silver\\\":5,\\\"bronze\\\":0}}\"\n}"
+              }
+            ],
+            "metadata": {
+              "toolCalls": [
+                {
+                  "tool": "fetch",
+                  "status": "completed",
+                  "input": {
+                    "method": "GET",
+                    "url": "http://127.0.0.1:18741/customers/c42"
+                  }
+                },
+                {
+                  "tool": "fetch",
+                  "status": "completed",
+                  "input": {
+                    "method": "GET",
+                    "url": "http://127.0.0.1:18741/policy/discounts"
+                  }
+                }
+              ],
+              "truncated": false
+            }
+          },
+          "time": {
+            "created": 1790947030619,
+            "ran": 1790947031733,
+            "completed": 1790947031806
+          }
+        }
+      ],
+      "snapshot": {
+        "start": "03055ef09fc8cc405a101b27c1b6292bcf376b1e",
+        "end": "03055ef09fc8cc405a101b27c1b6292bcf376b1e",
+        "files": []
+      },
+      "finish": "tool-calls",
+      "providerState": {
+        "responseId": "resp_6abfaed6a7a43fd79e8940e6"
+      },
+      "cost": 0,
+      "tokens": {
+        "input": 9263,
+        "output": 122,
+        "reasoning": 7,
+        "cache": {
+          "read": 0,
+          "write": 0
+        }
+      }
+    },
+    {
+      "id": "msg_0fcc2fb43001E60RoCEwD3ArfQ",
+      "time": {
+        "created": 1790947031917,
+        "streamed": 1790947034827,
+        "completed": 1790947034903
+      },
+      "type": "assistant",
+      "agent": "build",
+      "model": {
+        "id": "muse-spark-1.3-contributor-free",
+        "providerID": "opencode",
+        "variant": "default"
+      },
+      "content": [
+        {
+          "type": "reasoning",
+          "text": "",
+          "state": {
+            "itemId": "rs_6abfaed90c42e628fdc9403a:rs_01a0fcc3024670d68a2bd3aabe66a2c2",
+            "reasoningEncryptedContent": "Q-PaDgECxA9_MdfV_vD_eZKlbJ4UfM_A2XkZrjpTr4oA1_YQVhef9AU6hbt42FIiSpDmtlGUxWbiSfWx-JLIzTsxZs1yEjoDnp13Pt49w2dsbdoWpv1JKsQEYP2-Wd_1drE8OcySkWhTeUiBPYyHR5WlNsDQejYORhy5KpBXCbTj-zGQWdei1-yOr030xYcv-kJaAEGBuu1e3qdy2k4ytjCvlvkl-W2DNsUrAEhDl59KyKESoUSaT-EhBOF4F7SJM-ymLdi2DNpD8PMasPpyRY2lASQ5-k9ZAemUaKBdiAhoauffX93oqo673idP2ZZKrW8wxQncW2KFKk8gk5uC1ECTv-H3rxeB8zEeUWrJYMNg8zoQhbFvDEzDP5YleLlrklqMFcWO9BUgRS8AUpfxlAWbiBZStn5ZogrGo-1ouBUjPSdpuHCjmcP2TuCQJu6v7b7bCA4Ni9WQpDFT4-YLzTJQ31U1nuAYFvtC1itui6NnjM81kTvtjmVjIfbdF3nAje8nxa9Kj_7xBASdxIK9zVpkD3O6HWHmQ5TPxCDvsgiFQbi4VK-W6LI6IGjWqM01WyqiOrSnu07yOLGsD2cJUep1OD4ce4w96saRvdyM2lAYEeWRVgVoDOwYOqgI0c3VgTYYDK_qbUs1nhpHUibSxoA8-zozEBODVqorI-i45G4IR2Sag0iQ5kVxCGPdPV0atNyW2Vnp5IWzSI27u111G-0MezWqpDBAnc9Twrb1AHX4mXpo3udg08xU3rBxk65g0tV9Ej38F8E-9xZaVzxn7C-UVYUvFhfYUWfrbkESwZv39j0PdyKd59eBOl8Cf-wUt4zc55k9OXXcmAyiRgFMfMPSpMQviu6cJ5UEgHQRgp1qrk31GPkTMdA9SUXVGqsxXOijmalWBMfArXPEJ_mGlqYfGUHkkNGA5ZyD3i519vgj3lA_X7rIIfkgnnp8sJsM12YrfqpcwogVmG1LzsZlBhPUQchpzZrY8dL4ftkS_soenRtWir_CEwFgf9-lOQO4DxLHObvvIZL1MMwdDO_wuchVq5flxRBJFJ9S3HZ8q9OdGNXsO6CyzWoeUlR2ZtQA6zb_T9R9WdIIcYCG8q6yc6GJrNwjKH3CitfIPs9EdwJpQtmJAvxReGfZTG-VCNVrvwReRQSCzK1GAFmlb1e-bJdC1n47UhSdSH3n5WyM8n8dEE0alSp5r_sMoJ7h6YGQuiuFhrxivmin0g3IytlRmP9kCWhIRJA_MS9dIKE3c5Ul4ocNq8o-nqOIH_2FFzNTuGEIZjDnX0MAkgceIDw3Vj0BW23u5h2hIn-WK5i1B9Ze9EcVXoKS8yHMXfzNwzazSSCzVqD-y8iLj84q8O-j29xEntlkQ7S984XaWCYlJfOC_6XVIt3NyzEs2RLJ2shB_klyec44NuGRAz6QEw"
+          },
+          "time": {
+            "created": 1790947034079,
+            "completed": 1790947034085
+          }
+        },
+        {
+          "type": "tool",
+          "id": "call_01a0fcc303d774bc93aa74dfb57e32ef",
+          "name": "write",
+          "executed": false,
+          "providerState": {
+            "itemId": "fc_01a0fcc303d774bc93aa74dfb57e32ef"
+          },
+          "state": {
+            "status": "completed",
+            "input": {
+              "content": "# Customer c42\n\n- Name: Acme Ltd\n- Tier: gold\n- Discount: 10%\n",
+              "path": "customer.md"
+            },
+            "content": [
+              {
+                "type": "text",
+                "text": "Created file successfully: customer.md"
+              }
+            ],
+            "metadata": {
+              "truncated": false
+            }
+          },
+          "time": {
+            "created": 1790947034088,
+            "ran": 1790947034779,
+            "completed": 1790947034788
+          }
+        }
+      ],
+      "snapshot": {
+        "start": "03055ef09fc8cc405a101b27c1b6292bcf376b1e",
+        "end": "e7e6879103ff3c344207733b28d5551c50efbeb9",
+        "files": [
+          "customer.md"
+        ]
+      },
+      "finish": "tool-calls",
+      "providerState": {
+        "responseId": "resp_6abfaed90c42e628fdc9403a"
+      },
+      "cost": 0,
+      "tokens": {
+        "input": 264,
+        "output": 85,
+        "reasoning": 30,
+        "cache": {
+          "read": 9201,
+          "write": 0
+        }
+      }
+    },
+    {
+      "id": "msg_0fcc307260011RcaNrEDvGvty8",
+      "time": {
+        "created": 1790947034957,
+        "streamed": 1790947037004,
+        "completed": 1790947037034
+      },
+      "type": "assistant",
+      "agent": "build",
+      "model": {
+        "id": "muse-spark-1.3-contributor-free",
+        "providerID": "opencode",
+        "variant": "default"
+      },
+      "content": [
+        {
+          "type": "reasoning",
+          "text": "",
+          "state": {
+            "itemId": "rs_6abfaedbfbe062f8f7df4902:rs_01a0fcc30afa70498b4f5f7131769241",
+            "reasoningEncryptedContent": "Q-PaDgEyjFnaKH6LTcSkan0hq36Z_JjWACw8DS6QX6IQFVkcC00W0NDZxU3YyaQ_qAmGsLe8LS7hLW9yEGFw2TS7v6xIx5cvSPenxSELENqnHYtbFOPkRfhMCaZnWq4-yIJIPABYRaVg2bxITTI7P4isuTDXbg1rKFZPmufEsu28fVcnQnhzJuoZdIoXDAgwTevn7ahoYh7qaDJz-0yOeZJ6B1zL1Dh1fBPKaPfPqDo2BgppqFjKrSBYzES4BuALFFzEraS_1c0Mqwwe8OxvxCmXPgwmDohspUvjPTA9hZiD1WzbvGg7aAhmdn6o4XJd3phxp2ExXUDgxzP33mNgNqNIAMIipomzreDUnAa9pJJDnO5-6DakJChhBMLuU3OtJf93YZJLNqoY6ePTFhwzzYMjfnQyT1qLZmzsuaQmfp27jdOgoaXlZ5bjya7pRtUxuFz-WwuukC-6CPcZqeVrjeRO_1-xTHNz7Y9tJ-YdMFuCmeJRW8l4hUqXgCtVBZc8JPgMM9kzsrDDBUBP8qk727YkAhPuQFinXbt7WPpHW9oBCZqONFbRKPzXrG7DP4qmH5FhRc_bY1-9FnbWrYOa8_D-RLWK8_ln4B-sqb8I7h8OWRAGfAsoPZMJB3cyJp1AbZNBNHtX4BsH2Od1-yVMLLnBIUXs3pycw6clbqMxHxkUF00YwIRxcuf8gTzyItqw0EqojyZdu45Ip2Ijh4ytdWS7yQ47lTFphOKvTySwlPjrlfSZxlttEPctnAM4ZWvaphhcGsHXY9kMSZILA8EzWVB8jc4r21mWe2aaSkDdI-bNO6-Q7d6hvlWYWhpYw7kIiiY9PoGWEX_Hk05zbh7GRdi4Z9tGfK3-tOUJOWRh9iNqePprw4Jlojsh37vKhaZDdadcVcxRrq4xvCe2fUH-H0_CjnVR9jmXJsuMivsctJasIY3XUEUSaYTlq9bOlIEJ7I6aC_pbIfbwf0HPKBTpBev-oTlwTMmn5njpo3nUTU87zycZ5T8dxGegS5M70_LXDlyH6-vUS9iUz916Crg91VSZmsUxrHv2PBzq6TL82z8Qebm8zTKxZGt81u5j1vz70GSvnfXzqQrkfTUShC60ttGtxaSLJWZCRmb-Nj4kmmY4c8gyuR7yvshyFMoqdFDvV-Hd6WXgCgXCFquZ9_f7P7RlW5TAfCQiiFjPY4i53GymaBiCPbH-FECIxCx7ja1rQ9vLsGdANxN2qaI7snzL4IoKLdbI_igYmbNpLHxQ7R9GIEL9ZAdWkQcNqG8Ja6xLz3rOcFbIwSurrcfFp5VJCIv7vdAQ7GBi0XLPV1pO0DBBVEVddjzJzC_8wfX2FRS9Zo-ttLmxmiD8lTjOhOdqcU4DIQwfpSqoOLjFblIZVY5Sog2FwSXWVlAWhM1Gpq_CLThzc_9pDGcvTWSU4A"
+          },
+          "time": {
+            "created": 1790947036447,
+            "completed": 1790947036451
+          }
+        },
+        {
+          "type": "tool",
+          "id": "call_01a0fcc30b9d73499639afaf1dc18801",
+          "name": "execute",
+          "executed": false,
+          "providerState": {
+            "itemId": "fc_01a0fcc30b9d73499639afaf1dc18801"
+          },
+          "state": {
+            "status": "completed",
+            "input": {
+              "code": "const t = await fetch(\"http://127.0.0.1:18741/pricing/widget\").then(r => r.text());\nreturn {pricing: t};"
+            },
+            "content": [
+              {
+                "type": "text",
+                "text": "{\n  \"pricing\": \"{\\\"sku\\\":\\\"widget\\\",\\\"unit_price\\\":40.0,\\\"currency\\\":\\\"USD\\\"}\"\n}"
+              }
+            ],
+            "metadata": {
+              "toolCalls": [
+                {
+                  "tool": "fetch",
+                  "status": "completed",
+                  "input": {
+                    "method": "GET",
+                    "url": "http://127.0.0.1:18741/pricing/widget"
+                  }
+                }
+              ],
+              "truncated": false
+            }
+          },
+          "time": {
+            "created": 1790947036454,
+            "ran": 1790947036721,
+            "completed": 1790947036748
+          }
+        }
+      ],
+      "snapshot": {
+        "start": "e7e6879103ff3c344207733b28d5551c50efbeb9",
+        "end": "e7e6879103ff3c344207733b28d5551c50efbeb9",
+        "files": []
+      },
+      "finish": "tool-calls",
+      "providerState": {
+        "responseId": "resp_6abfaedbfbe062f8f7df4902"
+      },
+      "cost": 0,
+      "tokens": {
+        "input": 150,
+        "output": 82,
+        "reasoning": 13,
+        "cache": {
+          "read": 9457,
+          "write": 0
+        }
+      }
+    },
+    {
+      "id": "msg_0fcc30f790015seH95pfvkIHdg",
+      "time": {
+        "created": 1790947037093,
+        "streamed": 1790947041571,
+        "completed": 1790947041652
+      },
+      "type": "assistant",
+      "agent": "build",
+      "model": {
+        "id": "muse-spark-1.3-contributor-free",
+        "providerID": "opencode",
+        "variant": "default"
+      },
+      "content": [
+        {
+          "type": "reasoning",
+          "text": "",
+          "state": {
+            "itemId": "rs_6abfaedd62d1a7acf3c24ab7:rs_01a0fcc3136077aeb2d86e2193242fd7",
+            "reasoningEncryptedContent": "Q-PaDgE9EK19kvtiur3BAuPOcyheW9BYAq_aXZ3alZVUaDsqW0wXHb4S-J92hptoOLiHD0A3XMqyqu7LU71nkX3SdvIlLWBml8MwUKB-bvMba1__YaNqV_G-49-0tHy9LOJpqQoW1Xqwps21z1P5bR0nG_MMafLyXplyjKhExO769sGACF33VnCCtz0PHWu8IKID6C6KJl_m6t1Yo6-nMmlzY1ItR02O8uEntHr4hdrxF1fgB7yMdGBEkS2vQEVJoOd7dzGCY_B5yFiCYbnB4jGc8YvJWwwMm0Dn3XhYtKMQUfCZKUKL6SlW0SgitBNw9NMs5DOG_Q9wcWgAAJ9_yRv17AZ7P46JBxDKwi02MJ4FqmTF6kKg6w-9moeKlFDK-7tdiOt7YfIBQCabkTcK6xWcXGWSJx6gETd4ZYHlVN4bW0qIcoAz_WTmcmA4Narz1l5ZMcof667fxQfgcVOnKYCF_-0ZRjXRAujJLPu_C3-JUIUmjo4DlZ7kuNt5muKvlKITiWL8E2eL02P3jltOn5MzXo2KqAYROoAJcI-V01M2J3mE1b_hZKDJobPSKx4tyuOD0I9gm7Rx-cfEz6jXTfe_KtQPb7uL0WkZvOBsWJsC7P82_I6eeBjeEWrMgMtCH7RfPpqhBOWkwxVqW-giJuvJC9jExy02dg4lByfoS1Y9Wz8P6m7t7Y-KHsBezQfyAbZMyvfl4-UpYsQvF8KUEwBaQ7dC1ci2h4zVGpSNTSTdBDWW81ek-zK9FjBMyX5PLVSTsdkHiGdVoonEcX4fQL8CzUrMyMPBrYzduCBF0Tjxyh1D5YOIY4_C_oNE0wKFWgKkIINDPeYKCBwa07MgdBFaZG8yOX-iY3HZsXhUKB0w7TcEzXkQkx6DPru7PpQfM50OUlqalynNGV-ab9_C4x5PAV4wWKF6CHIEX47ES9es5QJVckw5txFaxzAFktBkIRPjKEDil6WiQMMq19LLeOeHa5beCvNa2P1_f3Gy1l1jkiltd8v4BZ5mloDjFhZGDDUB2HkB0P7B2z_7DXtGyWNcy1NEXDSvUiTKHm_RgZe9uCftUWa83A3JnyWbwqZIPC3sAMCwahPP3FWjK45yp_uve7Wffo1p4ifsSsoC04d926_SUU5afg5UrZa1G9NLZWkPsF7H-8RsAnSTz2m44V58Hw-WsQKk9pVdbX6DBpKQwrRO7ZzAyhl_U0GiIN5ZSomeJtJJwJ-KGh7RLFJM9PXogbPj0lTgurUECOVEktuU3XjTp70KkYG0BkJCq6d5rOJURaOXbi5P3bOTB9tCfrWUohFZjka_cqeNoeUWKxh07vJGPyH6o9JhG4yhZOJoQUOfkcRlHWYhsWvpz5rkBuZNwp0wKk_rQ-VOkLncL6BllYmrhTom1u6EYCkazLGkd1Sg09KXaK1NVZRPdTK2ruRZ1FP6cPVp_trOLbE4OOoFtrYrj-bzo5vMVkCV9mp8Eh9BEQiFvnOloCeGf0suOigdIVSUKlVJCJtCQ1Xu5l3qbYbZWZbRmrqFsGI3qSUS8Q84B8w0w75LCjJwX8dOQ7oO1b0RNyzcakYdGtV16_MxNIsfBs8M5S0F6mbB22wTHTeV_QKhEYBhfjHxWvQDy2_al19icoJiYpCz_6BBxhSepxKxrbPDqUU_4GsIU-S3yetphs_3L8FSro881INGPlryu8_ISp_E-1iV7lb_wE6bYkCu2hccOzeDQHn3UQnOiyLT8BnPlGqgW4KQM8DfRJwqPgokYMotqvZW9pbkFbeUTI5QenshcgI7wNTfm2FVhpSqd3ZrZgO8INB0GiuOAc5B1otRIzpU-P3FSnO7dmpjRMu08IoJlJOSCiga4gOL6TxCbOg_4CfkWpaKhIYnJX0OyaPyBAaAGuhyw4NoCd4PwWuw-IdzxND3PPFstNAwbYzz1LH6q0Bddw_oWMYdHSDvDCrhe8iCx5XjTsWUMS37n2KQ1VleoJlBp7vI8M_6I1Wh0hreT3yhhzD_GoSmPKjnHNYhwkCdn-1D2tdFAQ1KUh_KWerNlXlc1PIxinKafei6GRpGNQF-Lh8SYRWwVb21q-aeu6Ox2CCW5gEzbRJyQhPDK3kuJXnzHDUWeA6VATqjN6C2TQBi9tSVvaTOA0gH-imVZykEtRezEqDwC1B1otGtPBo2yy6omDBudtxxADTA0nHgMiRXfZ9Em6lLb4XXJMCzQ-ixQE7oJrzqumNnyB0nkKN5INsRdtQ2eaYsiGgGPmEK1wR7LuDMm5FZjyiYOPhVbycbSU9rjofW0m54_4zUJYcLtSJHmh9mgaZclCzis22q7jEl-tU1iPK8WKTldugLJ2Hqbo79AUE1f71ORDAO-avV9A7eAcTGKzgG4YiWhOZjIPxrx2Wuojl3kRwvQhHUBiVEoUCXX7GDsWxMa8r6bSlIV4LvLSOVkjep3cgBKJ1xFlGOwJU1QJu8xh_hfON1X6bT_pFLZbjgYoJr6npmB6e40QnsEBPbW6F_ZbG3KD4mzi2f8KqRLhfTbCARFHiS13jmCztu_Xz0el-vKPf_8UYT3UQxenNl_ettZvqrw9d4y_L2Ro3sohZPo1Ow2eF2dRzLqSBmdWPHCAFbObxuWWEEwvNoCk-YrKdaW9yZAjltuNqeFSYw7y-vGPKWqexgR-VoHQLulmDT_FbJ9kV7r1mzQp5CkR7X2tdQdtKEmaP411nxbQKtcgYYCV8bJnMYXTRozNHL5IdFulWbQYWuaSLoOjaYzhPL8qw0v2AG0ZJvB-fkTcc2LW_RFHbh8DrODV5jU9agUSo"
+          },
+          "time": {
+            "created": 1790947038295,
+            "completed": 1790947040514
+          }
+        },
+        {
+          "type": "text",
+          "text": "Customer file written — now building your quote.",
+          "state": {
+            "itemId": "rs_01a0fcc31d88759cb77b4642dba2120f",
+            "phase": "commentary"
+          }
+        },
+        {
+          "type": "tool",
+          "id": "call_01a0fcc31e6972cd85a533464e4d5d84",
+          "name": "write",
+          "executed": false,
+          "providerState": {
+            "itemId": "fc_01a0fcc31e6972cd85a533464e4d5d84"
+          },
+          "state": {
+            "status": "completed",
+            "input": {
+              "content": "{\"customer\":\"c42\",\"discount_pct\":10,\"qty\":3,\"sku\":\"widget\",\"total\":108,\"unit_price\":40}",
+              "path": "quote.json"
+            },
+            "content": [
+              {
+                "type": "text",
+                "text": "Created file successfully: quote.json"
+              }
+            ],
+            "metadata": {
+              "truncated": false
+            }
+          },
+          "time": {
+            "created": 1790947040869,
+            "ran": 1790947041461,
+            "completed": 1790947041467
+          }
+        }
+      ],
+      "snapshot": {
+        "start": "e7e6879103ff3c344207733b28d5551c50efbeb9",
+        "end": "2c1eb3c9f1d9b1d8d3b6609eb26147d550946ca7",
+        "files": [
+          "quote.json"
+        ]
+      },
+      "finish": "tool-calls",
+      "providerState": {
+        "responseId": "resp_6abfaedd62d1a7acf3c24ab7"
+      },
+      "cost": 0,
+      "tokens": {
+        "input": 160,
+        "output": 107,
+        "reasoning": 215,
+        "cache": {
+          "read": 9585,
+          "write": 0
+        }
+      }
+    },
+    {
+      "id": "msg_0fcc32184001JIX5bcDyevUcqk",
+      "time": {
+        "created": 1790947041716,
+        "streamed": 1790947045015,
+        "completed": 1790947045042
+      },
+      "type": "assistant",
+      "agent": "build",
+      "model": {
+        "id": "muse-spark-1.3-contributor-free",
+        "providerID": "opencode",
+        "variant": "default"
+      },
+      "content": [
+        {
+          "type": "reasoning",
+          "text": "",
+          "state": {
+            "itemId": "rs_6abfaee3314d21178c7d4842:rs_01a0fcc329ee7648919ad0a8bee91774",
+            "reasoningEncryptedContent": "Q-PaDgFhofuGIH_PlUeNcZtVAbkfok936hu-rPCRblzGYg10S397itczQzjaCgG1xDUwDcMPUsHAHB8tX0cYXbNA8oTLW7Hhl8VLTXXL5PO2c9n4Dqll8Xddk8s6vqjxY7z8uUW8HzD93z7AVVadra7raRh8OO-ncuZHo6IC78xmFimRd_oHgvP6HZ1_nK3oQ2B33fzZUO3_4iK18L7vKzqlcKSVlY7CMcBcnSZ4dnTOp1vYFlPV4g3tAlqf8q72q4btOC31jwMiyrfoNCO081nevkEhuyqj8soGea8Vlf98aIHmvyB-3O15MW77-Xb8R31LeBVd85LI058pkDsk9apVuEFf3JwnFS1RjmnW8rDjd--cUkUvUkmHXlF7XzM4JUaDN8nCVm3uO1elWESSVKEeIPlCZejqU0fba-65CjBYEls-6luu4utzzt8wlh-oBmPqMItAiui6q1ViJba-NAzCPwT2nUrUaN1JJN7MM3FG6ZED3495aHRl2KxDlo7KyFfrnI9UNodReHKNiLRbgylpcR_2HX39TquQd3dOukxzWqGyn2EOKD3WjfGFp6UbRp3p2jiqCvEA7A3a-29OXair_FJ1LL7akPSkswWapOmBBHFKo8XJY-RwNncqHgJwchS_m8NCS-PLD6oxFm6CO2Z86ha4clcNu0_m94ZTTESucsoa4_di71EX31LqyqhKH1nOFKdONVsiTM-bX6cZeeRW9BarE2dFVFQi5yhBKTLaMvBIhd-tqDFAiezq1B49Y7uVO8Ezj_uSjBsDBBcbhb95uJcQUTk3jAmxXtpazPqbRAoNHaJYhYFsVF_DDYdeZsDW9_U3Cf9yxU4UWgWLqbAW0-5FWf1g9cbGwRrnP7XceFm1CxZrZ7mNVSZ28OsFtih65pr0NfVsSTmvIKzIx_60TkqlqJ30E6S03HTQy1ls2zt5la7J6Exat4AeOHBKHZsfg7ncIw0AuTlJmQyvFGuoAVk6UWyGVT8RdF8f7uhLzeqzlBXY011dgefKEdqVdhHjEQKTUgG7txN_esgS9aCjPFgy5UBmgSGTMWnqKIfTOB4iY9iuZ7ltqy7m_is5UMJZT_3kPgDP1BSrbkm7sehrvsdexpjKy_fa65koHrASBdoz9K_vx7BR18l4-u7bqMCs1pgHoMwk10MIfcfJPVcgZu45bsLetj8L7056sRaUsg6VlNAbHlPu_vPk-iiriKAAcv3kazmbbe40oTMHfZ1B2fBZUU_GkzTpu0eisFVuesp_NOsMNuELQmZ9aLjXRvYmNUXiZTpSp3tB6I7GdcRlMCaUbrgCSIFUQN5ag8xpnJFnb481yP41ZeJ0ATDWjFuBiUmm2C890o-XORTsCSmQbAnQLgBMOe5DmwVAjtjaSfYQQssFuhb786T2P8F_eCSTbKc2yHKVDDCIhw"
+          },
+          "time": {
+            "created": 1790947044019,
+            "completed": 1790947044320
+          }
+        },
+        {
+          "type": "text",
+          "text": "Wrote customer.md for Acme Ltd (gold, 10%) and quote.json for 3x widget at $40 with 10% off totaling $108.\n",
+          "state": {
+            "itemId": "msg_01a0fcc32bdc759c86543d15ced5fda2"
+          }
+        }
+      ],
+      "snapshot": {
+        "start": "2c1eb3c9f1d9b1d8d3b6609eb26147d550946ca7",
+        "end": "2c1eb3c9f1d9b1d8d3b6609eb26147d550946ca7",
+        "files": []
+      },
+      "finish": "stop",
+      "providerState": {
+        "responseId": "resp_6abfaee3314d21178c7d4842"
+      },
+      "cost": 0,
+      "tokens": {
+        "input": 381,
+        "output": 44,
+        "reasoning": 35,
+        "cache": {
+          "read": 9713,
+          "write": 0
+        }
+      }
+    },
+    {
+      "id": "msg_0fcc32eb9001QjNT7rdfP1GgmQ",
+      "time": {
+        "created": 1790947045049
+      },
+      "type": "idle",
+      "outcome": "succeeded"
+    }
+  ]
+}

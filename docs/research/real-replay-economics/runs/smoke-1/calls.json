@@ -1,0 +1,204 @@
+{
+  "session_id": "ses_f0344bf03ffeg9TbIixp7XvDsu",
+  "calls": [
+    {
+      "message_id": "msg_0fcbb4588001DuOrWY52FZbJtc",
+      "steps": 1,
+      "finish": "tool-calls",
+      "snapshot": "03055ef09fc8cc405a101b27c1b6292bcf376b1e",
+      "tokens": {
+        "input": 7477,
+        "output": 116,
+        "reasoning": 81,
+        "cache_read": 1521,
+        "cache_write": 0,
+        "reasoning_exposed": true
+      },
+      "usage_reported": true,
+      "tools": [
+        {
+          "tool": "read",
+          "input": {
+            "path": "/private/tmp/claude-501/-Users-wira-Documents-thompson-sampling/3fabd393-52f5-436f-9d93-ac4c7273ffdd/scratchpad/rre-work/ws-smoke"
+          },
+          "output": "Read directory /private/tmp/claude-501/-Users-wira-Documents-thompson-sampling/3fabd393-52f5-436f-9d93-ac4c7273ffdd/scratchpad/rre-work/ws-smoke, entries 1-3\n.git/\nopencode.json\nREADME.md",
+          "status": "completed",
+          "start_ms": 1790946532256,
+          "end_ms": 1790946533023
+        }
+      ],
+      "start_ms": 1790946531092,
+      "end_ms": 1790946533143
+    },
+    {
+      "message_id": "msg_0fcbb5f28001S6ndhXInz9Eml7",
+      "steps": 1,
+      "finish": "tool-calls",
+      "snapshot": "03055ef09fc8cc405a101b27c1b6292bcf376b1e",
+      "tokens": {
+        "input": 338,
+        "output": 80,
+        "reasoning": 10,
+        "cache_read": 8945,
+        "cache_write": 0,
+        "reasoning_exposed": true
+      },
+      "usage_reported": true,
+      "tools": [
+        {
+          "tool": "webfetch",
+          "input": {
+            "format": "text",
+            "url": "http://127.0.0.1:18741/customers/c42"
+          },
+          "output": "{\"id\":\"c42\",\"name\":\"Acme Ltd\",\"tier\":\"gold\",\"country\":\"DE\"}",
+          "status": "completed",
+          "start_ms": 1790946535140,
+          "end_ms": 1790946535425
+        }
+      ],
+      "start_ms": 1790946535121,
+      "end_ms": 1790946535608
+    },
+    {
+      "message_id": "msg_0fcbb68c90019Gxhh0INujpCGt",
+      "steps": 1,
+      "finish": "tool-calls",
+      "snapshot": "03055ef09fc8cc405a101b27c1b6292bcf376b1e",
+      "tokens": {
+        "input": 214,
+        "output": 80,
+        "reasoning": 12,
+        "cache_read": 9201,
+        "cache_write": 0,
+        "reasoning_exposed": true
+      },
+      "usage_reported": true,
+      "tools": [
+        {
+          "tool": "webfetch",
+          "input": {
+            "format": "text",
+            "url": "http://127.0.0.1:18741/policy/discounts"
+          },
+          "output": "{\"unit\":\"percent\",\"tiers\":{\"gold\":10,\"silver\":5,\"bronze\":0}}",
+          "status": "completed",
+          "start_ms": 1790946536887,
+          "end_ms": 1790946537412
+        }
+      ],
+      "start_ms": 1790946536871,
+      "end_ms": 1790946537580
+    },
+    {
+      "message_id": "msg_0fcbb708c001aeJCYrCBXNzLbl",
+      "steps": 1,
+      "finish": "tool-calls",
+      "snapshot": "03055ef09fc8cc405a101b27c1b6292bcf376b1e",
+      "tokens": {
+        "input": 220,
+        "output": 105,
+        "reasoning": 35,
+        "cache_read": 9329,
+        "cache_write": 0,
+        "reasoning_exposed": true
+      },
+      "usage_reported": true,
+      "tools": [
+        {
+          "tool": "write",
+          "input": {
+            "content": "# Customer c42\n\n- Name: Acme Ltd\n- Tier: gold\n- Discount: 10%\n",
+            "path": "customer.md"
+          },
+          "output": "Created file successfully: customer.md",
+          "status": "completed",
+          "start_ms": 1790946539524,
+          "end_ms": 1790946540543
+        }
+      ],
+      "start_ms": 1790946538720,
+      "end_ms": 1790946540815
+    },
+    {
+      "message_id": "msg_0fcbb7d300015OJoip7IWWDBOC",
+      "steps": 1,
+      "finish": "tool-calls",
+      "snapshot": "e7e6879103ff3c344207733b28d5551c50efbeb9",
+      "tokens": {
+        "input": 259,
+        "output": 79,
+        "reasoning": 8,
+        "cache_read": 9457,
+        "cache_write": 0,
+        "reasoning_exposed": true
+      },
+      "usage_reported": true,
+      "tools": [
+        {
+          "tool": "webfetch",
+          "input": {
+            "format": "text",
+            "url": "http://127.0.0.1:18741/pricing/widget"
+          },
+          "output": "{\"sku\":\"widget\",\"unit_price\":40.0,\"currency\":\"USD\"}",
+          "status": "completed",
+          "start_ms": 1790946542142,
+          "end_ms": 1790946542567
+        }
+      ],
+      "start_ms": 1790946542130,
+      "end_ms": 1790946542669
+    },
+    {
+      "message_id": "msg_0fcbb845c001D5SJb5ts2UnLTU",
+      "steps": 1,
+      "finish": "tool-calls",
+      "snapshot": "e7e6879103ff3c344207733b28d5551c50efbeb9",
+      "tokens": {
+        "input": 128,
+        "output": 105,
+        "reasoning": 689,
+        "cache_read": 9713,
+        "cache_write": 0,
+        "reasoning_exposed": true
+      },
+      "usage_reported": true,
+      "tools": [
+        {
+          "tool": "write",
+          "input": {
+            "content": "{\"customer\": \"c42\", \"discount_pct\": 10, \"qty\": 3, \"sku\": \"widget\", \"total\": 108.0, \"unit_price\": 40.0}",
+            "path": "quote.json"
+          },
+          "output": "Created file successfully: quote.json",
+          "status": "completed",
+          "start_ms": 1790946555198,
+          "end_ms": 1790946556029
+        }
+      ],
+      "start_ms": 1790946544378,
+      "end_ms": 1790946556252
+    },
+    {
+      "message_id": "msg_0fcbbb96c001DjZr61fvsLkVDf",
+      "steps": 1,
+      "finish": "",
+      "snapshot": "2b356fb9c56665d341672facdbeb04705a787906",
+      "tokens": {
+        "input": 0,
+        "output": 0,
+        "reasoning": 0,
+        "cache_read": 0,
+        "cache_write": 0,
+        "reasoning_exposed": false
+      },
+      "usage_reported": false,
+      "tools": null,
+      "start_ms": 1790946557880,
+      "end_ms": 1790946559401
+    }
+  ],
+  "unknown_event_types": null,
+  "errors": null
+}

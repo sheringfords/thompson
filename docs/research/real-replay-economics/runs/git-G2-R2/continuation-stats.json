@@ -1,0 +1,11 @@
+{
+  "source_session": "ses_f0340db7affenpXucdVxkjsaKt",
+  "new_session": "ses_f0340db7affenpXucdVxkjG211",
+  "kept_assistant_messages": 1,
+  "dropped_assistant_messages": 8,
+  "hidden_items_removed": 3,
+  "kept_source_message_ids": [
+    "msg_0fcbf24f9001PIOLIxU8vuYGh0",
+    "msg_0fcbf284e001ibKl8lEy31TFTc"
+  ]
+}

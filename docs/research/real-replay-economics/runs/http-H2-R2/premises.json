@@ -1,0 +1,62 @@
+[
+  {
+    "kind": "unknown",
+    "key": "execute",
+    "witness": "",
+    "call": 1,
+    "tool": "execute",
+    "why": "unclassified tool"
+  },
+  {
+    "kind": "unknown",
+    "key": "execute",
+    "witness": "",
+    "call": 2,
+    "tool": "execute",
+    "why": "unclassified tool"
+  },
+  {
+    "kind": "unknown",
+    "key": "execute",
+    "witness": "",
+    "call": 3,
+    "tool": "execute",
+    "why": "unclassified tool"
+  },
+  {
+    "kind": "git",
+    "key": "customer.md",
+    "witness": "absent",
+    "call": 4,
+    "tool": "write"
+  },
+  {
+    "kind": "unknown",
+    "key": "execute",
+    "witness": "",
+    "call": 5,
+    "tool": "execute",
+    "why": "unclassified tool"
+  },
+  {
+    "kind": "git",
+    "key": "quote.json",
+    "witness": "absent",
+    "call": 6,
+    "tool": "write"
+  },
+  {
+    "kind": "git",
+    "key": "customer.md",
+    "witness": "absent",
+    "call": 7,
+    "tool": "read"
+  },
+  {
+    "kind": "git",
+    "key": "quote.json",
+    "witness": "absent",
+    "call": 7,
+    "tool": "read"
+  }
+]

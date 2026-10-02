@@ -1,0 +1,130 @@
+{
+  "s0_calls": 7,
+  "s0_tools": {
+    "read": 1,
+    "webfetch": 3,
+    "write": 2
+  },
+  "s0_premises": [
+    {
+      "kind": "git",
+      "key": "names:",
+      "witness": "names:c4623f394f4417e8",
+      "call": 0,
+      "tool": "read"
+    },
+    {
+      "kind": "http",
+      "key": "/customers/c42",
+      "witness": "\"717397117e3f5f6d\"",
+      "call": 1,
+      "tool": "webfetch"
+    },
+    {
+      "kind": "http",
+      "key": "/policy/discounts",
+      "witness": "\"54bf52bcd43a340f\"",
+      "call": 2,
+      "tool": "webfetch"
+    },
+    {
+      "kind": "git",
+      "key": "customer.md",
+      "witness": "absent",
+      "call": 3,
+      "tool": "write"
+    },
+    {
+      "kind": "http",
+      "key": "/pricing/widget",
+      "witness": "\"89916a0f82d77988\"",
+      "call": 4,
+      "tool": "webfetch"
+    },
+    {
+      "kind": "git",
+      "key": "quote.json",
+      "witness": "absent",
+      "call": 5,
+      "tool": "write"
+    }
+  ],
+  "first_stale_call_under_H1": 4,
+  "continuation": {
+    "source_session": "ses_f0344bf03ffeg9TbIixp7XvDsu",
+    "new_session": "ses_f0344bf03ffeg9TbIixp7XSm01",
+    "kept_assistant_messages": 4,
+    "dropped_assistant_messages": 3,
+    "hidden_items_removed": 12,
+    "kept_source_message_ids": [
+      "msg_0fcbb4162001yp4KIgv3Lx1V4k",
+      "msg_0fcbb4588001DuOrWY52FZbJtc",
+      "msg_0fcbb5f28001S6ndhXInz9Eml7",
+      "msg_0fcbb68c90019Gxhh0INujpCGt",
+      "msg_0fcbb708c001aeJCYrCBXNzLbl"
+    ]
+  },
+  "resume_calls": 0,
+  "resume_call_tokens": null,
+  "s0_call_tokens": [
+    {
+      "input": 7477,
+      "output": 116,
+      "reasoning": 81,
+      "cache_read": 1521,
+      "cache_write": 0,
+      "reasoning_exposed": true
+    },
+    {
+      "input": 338,
+      "output": 80,
+      "reasoning": 10,
+      "cache_read": 8945,
+      "cache_write": 0,
+      "reasoning_exposed": true
+    },
+    {
+      "input": 214,
+      "output": 80,
+      "reasoning": 12,
+      "cache_read": 9201,
+      "cache_write": 0,
+      "reasoning_exposed": true
+    },
+    {
+      "input": 220,
+      "output": 105,
+      "reasoning": 35,
+      "cache_read": 9329,
+      "cache_write": 0,
+      "reasoning_exposed": true
+    },
+    {
+      "input": 259,
+      "output": 79,
+      "reasoning": 8,
+      "cache_read": 9457,
+      "cache_write": 0,
+      "reasoning_exposed": true
+    },
+    {
+      "input": 128,
+      "output": 105,
+      "reasoning": 689,
+      "cache_read": 9713,
+      "cache_write": 0,
+      "reasoning_exposed": true
+    },
+    {
+      "input": 0,
+      "output": 0,
+      "reasoning": 0,
+      "cache_read": 0,
+      "cache_write": 0,
+      "reasoning_exposed": false
+    }
+  ],
+  "notes": [
+    "opencode session import ../docs/research/real-replay-economics/runs/smoke-2/continuation.json --directory /private/tmp/claude-501/-Users-wira-Documents-thompson-sampling/3fabd393-52f5-436f-9d93-ac4c7273ffdd/scratchpad/rre-work/ws-smoke: exit status 1: Error: Failed to read session data: ENOENT: no such file or directory, open '../docs/research/real-replay-economics/runs/smoke-2/continuation.json'\n    at ~effect/Utils/internal (/$bunfs/root/chunk-22mwpvp2.js:8:1540)\n    at s (/$bunfs/root/chunk-22mwpvp2.js:24:5696)\n    at processTicksAndRejections (native:7:39)\n    at cli.session.import (/$bunfs/root/chunk-m94m939d.js:49:15208)\n    at cli.session.import (definition) (/$bunfs/root/chunk-ecdf6ejp.js:2:1350)\n"
+  ]
+}

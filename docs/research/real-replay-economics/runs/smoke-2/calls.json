@@ -1,0 +1,173 @@
+{
+  "session_id": "ses_f0344bf03ffeg9TbIixp7XSm02",
+  "calls": [
+    {
+      "message_id": "msg_0fcbd6ae2001dXylJmOVrbgV54",
+      "steps": 1,
+      "finish": "tool-calls",
+      "snapshot": "e7e6879103ff3c344207733b28d5551c50efbeb9",
+      "tokens": {
+        "input": 8038,
+        "output": 99,
+        "reasoning": 86,
+        "cache_read": 1521,
+        "cache_write": 0,
+        "reasoning_exposed": true
+      },
+      "usage_reported": true,
+      "tools": [
+        {
+          "tool": "webfetch",
+          "input": {
+            "format": "text",
+            "url": "http://127.0.0.1:18741/pricing/widget"
+          },
+          "output": "{\"sku\":\"widget\",\"unit_price\":52.0,\"currency\":\"USD\"}",
+          "status": "completed",
+          "start_ms": 1790946671705,
+          "end_ms": 1790946672296
+        }
+      ],
+      "start_ms": 1790946670208,
+      "end_ms": 1790946672400
+    },
+    {
+      "message_id": "msg_0fcbd7f32001j8WvSZDe8peLtr",
+      "steps": 1,
+      "finish": "tool-calls",
+      "snapshot": "e7e6879103ff3c344207733b28d5551c50efbeb9",
+      "tokens": {
+        "input": 325,
+        "output": 50,
+        "reasoning": 250,
+        "cache_read": 9457,
+        "cache_write": 0,
+        "reasoning_exposed": true
+      },
+      "usage_reported": true,
+      "tools": [
+        {
+          "tool": "read",
+          "input": {
+            "path": "customer.md"
+          },
+          "output": "Read file customer.md, lines 1-5\n1: # Customer c42\n2: \n3: - Name: Acme Ltd\n4: - Tier: gold\n5: - Discount: 10%",
+          "status": "completed",
+          "start_ms": 1790946677946,
+          "end_ms": 1790946678301
+        }
+      ],
+      "start_ms": 1790946674733,
+      "end_ms": 1790946678378
+    },
+    {
+      "message_id": "msg_0fcbd967a001L6YGKMuLCu7wzU",
+      "steps": 1,
+      "finish": "tool-calls",
+      "snapshot": "e7e6879103ff3c344207733b28d5551c50efbeb9",
+      "tokens": {
+        "input": 434,
+        "output": 105,
+        "reasoning": 53,
+        "cache_read": 9713,
+        "cache_write": 0,
+        "reasoning_exposed": true
+      },
+      "usage_reported": true,
+      "tools": [
+        {
+          "tool": "write",
+          "input": {
+            "content": "{\"customer\": \"c42\", \"discount_pct\": 10, \"qty\": 3, \"sku\": \"widget\", \"total\": 140.4, \"unit_price\": 52.0}",
+            "path": "quote.json"
+          },
+          "output": "Created file successfully: quote.json",
+          "status": "completed",
+          "start_ms": 1790946680560,
+          "end_ms": 1790946681305
+        }
+      ],
+      "start_ms": 1790946680126,
+      "end_ms": 1790946681460
+    },
+    {
+      "message_id": "msg_0fcbda284001vYTGNT46I5IfiR",
+      "steps": 1,
+      "finish": "tool-calls",
+      "snapshot": "86a15088cd92255815ad10ec045600777ffefe53",
+      "tokens": {
+        "input": 235,
+        "output": 67,
+        "reasoning": 178,
+        "cache_read": 10097,
+        "cache_write": 0,
+        "reasoning_exposed": true
+      },
+      "usage_reported": true,
+      "tools": [
+        {
+          "tool": "read",
+          "input": {
+            "path": "quote.json"
+          },
+          "output": "Read file quote.json, lines 1-1\n1: {\"customer\": \"c42\", \"discount_pct\": 10, \"qty\": 3, \"sku\": \"widget\", \"total\": 140.4, \"unit_price\": 52.0}",
+          "status": "completed",
+          "start_ms": 1790946687621,
+          "end_ms": 1790946687953
+        }
+      ],
+      "start_ms": 1790946684611,
+      "end_ms": 1790946688029
+    },
+    {
+      "message_id": "msg_0fcbdbc3f0014CYUqEDjMKQ534",
+      "steps": 1,
+      "finish": "tool-calls",
+      "snapshot": "86a15088cd92255815ad10ec045600777ffefe53",
+      "tokens": {
+        "input": 428,
+        "output": 105,
+        "reasoning": 43,
+        "cache_read": 10225,
+        "cache_write": 0,
+        "reasoning_exposed": true
+      },
+      "usage_reported": true,
+      "tools": [
+        {
+          "tool": "write",
+          "input": {
+            "content": "{\"customer\": \"c42\", \"sku\": \"widget\", \"qty\": 3, \"unit_price\": 52.0, \"discount_pct\": 10, \"total\": 140.4}",
+            "path": "quote.json"
+          },
+          "output": "Wrote file successfully: quote.json",
+          "status": "completed",
+          "start_ms": 1790946689879,
+          "end_ms": 1790946690618
+        }
+      ],
+      "start_ms": 1790946689154,
+      "end_ms": 1790946690788
+    },
+    {
+      "message_id": "msg_0fcbdc6f4001oInBklEab3DUpV",
+      "steps": 1,
+      "finish": "stop",
+      "snapshot": "c4a6e7913a0f73b6c3a8171079e03275a20a13af",
+      "tokens": {
+        "input": 220,
+        "output": 37,
+        "reasoning": 7,
+        "cache_read": 10609,
+        "cache_write": 0,
+        "reasoning_exposed": true
+      },
+      "usage_reported": true,
+      "tools": null,
+      "start_ms": 1790946693306,
+      "end_ms": 1790946693711
+    }
+  ],
+  "unknown_event_types": null,
+  "errors": null
+}

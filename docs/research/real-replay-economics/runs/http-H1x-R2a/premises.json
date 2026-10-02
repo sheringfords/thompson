@@ -1,0 +1,46 @@
+[
+  {
+    "kind": "unknown",
+    "key": "execute",
+    "witness": "",
+    "call": 1,
+    "tool": "execute",
+    "why": "unclassified tool"
+  },
+  {
+    "kind": "git",
+    "key": "README.md",
+    "witness": "21c77486b28e66d516b3b8a8ce03b315033c1057",
+    "call": 2,
+    "tool": "read"
+  },
+  {
+    "kind": "git",
+    "key": "opencode.json",
+    "witness": "fd59f9a573e8461419bc7cef7e4faccd97a0098d",
+    "call": 2,
+    "tool": "read"
+  },
+  {
+    "kind": "git",
+    "key": "customer.md",
+    "witness": "absent",
+    "call": 3,
+    "tool": "write"
+  },
+  {
+    "kind": "unknown",
+    "key": "execute",
+    "witness": "",
+    "call": 4,
+    "tool": "execute",
+    "why": "unclassified tool"
+  },
+  {
+    "kind": "git",
+    "key": "quote.json",
+    "witness": "absent",
+    "call": 5,
+    "tool": "write"
+  }
+]

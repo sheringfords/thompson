@@ -13,6 +13,7 @@ package gateway
 import (
 	"math/rand/v2"
 	"net/http"
+	"sync/atomic"
 	"time"
 
 	"github.com/wiramahendra/thompson-sampling/go/thompson"
@@ -27,7 +28,10 @@ type Middleware struct {
 	RateLimiter  func(r *http.Request) bool // true = allow, false = 429
 	AuthRequired func(r *http.Request) bool // true = authorized
 	MaxRetries   int
-	round        uint64 // coarse round for breaker cooldown
+	// round is a coarse breaker-cooldown clock mutated on every request.
+	// Atomic: Handler runs concurrently, a plain uint64 is a data race
+	// (`go test -race` flags it under parallel load).
+	round atomic.Uint64
 }
 
 // Handler returns an http.Handler that does Select -> Forward -> Record.
@@ -41,6 +45,10 @@ func (m *Middleware) Handler(next http.Handler) http.Handler {
 			http.Error(w, "rate limited", http.StatusTooManyRequests)
 			return
 		}
+		if m.Policy == nil {
+			http.Error(w, "no policy", http.StatusServiceUnavailable)
+			return
+		}
 		if next != nil && m.Policy.Len() == 0 {
 			next.ServeHTTP(w, r)
 			return
@@ -51,10 +59,11 @@ func (m *Middleware) Handler(next http.Handler) http.Handler {
 			http.Error(w, err.Error(), http.StatusServiceUnavailable)
 			return
 		}
+		round := m.round.Load()
 		// Health: skip tripped provider
-		if m.Breaker != nil && m.Breaker.IsTripped(provider, m.round) {
+		if m.Breaker != nil && m.Breaker.IsTripped(provider, round) {
 			ids := []string{provider}
-			if avail := m.Breaker.Available(ids, m.round); len(avail) > 0 && avail[0] != provider {
+			if avail := m.Breaker.Available(ids, round); len(avail) > 0 && avail[0] != provider {
 				provider = avail[0]
 			}
 		}
@@ -73,13 +82,14 @@ func (m *Middleware) Handler(next http.Handler) http.Handler {
 				time.Sleep(time.Duration(attempt+1)*10*time.Millisecond + jitter)
 			}
 		}
-		m.round++
+		m.round.Add(1)
+		round = m.round.Load()
 		if outcome.LatencyMs == 0 {
 			outcome.LatencyMs = float64(time.Since(start).Milliseconds())
 		}
 		_ = m.Policy.RecordOutcome(rng, provider, outcome)
 		if m.Breaker != nil {
-			_ = m.Breaker.Record(provider, outcome, m.round)
+			_ = m.Breaker.Record(provider, outcome, round)
 		}
 		// OtelObserver currently eprintln! `go/thompson/otel.go:1` — swap to opentelemetry.Tracer in prod
 		if fwdErr != nil {

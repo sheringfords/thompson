@@ -256,11 +256,9 @@ func Evaluate(scenario *Scenario, treatment *Treatment, seeds int) Summary {
 		}
 		variance /= n - 1
 		stderr = variance / n
-		// sqrt
+		// Standard error of the mean.
 		if stderr > 0 {
-			// use math.Sqrt via approximation: rely on thompson import? Use simple sqrt via Newton's method
-			// avoid import for tiny helper — use standard library math via direct call
-			stderr = sqrtApprox(stderr)
+			stderr = math.Sqrt(stderr)
 		}
 	} else {
 		stderr = nan()
@@ -284,19 +282,6 @@ func Evaluate(scenario *Scenario, treatment *Treatment, seeds int) Summary {
 		MeanOptimalShare: meanOptimal,
 		NanosPerDecision: meanNanos,
 	}
-}
-
-func sqrtApprox(x float64) float64 {
-	// Newton iteration for sqrt without importing math (to keep harness minimal).
-	// For non-critical stats, 10 iterations is plenty.
-	if x <= 0 {
-		return 0
-	}
-	z := x
-	for i := 0; i < 10; i++ {
-		z = 0.5 * (z + x/z)
-	}
-	return z
 }
 
 func nan() float64 { return math.NaN() }

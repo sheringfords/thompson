@@ -3,8 +3,10 @@ package thompson
 import (
 	"encoding/json"
 	"fmt"
+	"math/rand/v2"
 	"os"
 	"path/filepath"
+	"sync"
 )
 
 // SnapshotStore persists policy snapshots durably.
@@ -14,7 +16,10 @@ type SnapshotStore interface {
 }
 
 // MemoryStore is an in-memory SnapshotStore for tests and harness use.
+// Mutex-guarded: Policy + gateway use it concurrently (parity with Rust
+// `MemoryStore` RwLock in `crates/thompson-sampling/src/persistence.rs:24`).
 type MemoryStore struct {
+	mu   sync.RWMutex
 	data []byte
 }
 
@@ -25,16 +30,21 @@ func (m *MemoryStore) Save(s Snapshot) error {
 	if err != nil {
 		return err
 	}
+	m.mu.Lock()
+	defer m.mu.Unlock()
 	m.data = b
 	return nil
 }
 
 func (m *MemoryStore) Load() (*Snapshot, error) {
-	if m.data == nil {
+	m.mu.RLock()
+	data := m.data
+	m.mu.RUnlock()
+	if data == nil {
 		return nil, nil
 	}
 	var s Snapshot
-	if err := json.Unmarshal(m.data, &s); err != nil {
+	if err := json.Unmarshal(data, &s); err != nil {
 		return nil, err
 	}
 	return &s, nil
@@ -55,7 +65,10 @@ func (f *FileStore) Save(s Snapshot) error {
 	if len(b) > 10*1024*1024 {
 		return fmt.Errorf("thompson: snapshot too large (%d bytes)", len(b))
 	}
-	tmp := f.Path + ".tmp"
+	// pid + random suffix: fixed `.tmp` collides when two processes/savers
+	// flush the same path concurrently (Rust uses `tmp.<pid>` in
+	// `crates/thompson-sampling/src/persistence.rs:75` for the same reason).
+	tmp := fmt.Sprintf("%s.tmp.%d.%d", f.Path, os.Getpid(), rand.IntN(1<<30))
 	// Use non-cached write with fsync for durability
 	file, err := os.OpenFile(tmp, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
 	if err != nil {
